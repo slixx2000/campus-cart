@@ -5,15 +5,16 @@ import { SAMPLE_LISTINGS, formatPrice, CATEGORIES } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 
 interface ProductPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateStaticParams() {
   return SAMPLE_LISTINGS.map((l) => ({ id: l.id }));
 }
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const listing = SAMPLE_LISTINGS.find((l) => l.id === params.id);
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { id } = await params;
+  const listing = SAMPLE_LISTINGS.find((l) => l.id === id);
 
   if (!listing) notFound();
 
