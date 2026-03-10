@@ -1,0 +1,220 @@
+import { University, Listing, Category } from "@/types";
+
+export const UNIVERSITIES: University[] = [
+  {
+    id: "unza",
+    name: "University of Zambia",
+    shortName: "UNZA",
+    city: "Lusaka",
+    province: "Lusaka",
+  },
+  {
+    id: "cbu",
+    name: "Copperbelt University",
+    shortName: "CBU",
+    city: "Kitwe",
+    province: "Copperbelt",
+  },
+  {
+    id: "mu",
+    name: "Mulungushi University",
+    shortName: "MU",
+    city: "Kabwe",
+    province: "Central",
+  },
+  {
+    id: "natsz",
+    name: "Northrise University",
+    shortName: "Northrise",
+    city: "Ndola",
+    province: "Copperbelt",
+  },
+  {
+    id: "cavendish",
+    name: "Cavendish University Zambia",
+    shortName: "CUZ",
+    city: "Lusaka",
+    province: "Lusaka",
+  },
+  {
+    id: "dmmu",
+    name: "Dag Hammarskjöld University",
+    shortName: "DMMU",
+    city: "Lusaka",
+    province: "Lusaka",
+  },
+  {
+    id: "luse",
+    name: "Lusaka Apex Medical University",
+    shortName: "LAMU",
+    city: "Lusaka",
+    province: "Lusaka",
+  },
+  {
+    id: "zica",
+    name: "Zambia Institute of Chartered Accountants",
+    shortName: "ZICA",
+    city: "Lusaka",
+    province: "Lusaka",
+  },
+];
+
+export const CATEGORIES: { label: Category; icon: string; color: string }[] = [
+  { label: "Food & Drinks", icon: "🍔", color: "bg-orange-100 text-orange-700" },
+  {
+    label: "Clothing & Fashion",
+    icon: "👕",
+    color: "bg-purple-100 text-purple-700",
+  },
+  {
+    label: "Electronics",
+    icon: "📱",
+    color: "bg-blue-100 text-blue-700",
+  },
+  {
+    label: "Books & Stationery",
+    icon: "📚",
+    color: "bg-yellow-100 text-yellow-700",
+  },
+  { label: "Services", icon: "🔧", color: "bg-teal-100 text-teal-700" },
+  {
+    label: "Beauty & Personal Care",
+    icon: "💄",
+    color: "bg-pink-100 text-pink-700",
+  },
+  {
+    label: "Sports & Fitness",
+    icon: "⚽",
+    color: "bg-green-100 text-green-700",
+  },
+  { label: "Home & Dorm", icon: "🏠", color: "bg-indigo-100 text-indigo-700" },
+  { label: "Tutoring", icon: "🎓", color: "bg-red-100 text-red-700" },
+  { label: "Other", icon: "📦", color: "bg-gray-100 text-gray-700" },
+];
+
+export const SAMPLE_LISTINGS: Listing[] = [
+  {
+    id: "1",
+    title: "Samsung Galaxy A14 – Excellent Condition",
+    description:
+      "Selling my Samsung Galaxy A14 in excellent condition. Comes with original charger and box. Perfect for students who need a reliable smartphone on a budget.",
+    price: 1800,
+    category: "Electronics",
+    condition: "Like New",
+    university: "UNZA",
+    sellerName: "Mwila Banda",
+    sellerPhone: "+260 97 1234567",
+    images: ["/images/placeholder-electronics.svg"],
+    createdAt: "2026-03-01T09:00:00Z",
+    featured: true,
+  },
+  {
+    id: "2",
+    title: "Nshima & Chicken Plate – Daily Special",
+    description:
+      "Hot and fresh nshima with grilled chicken, served with relish and vegetables. Available Monday to Friday near the UNZA main gate.",
+    price: 45,
+    category: "Food & Drinks",
+    university: "UNZA",
+    sellerName: "Charity Phiri",
+    sellerPhone: "+260 96 7654321",
+    images: ["/images/placeholder-food.svg"],
+    createdAt: "2026-03-02T10:30:00Z",
+    featured: true,
+    isService: false,
+  },
+  {
+    id: "3",
+    title: "Accounting Textbooks Bundle (ACCA F1–F3)",
+    description:
+      "Full set of ACCA Foundation level textbooks (F1, F2, F3). BPP Learning Media editions, lightly used. Great for ZICA and CBU accounting students.",
+    price: 350,
+    category: "Books & Stationery",
+    condition: "Good",
+    university: "CBU",
+    sellerName: "Kelvin Mwanza",
+    sellerPhone: "+260 95 3456789",
+    images: ["/images/placeholder-books.svg"],
+    createdAt: "2026-03-03T08:00:00Z",
+    featured: true,
+  },
+  {
+    id: "4",
+    title: "Mathematics & Physics Tutoring",
+    description:
+      "Experienced 3rd-year Engineering student offering affordable maths and physics tutoring sessions for 1st and 2nd year students. Online or in-person at CBU library.",
+    price: 80,
+    category: "Tutoring",
+    university: "CBU",
+    sellerName: "Bwalya Mutale",
+    sellerPhone: "+260 97 9876543",
+    images: ["/images/placeholder-tutoring.svg"],
+    createdAt: "2026-03-04T11:00:00Z",
+    featured: true,
+    isService: true,
+  },
+  {
+    id: "5",
+    title: "Ladies African Print Dress",
+    description:
+      "Beautiful Chitenge fabric dress, custom-made. Available in sizes 8–16. Can be made to order in any Chitenge print of your choice within 3 days.",
+    price: 250,
+    category: "Clothing & Fashion",
+    condition: "New",
+    university: "Mulungushi University",
+    sellerName: "Naomi Zulu",
+    sellerPhone: "+260 96 2345678",
+    images: ["/images/placeholder-fashion.svg"],
+    createdAt: "2026-03-05T14:00:00Z",
+    featured: false,
+  },
+  {
+    id: "6",
+    title: "Laptop Repair & Software Installation",
+    description:
+      "Fast and affordable laptop repair: virus removal, OS installation, hardware fixes. Available on campus at Cavendish University. Most jobs done within 24 hours.",
+    price: 120,
+    category: "Services",
+    university: "Cavendish University Zambia",
+    sellerName: "Emmanuel Chanda",
+    sellerPhone: "+260 97 1122334",
+    images: ["/images/placeholder-services.svg"],
+    createdAt: "2026-03-06T09:30:00Z",
+    featured: false,
+    isService: true,
+  },
+  {
+    id: "7",
+    title: "Natural Hair Care Products",
+    description:
+      "Handmade natural hair butter and edge control using shea butter, coconut oil, and castor oil. Great for protective styles. Available for delivery on campus.",
+    price: 60,
+    category: "Beauty & Personal Care",
+    condition: "New",
+    university: "UNZA",
+    sellerName: "Luyando Mulenga",
+    sellerPhone: "+260 95 5566778",
+    images: ["/images/placeholder-beauty.svg"],
+    createdAt: "2026-03-07T12:00:00Z",
+    featured: false,
+  },
+  {
+    id: "8",
+    title: "HP Laptop (Core i5, 8GB RAM, 256GB SSD)",
+    description:
+      "HP laptop in good working condition. Ideal for coursework, presentations, and research. Battery lasts ~4 hours. Selling because I upgraded.",
+    price: 3200,
+    category: "Electronics",
+    condition: "Good",
+    university: "Northrise University",
+    sellerName: "Patson Tembo",
+    sellerPhone: "+260 96 8899001",
+    images: ["/images/placeholder-electronics.svg"],
+    createdAt: "2026-03-08T10:00:00Z",
+    featured: false,
+  },
+];
+
+export const formatPrice = (amount: number): string => {
+  return `K${amount.toLocaleString("en-ZM")}`;
+};

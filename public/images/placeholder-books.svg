@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#fef9c3"/>
+  <rect x="140" y="70" width="30" height="140" rx="5" fill="#eab308"/>
+  <rect x="175" y="90" width="30" height="120" rx="5" fill="#ca8a04"/>
+  <rect x="210" y="80" width="30" height="130" rx="5" fill="#eab308"/>
+  <rect x="245" y="95" width="30" height="115" rx="5" fill="#ca8a04"/>
+  <rect x="130" y="210" width="155" height="10" rx="3" fill="#78350f"/>
+  <text x="200" y="245" text-anchor="middle" font-family="Arial" font-size="16" fill="#713f12">Books &amp; Stationery</text>
+</svg>
