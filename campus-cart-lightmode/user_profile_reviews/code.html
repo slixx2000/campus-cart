@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CampusCart - Sarah Jenkins Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b9dee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 md:px-10 py-3">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg text-white">
+<span class="material-symbols-outlined block">shopping_cart</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-extrabold tracking-tight">CampusCart</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center bg-slate-100 dark:bg-slate-800 rounded-full px-4 py-2 w-64">
+<span class="material-symbols-outlined text-slate-400 text-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full placeholder:text-slate-400" placeholder="Search campus..." type="text"/>
+</div>
+<button class="flex items-center justify-center rounded-full size-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-full size-10 bg-primary text-white shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-5xl mx-auto w-full px-4 py-8">
+<!-- Profile Header Section -->
+<div class="bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 p-6 md:p-10 mb-8">
+<div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+<div class="relative">
+<div class="size-32 md:size-40 rounded-full border-4 border-white dark:border-slate-800 shadow-xl overflow-hidden bg-slate-200">
+<img class="w-full h-full object-cover" data-alt="Profile photo of Sarah Jenkins" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAneXzhsUx22h2ib85vsQ0QoQSEcaEHUJpKcTSUdS0v55xQLOBHesd-Zx1RAPzKcRyDy71arqaqLHmjZBN3tb4k2ibdYCnIakCKwEpRA1g-j6WW1g2LRZYzmAOLXHBr01-N3tHTm268Pjz32mJ0AWOXJ8Mv2Qq_lgU2wK3X6oS7Ru38CweyJMNav29KkedgpvL9V_UIlhT0UQhxvLV-42MS31INRgdn2zQg_x-AGeNk4mBZJ1kz0k5NG_DmiBVgVNlsa5bKFJrQEXo"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-green-500 border-4 border-white dark:border-slate-800 size-6 rounded-full" title="Online"></div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<div class="flex flex-col md:flex-row md:items-center gap-3 mb-2">
+<h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">Sarah Jenkins</h1>
+<span class="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full border border-primary/20 self-center md:self-auto">
+<span class="material-symbols-outlined text-xs">verified</span>
+                                Verified Student
+                            </span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 font-medium mb-4">Economics Major • Senior at Stanford University</p>
+<div class="flex flex-wrap justify-center md:justify-start gap-6 mb-6">
+<div class="flex flex-col">
+<span class="text-2xl font-bold text-slate-900 dark:text-white">4.9</span>
+<div class="flex items-center gap-1">
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+</div>
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Rating</span>
+</div>
+</div>
+<div class="w-px h-10 bg-slate-200 dark:bg-slate-800 self-center hidden sm:block"></div>
+<div class="flex flex-col">
+<span class="text-2xl font-bold text-slate-900 dark:text-white">45</span>
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Items Sold</span>
+</div>
+<div class="w-px h-10 bg-slate-200 dark:bg-slate-800 self-center hidden sm:block"></div>
+<div class="flex flex-col">
+<span class="text-2xl font-bold text-slate-900 dark:text-white">12</span>
+<span class="text-slate-500 dark:text-slate-400 text-sm font-medium">Active</span>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-3">
+<button class="bg-primary text-white font-bold py-2.5 px-6 rounded-full hover:brightness-110 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">chat</span>
+                                Message
+                            </button>
+<button class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-6 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">share</span>
+                                Share Profile
+                            </button>
+</div>
+</div>
+<div class="text-right hidden lg:block">
+<p class="text-slate-400 dark:text-slate-500 text-sm font-medium">Member since</p>
+<p class="text-slate-600 dark:text-slate-300 font-bold">September 2022</p>
+</div>
+</div>
+</div>
+<!-- Tabs Navigation -->
+<div class="sticky top-[68px] z-40 bg-background-light dark:bg-background-dark py-2">
+<div class="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto no-scrollbar">
+<button class="flex items-center gap-2 px-6 py-4 text-primary border-b-2 border-primary font-bold text-sm whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">grid_view</span>
+                        Active Listings (12)
+                    </button>
+<button class="flex items-center gap-2 px-6 py-4 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-bold text-sm border-b-2 border-transparent transition-all whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+                        Sold Items (45)
+                    </button>
+<button class="flex items-center gap-2 px-6 py-4 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-bold text-sm border-b-2 border-transparent transition-all whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">reviews</span>
+                        Reviews (38)
+                    </button>
+</div>
+</div>
+<!-- Active Listings Grid -->
+<div class="mt-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Product Card 1 -->
+<div class="group bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="iPhone 15 Pro Natural Titanium" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD46s6quaLMSrjRHEfqHPnZ_-oA2Aqyz1zj3Kvt4Ec4QhUe1kqQIXlwpzicNwbG_do1vD1c6Ih8xorC7CRW95jRErX5iPBO_blugu3Jo4r8fs9FTOK8wfSrH_jphhS8fS1ATaI-FhYCK2VQGKA90NJeelLzqZr08hKne3yItLAUrtkphRxOuhhTUtkJb-S_xE_Qnk0QjnLkMUHeZT8_VR9nH-5NpCGgsKxMLSIgQgxR8o8qFOJSf_v6BPLszjFfvUjGVwwathUMJA4"/>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full size-8 flex items-center justify-center text-slate-600 hover:text-red-500 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-slate-900 dark:text-white text-lg">iPhone 15 Pro</h3>
+<span class="text-primary font-bold text-lg">ZMW 950</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-3">Excellent condition, 256GB, Titanium.</p>
+<div class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                Listed 2 hours ago
+                            </div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Organic Chemistry Textbook" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqRsPB0_vD3yjH9RlQJ5FruY_TNVJ71v5CsuJJIIfG80N_xINKvvbm88co2OTd7EJvzuqj0g0CBF8uiFSu5ims5TJPwCmwFqmgr6k8h8zVc-UgzPyNt1Ry1nmtZxVTu9kxdGpLf7a_u8gbKVcPnjW4SKZxvnS1GEXenhBVT2XigVirc-wV1eVWcr9S_ybobhZFju7YnHjXrMeG9op_fO9KAFRdhYaaZ_7CbjYeeOg8H9TH0rwvbXNGXHuZ6P15RHlT_irstQ1mS3U"/>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full size-8 flex items-center justify-center text-slate-600 hover:text-red-500 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-slate-900 dark:text-white text-lg">Organic Chemistry</h3>
+<span class="text-primary font-bold text-lg">ZMW 45</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-3">Latest edition, some highlights but clean.</p>
+<div class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                Listed 1 day ago
+                            </div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="aspect-[4/3] relative overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Apple MacBook Pro M2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiXetUsAXJWbfmVDhbGZVeSrK8xQWsrHt-Y47nlyInwR66cbLnFfYp7RCkVfIABjPbX7eqpz-5dlhjjkCKNOZVz24eCciWDtA0RMb_-3bOxW9i9tZnqbOZhPTFj_8-k0Pg3-dnvFqAUJmYYAgXWpuYFvS1i4Gz_MqdR8U4ytDRvm7u5eigbHfqYn9bHLvKiFiQ1pJgq9WcTc1cUcEx4Y5PvhNhlf6A4fVo-An41HbNNu_RfnSd_tZjwptqDWLDYtEt5WT-o-MKDvc"/>
+<div class="absolute top-3 right-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur rounded-full size-8 flex items-center justify-center text-slate-600 hover:text-red-500 transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-1">
+<h3 class="font-bold text-slate-900 dark:text-white text-lg">MacBook Pro M2</h3>
+<span class="text-primary font-bold text-lg">ZMW 1,200</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm mb-3">Space Gray, 16GB RAM, AppleCare+ included.</p>
+<div class="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                                Listed 3 days ago
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Reviews Section (Sample Content) -->
+<div class="mt-12 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-6">
+<h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">reviews</span>
+                    Recent Seller Reviews
+                </h2>
+<div class="space-y-6">
+<!-- Review 1 -->
+<div class="border-b border-slate-100 dark:border-slate-800 pb-6">
+<div class="flex justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover" data-alt="Reviewer avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC7PCOKnqAfmlxcgAEiTHu3sXYH5SrOxM6sq2KN59l0jAKzHa1CVq1XVjz9fGDcpxCWpXYK4xQWE6hnYzIv96_oujTo4elmW39gIwq3Cndp0D-BS_4V8YSeChKYVsWWE8dStVdbH2nW-EZUCHd90nHbVpN54CTPYJ17h6ZDx5QS5GFiqmr6paI6PEyhQHpEI2P8LaX4ui4RIttP4H1tfEEEZrHZbzbsvkZ8DiFjYPtdfR3y1B8s1GCr2rw8yuuSSKWbkzTzzhlcEA"/>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-white text-sm">Marcus Thompson</p>
+<p class="text-slate-400 text-xs">Verified Buyer • 2 days ago</p>
+</div>
+</div>
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+</div>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">Great seller, very fast response! We met up in front of the library and the transaction was super smooth. Highly recommend Sarah.</p>
+</div>
+<!-- Review 2 -->
+<div class="border-b border-slate-100 dark:border-slate-800 pb-6">
+<div class="flex justify-between mb-2">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full overflow-hidden bg-slate-100">
+<img class="w-full h-full object-cover" data-alt="Reviewer avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-nGIqHSs3Yb3tOfGwxTwLbLkXBLICHLKkt1pQuwBsJq8ulublw47S9c1EtLQYZrDGCiWYHCFoOvA_b7KXORcRSzNSs86HQFNN9doGt06bUPFxPSaRSmovf4-JBjZjkl1jajyyH1rzgO5bFgOc78KZT7FhQFxc6wD81-7SUuqWfgUmO-sK2hjt6RABDrA87wwnVeeKVwe2N3Q4sqZbln_IWS_TRTgstSWAL2t_wy1w2lVpPz4B4sz-wRRIcjLqhhseh51VmsMukpw"/>
+</div>
+<div>
+<p class="font-bold text-slate-900 dark:text-white text-sm">Alex Rodriguez</p>
+<p class="text-slate-400 text-xs">Verified Buyer • 1 week ago</p>
+</div>
+</div>
+<div class="flex text-yellow-400">
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1">star</span>
+</div>
+</div>
+<p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">Book was in perfect condition as described. No hidden marks. Really appreciate the honest listing!</p>
+</div>
+<button class="w-full py-3 text-primary font-bold text-sm hover:bg-primary/5 rounded-lg transition-colors">
+                        View all 38 reviews
+                    </button>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12 px-4 mt-auto">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary/20 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined block">shopping_cart</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold">CampusCart</h2>
+</div>
+<div class="flex gap-8 text-sm font-medium text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Safety Tips</a>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+</div>
+<p class="text-slate-400 dark:text-slate-500 text-xs">© 2024 CampusCart Inc. All university students verified.</p>
+</div>
+</footer>
+</div>
+</body></html>

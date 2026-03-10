@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a2ce2",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191121",
+                        "neutral-dark": "#2a1f36",
+                        "neutral-border": "#3d2d4d",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-neutral-border px-6 md:px-20 py-4 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">shopping_cart</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">CampusCart</h2>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-neutral-dark text-slate-100 hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-neutral-dark text-slate-100 hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-1 w-full max-w-6xl mx-auto px-4 py-8">
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Main Form Column -->
+<div class="flex-1 space-y-8">
+<!-- Progress Header -->
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<div>
+<p class="text-primary font-medium">Step 2 of 3</p>
+<h1 class="text-3xl font-bold">Item Details</h1>
+</div>
+<p class="text-slate-400 text-sm">66% Complete</p>
+</div>
+<div class="w-full bg-neutral-border h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[66%] rounded-full"></div>
+</div>
+</div>
+<!-- Form Sections -->
+<div class="bg-neutral-dark/40 border border-neutral-border p-6 rounded-xl space-y-8">
+<!-- Photos Section -->
+<section>
+<h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">add_a_photo</span>
+                            Photos
+                        </h3>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<div class="aspect-square rounded-xl bg-neutral-dark border-2 border-dashed border-neutral-border flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors group">
+<span class="material-symbols-outlined text-3xl text-slate-500 group-hover:text-primary">upload</span>
+<span class="text-xs mt-2 text-slate-500">Add Photo</span>
+</div>
+<div class="aspect-square rounded-xl bg-cover bg-center border border-neutral-border" data-alt="Cover of a classic textbook on a desk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDd3T6m7cAXDgruAiimSBHuYvJ7vSdCCIjsh0N0KbpI4aBv-O59yR_fyppfdLZNSsWrlltMJG0AYwf488FAYciLDbA62V9L5DG8kkobyGhUnDbV3qfekadsoxwWsdAKumX8e7wfD5JK7zoH6ca-bOaUUK6TnczyWzlemOXrm-tObRDPSpI1ngrqVLGAiJGmx0dU7mUpaPOYCrivANLFTqvFglubVXij8SLhDuhwvRhTONUVpe131U9UBKWZI4Dz6gj9UCUE6deClQw");'></div>
+<div class="aspect-square rounded-xl bg-cover bg-center border border-neutral-border" data-alt="Open pages of a thick academic book" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLt47UPUsIBXR5uNFSv36g66nMjsokvPKbERLJo8evw5Obu2g4viawDTWWudutT_uUwlbo_RT1gbEws6t46I9Zghay45s1Z8B75GjhVxVj3I-Zm_HNcfnFHVK59dTPtc2srZp4VRp9rq9QQCUsQb3KvIXaiYovPmFw7JfTWINyBxrgkK2QjmkynvVd4QQRgPvumauLzy-ngCtZKNWnZ_LiW83XvE5q-nkS3DtR2F3lATUR1lQGwM8QylIvTJOFAgLpX2VVL6IPC34");'></div>
+<div class="aspect-square rounded-xl bg-cover bg-center border border-neutral-border flex items-center justify-center bg-black/40" data-alt="Stack of university level textbooks" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDt58JNZqQ9hvjBjITZT9UaHXcerTmP_y30I2s1Y5M_kmuKkrRLYvWJ4Rxsr4HB-9aNZQWKDbxfBLQLoFNDDH_OFjIodWN6StWgtduRjtOWYS3zTjSWX4Q2xPOxiP9gFM3ahicoSxhiN0B279NJaPYZNgj7VrqJliKiJHbMo4_MjFe8X2UBr3e9e4mGUoDdm1T703ALILXm2frKvorTlQ5GkKNGEKumN-kfg0qkOA895xC-TP_KenuDAbAApEpbN56JXreyv0S5F2Y");'>
+<span class="text-white font-bold">+2</span>
+</div>
+</div>
+</section>
+<!-- Details Inputs -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-2 md:col-span-2">
+<label class="text-sm font-medium text-slate-300">Listing Title</label>
+<input class="bg-neutral-dark border-neutral-border rounded-lg p-3 focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-slate-100" placeholder="e.g. Organic Chemistry 8th Edition" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-300">Category</label>
+<select class="bg-neutral-dark border-neutral-border rounded-lg p-3 focus:ring-2 focus:ring-primary outline-none text-slate-100">
+<option>Textbooks</option>
+<option>Electronics</option>
+<option>Dorm Essentials</option>
+<option>Stationery</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-300">Condition</label>
+<select class="bg-neutral-dark border-neutral-border rounded-lg p-3 focus:ring-2 focus:ring-primary outline-none text-slate-100">
+<option>New</option>
+<option>Like New</option>
+<option>Good</option>
+<option>Fair</option>
+</select>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-300">Price (ZMW)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">K</span>
+<input class="w-full bg-neutral-dark border-neutral-border rounded-lg p-3 pl-8 focus:ring-2 focus:ring-primary outline-none text-slate-100" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-medium text-slate-300">Location</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">location_on</span>
+<input class="w-full bg-neutral-dark border-neutral-border rounded-lg p-3 pl-10 focus:ring-2 focus:ring-primary outline-none text-slate-100" placeholder="Search Campus/City" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2 md:col-span-2">
+<label class="text-sm font-medium text-slate-300">Description</label>
+<textarea class="bg-neutral-dark border-neutral-border rounded-lg p-3 focus:ring-2 focus:ring-primary outline-none text-slate-100" placeholder="Describe the item's condition, highlighting any marks or damage..." rows="4"></textarea>
+</div>
+</div>
+<!-- Navigation Buttons -->
+<div class="flex flex-col sm:flex-row gap-4 pt-4">
+<button class="flex-1 h-12 rounded-full border border-neutral-border hover:bg-neutral-dark transition-colors font-semibold text-slate-300">
+                            Back
+                        </button>
+<button class="flex-1 h-12 rounded-full bg-primary hover:bg-primary/90 transition-colors font-semibold text-white shadow-lg shadow-primary/20">
+                            Save and Continue
+                        </button>
+</div>
+</div>
+</div>
+<!-- Sidebar Column -->
+<aside class="w-full lg:w-80 space-y-6">
+<!-- Selling Tips -->
+<div class="bg-primary/10 border border-primary/20 p-6 rounded-xl">
+<h4 class="font-bold flex items-center gap-2 mb-4 text-primary">
+<span class="material-symbols-outlined">lightbulb</span>
+                        Selling Tips
+                    </h4>
+<ul class="space-y-4 text-sm text-slate-300">
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Take clear photos in natural light for better visibility.</span>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Be honest about the condition to build trust with buyers.</span>
+</li>
+<li class="flex gap-3">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Check similar listings to price your item competitively.</span>
+</li>
+</ul>
+</div>
+<!-- Safety First -->
+<div class="bg-neutral-dark/40 border border-neutral-border p-6 rounded-xl">
+<h4 class="font-bold flex items-center gap-2 mb-4 text-slate-100">
+<span class="material-symbols-outlined text-amber-500">security</span>
+                        Safety First
+                    </h4>
+<p class="text-sm text-slate-400 mb-4 leading-relaxed">
+                        To ensure a safe transaction for everyone on CampusCart, we recommend:
+                    </p>
+<div class="space-y-3">
+<div class="bg-neutral-dark p-3 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">groups</span>
+<span class="text-xs text-slate-300">Meet in public campus areas</span>
+</div>
+<div class="bg-neutral-dark p-3 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400">payments</span>
+<span class="text-xs text-slate-300">Use secure payment methods</span>
+</div>
+</div>
+</div>
+<!-- Map Preview -->
+<div class="rounded-xl overflow-hidden border border-neutral-border h-48 relative">
+<div class="absolute inset-0 bg-neutral-dark flex flex-col items-center justify-center" data-alt="Simplified dark map showing a campus layout" data-location="Lusaka" style='background-image: linear-gradient(rgba(25, 17, 33, 0.6), rgba(25, 17, 33, 0.6)), url("https://lh3.googleusercontent.com/aida-public/AB6AXuD4KmIabetmm6yTK5zTZS4onn33_cNUEBRUn7oy1laKK5L8vrr14A_XH6vMlQE0QR0a6aPOwT62Ly-0okTboA6_U-IQLjlU4mHgrCBix2p2AtTNdmaMfa22e-21ptBms6pNmn5GSqCFS2dAPHpujm4gdCFfKnXuzhXx7j2oWaICDtn8UY1LbhZ4mlotbIS8ixuNCTIjvEpiPHsCg-b5QgJ-BQMhELe_q1OMXO7Ys6QYYHSksJUMLjZ4NYXNg4Y055bwinoJKWVLbnM");'>
+<div class="bg-primary/20 p-2 rounded-full border border-primary animate-pulse">
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<span class="text-xs mt-2 font-medium bg-background-dark/80 px-2 py-1 rounded">Lusaka Campus</span>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Note -->
+<footer class="mt-auto py-8 text-center border-t border-neutral-border">
+<p class="text-slate-500 text-sm">© 2024 CampusCart Inc. Your trusted university marketplace.</p>
+</footer>
+</div>
+</body></html>

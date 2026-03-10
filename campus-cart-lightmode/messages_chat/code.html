@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b9dee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex h-screen flex-col">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 px-6 py-3 glass border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">shopping_cart</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold tracking-tight">CampusCart</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-semibold" href="#">Market</a>
+<a class="text-primary transition-colors text-sm font-semibold border-b-2 border-primary pb-1" href="#">Messages</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-semibold" href="#">My Listings</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-semibold" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="bg-slate-100 dark:bg-slate-800 border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary w-64" placeholder="Search chats..." type="text"/>
+</div>
+<button class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<div class="size-10 rounded-full bg-primary/20 border-2 border-primary p-0.5">
+<img class="w-full h-full rounded-full object-cover" data-alt="User profile avatar student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFrRIvEaoCz4HpmHGmaQl_G2YhnWyVWQCTFjP2RRr1L5wXSzzRK3c1AtegPS2U6YHPSYDszWmOBr1CKW2loJ4ztZWPEI19vPwWWzWtv3NB5k-WFJT68HuX1fDglFequrvMuYM--rB5mgtY8djAylpjcXfURCtY9DYN5qE3_TzU0sOpBfbrbyXtWv4AuoT6c0gi8HkeyfB3PYRwkyVPVIijEj_xKS7pGKDKezG1zH9XSUU_U0hOpqltPYYDpjJbVWNh53jyZRCdJQc"/>
+</div>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden p-4 gap-4">
+<!-- Sidebar: Recent Conversations -->
+<aside class="w-80 flex-shrink-0 flex flex-col glass rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="p-4 border-b border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-lg">Messages</h3>
+<button class="text-primary hover:bg-primary/10 p-1 rounded-lg transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+<div class="flex-shrink-0 flex flex-col items-center gap-1 cursor-pointer">
+<div class="size-12 rounded-full ring-2 ring-primary ring-offset-2 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Alex Rivera student avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdEieEMduN_Ab-442OxmuqYsYY1TT5yszpyqW8YaMWXsm5fpkYodhIcidNfDo2zyxk2STL0soxAbjIrt5p0JMPmiJlN7d5m-lqSQiRZjjk0ZxnzjWCC46TZ8jtVff_rTB4sAySm2wpHFd99CUdSHMh3ekf61vYhWaGIr1cwVy_yKWNNhJbEGWGchYTcQo0FOIN_OfhfryEBOGKayRwtbb45K7mU1zZictdVgSPVyjLwUOa55fAa7Lye44h5fitOdUdj4ahWKKqemQ"/>
+</div>
+<span class="text-[10px] font-medium">Alex</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-1 cursor-pointer">
+<div class="size-12 rounded-full border-2 border-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Jordan student avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQpZb4fb2weqjUmtoLhfLlqlIf7QxlFWGcCIvse7DET9uRwxJl3dRGoJHC6rQwd7kUu23_YyYYf2h0uMD7EM1AkMJPsej375IG-mWgDcDVbziyTmW0l899z31gdy9tnlE587fXGMXq1uBzAkcwApEDFkdC5nXUevT664MRsfVajuD-LvhJvLLrYnPHcBqosNTsjFMhv4Q1qHhkv9XioniiuD0r3-0gQcewuEyg4BxHXClKeVT4Ge1i9SHm7ede8r7rO6A10YJmDcY"/>
+</div>
+<span class="text-[10px] font-medium">Jordan</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-1 cursor-pointer">
+<div class="size-12 rounded-full border-2 border-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Sarah student avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZg_bDcdaRdZCKZIi3h3tfNxbMfZTpabC_iNDHdnusKnzH9k8wjHbwgh0FHPn3b2Xc3CWtHTzRN8yizwyPptADViyY8YqxXEJjOHZYJcGYkoruUTJK0_NnhztcvgonLMKBM-bETTPfYeYgHuahDq2ay9E0cVeC_4UXmsVXNvQgbZDEaGrBmRt6M0R5jyxh7o554Z5kDAtiB0KoUtUa4MnQmdJMxEZLgiKVv-ID2kja2vh2Haq4z7lH7HBEaN--5YRGM1u7vSwc4CA"/>
+</div>
+<span class="text-[10px] font-medium">Sarah</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center gap-1 cursor-pointer">
+<div class="size-12 rounded-full border-2 border-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Chris student avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUUKq4ggsMYywOIHdlPGlhB-XQhTAR-TAGQIWhTfhL_0a3jXNgg4kNeE64bD1FK31J5ZaKRZ2zIf4hxW8Pg2yTm9mhFZHZR0yfVEorqh0aaTUg91Z8g4Nh3rPsR7k3c1Nv5Yj0XLrWsj0ezERT4PX7HMI3pUi7nFjYJCreWkX5AjRcexf78s06Bk3EvwFSfSNCpsFh_ogIOstqrUBu14AgZUlY2VQ7v3xA1cWI21_ABioQkaGCRs6HGR4_uxbHBLoIoYDGpg5RS3U"/>
+</div>
+<span class="text-[10px] font-medium">Chris</span>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<div class="bg-primary/5 border-l-4 border-primary p-4 flex gap-3 cursor-pointer">
+<div class="relative size-12 shrink-0">
+<img class="size-full rounded-full object-cover" data-alt="Active chat Alex Rivera" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvgFngLLTGEK7h2CGrqhTgMdg3Pmff7jUMT4f49g-Q6M0Sx7ylgQMzYBp_3ujUx62UDv5EgzUbl4BAYoUnCAY1D3oXBpkaAolvLUbjcKl1lmpvSOY6Nd-opyfvA5nJGEpfNjyEJH2zRWGh6Zu--WQXYuCEKxSmcJGc7Sq-hE1LfZfiap2vD9wQhhX1JaRsXvdVHYjRj-cKJsR4Pnr4N6OFFihyrDJnJCvLDmFmyXlS6o5G9TCCo_2WUoKHAQatt8HuDMcO4HxTfqc"/>
+<div class="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full border-2 border-white"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h4 class="font-bold text-sm truncate">Alex Rivera</h4>
+<span class="text-[10px] text-slate-500">2m ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 truncate">Yes, it is! I'm on campus today...</p>
+<span class="text-[10px] font-medium text-primary mt-1 block">MacBook Pro M2</span>
+</div>
+</div>
+<div class="p-4 flex gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-b border-slate-50 dark:border-slate-800">
+<div class="relative size-12 shrink-0">
+<img class="size-full rounded-full object-cover" data-alt="Jordan chat avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVmiIpfDe4aQ9rinnIgro5BT5SvClJNMA4rCJFE7B6VcVFOGXNKf4Oyj6ufdzYvC0zHiEcugBwNdEYF1TAUtar0dKyxYcCeyLL3De_I6AkKPqjQMAycoa7KzaIgg4FNhut_XyPsciqqGE6xRVBKhGVqyeyj4dPK-YpVAFJhvfWHy5LxPdfzddqOOnESi-SrbA2Ruuor021Y9xfivK6u66OCwN52LTigl7G4gukcjJGuM5ji-ZFQxGP67Xev-XD0Xc40qRkNcmkUCE"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h4 class="font-bold text-sm truncate">Jordan Smith</h4>
+<span class="text-[10px] text-slate-500">1h ago</span>
+</div>
+<p class="text-xs text-slate-500 truncate">Is the bike still available for ZMW 150?</p>
+<span class="text-[10px] font-medium text-slate-400 mt-1 block">Mountain Bike</span>
+</div>
+</div>
+<div class="p-4 flex gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-b border-slate-50 dark:border-slate-800">
+<div class="relative size-12 shrink-0">
+<img class="size-full rounded-full object-cover" data-alt="Sarah chat avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt81pk_xBI8ER5iB5ojQJ4AcB89QIpqZLjaJMN3POtitzsXCGyXX__4wlGOpni-8Ph9FQfJEjQRfG4vyLCXYS45xFQwHFsQ9oiADctHAcy1RyGFBX-p2stkOKH1VHy5zFL7fN-pLBuo31opWVT4942O7g4hQm7t9OsdSvtVWyCjuhY3YtOe56uMUHuKxPnQz2tdMFKwu6BvOH3Y-1XMi5vxHCG84X1Kdas-bXm5AYrlTeBY9Lgzex2Zm5yUp_px6bRvagmyGI4pxk"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h4 class="font-bold text-sm truncate">Sarah Chen</h4>
+<span class="text-[10px] text-slate-500">3h ago</span>
+</div>
+<p class="text-xs text-slate-500 truncate">Thanks! I'll meet you at the library.</p>
+<span class="text-[10px] font-medium text-slate-400 mt-1 block">Organic Chemistry Book</span>
+</div>
+</div>
+<div class="p-4 flex gap-3 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+<div class="relative size-12 shrink-0">
+<img class="size-full rounded-full object-cover" data-alt="Chris chat avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYOLz47NZUAsnwFSxwy5uA0xdChC95Y8mFCgTuQg1YtG075xxAF0HV-Rg28QyOr-FDzznPOI6QPUnhBL14LbKGPXDDGm7I4xgio0s-YQCaPxdly2aVpk2xdVtqUfWpBPmTG-UJjo1dvOk9TQ9Gd89sKrAFH5h9ub6MgbJ9MQIhLjD-1s6Z5WzmLMHzD3nUXszikKFWQLhMksQgElorRXczZiioxGMnx68VH3GkhU8Vj1At3k3lKBG8BaI2aMHJA3XFqVVLsmpeOKI"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start">
+<h4 class="font-bold text-sm truncate">Chris Evans</h4>
+<span class="text-[10px] text-slate-500">Yesterday</span>
+</div>
+<p class="text-xs text-slate-500 truncate">Sent a photo</p>
+<span class="text-[10px] font-medium text-slate-400 mt-1 block">Gaming Monitor</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Chat Area -->
+<section class="flex-1 flex flex-col glass rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
+<!-- Chat Header -->
+<header class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white/50 dark:bg-slate-900/50">
+<div class="flex items-center gap-3">
+<div class="relative size-12">
+<img class="size-full rounded-full object-cover" data-alt="Alex Rivera profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVn18EvwURMSm1CIoD1In5ZfDBlqIJUnFA4zqqgq8qWGMiIF3a-7KWwv2_D9sYEcmTNAf51ucxV8a1JGse4zO4i0ibTkzv9e4ZvwStu7OLyrG1_RSz2dGl8V43YYN6_jEHX7yYI4jpYoRNI5pDSdtQ0-IwEG339AjX2iETHc_kCxfDyUn9rNxNb_h9RodrDkr2wTGqwPDYU89ka5frFRRSiDDQj723KknBP6fNfVFh2lmUBXcfdCJzi9eU_XtKPv6KDUCe1YOTe_M"/>
+<div class="absolute bottom-0 right-0 size-3 bg-green-500 rounded-full border-2 border-white"></div>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="font-bold text-base">Alex Rivera</h3>
+<span class="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">Verified Student</span>
+</div>
+<div class="flex items-center gap-2 text-xs text-slate-500">
+<span class="flex items-center text-yellow-500">
+<span class="material-symbols-outlined text-sm">star</span> 4.9 Rating
+                                </span>
+<span>•</span>
+<span>Typically responds in 5 mins</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+<span class="material-symbols-outlined">call</span>
+</button>
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</header>
+<!-- Messages Container -->
+<div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6 custom-scrollbar bg-slate-50/30 dark:bg-slate-900/10">
+<div class="flex justify-center">
+<span class="bg-white dark:bg-slate-800 px-3 py-1 rounded-full text-[10px] font-medium text-slate-400 shadow-sm border border-slate-100 dark:border-slate-700 uppercase tracking-wider">Today</span>
+</div>
+<!-- Incoming Message -->
+<div class="flex items-end gap-3 max-w-[80%]">
+<img class="size-8 rounded-full object-cover shrink-0" data-alt="Alex avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCobBfPWOfSrb3upBtBiE9-VbwxUjw3SfiIDssgnsx1D4n2NoUNsAlx4TDEyDYd9uVHc-ylhIO9zaMPtUS2ZTkYjgNfBGfnSYfBccR52LQ_kUYKSQt5PvFmCkWjRLhxb-h0vip3BI55oh4ON1O2dt48vbCs7Oi4yovr0Pzo5lW5E8p8kIEqRyJrf47B4SCebUscIUNOUgpYYoDWdRTJR62DK0zuFgGHm3hHJ6NsUejph5ggLIjr14R7XpqsbJHLmHVP2AJb10MbptY"/>
+<div>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl rounded-bl-none shadow-sm border border-slate-100 dark:border-slate-700">
+<p class="text-sm">Hi! Is the MacBook Pro still available for the ZMW 900 price?</p>
+</div>
+<span class="text-[10px] text-slate-400 mt-1 block px-1">10:42 AM</span>
+</div>
+</div>
+<!-- Outgoing Message -->
+<div class="flex flex-col items-end gap-1 ml-auto max-w-[80%]">
+<div class="bg-primary text-white p-4 rounded-xl rounded-br-none shadow-lg shadow-primary/20">
+<p class="text-sm font-medium">Yes, it is! I'm on campus today if you want to see it. I'll be at the Student Union until 4 PM.</p>
+</div>
+<div class="flex items-center gap-1 px-1">
+<span class="text-[10px] text-slate-400">10:45 AM</span>
+<span class="material-symbols-outlined text-[10px] text-primary">done_all</span>
+</div>
+</div>
+<!-- Incoming Message -->
+<div class="flex items-end gap-3 max-w-[80%]">
+<img class="size-8 rounded-full object-cover shrink-0" data-alt="Alex avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCIk7rLxgLTW_KnzV8BJD8QrApRU5WzeFxd1sZwAMt2Y2sG3fGBTB87337OLdlooHAsq2f_ZxRDneF1H2GBuwcusCivPETYqRfijOoaBV-VfLwG9LiGGXAUWdw83ngYMTBxJlPIiOoJsTvCxFJ80ehTYZtUrhqUJIYSfnP8ObtdHYUcNhANQncwQ0vUSTrcx9SsErFZVNHc_QNCrKGDvN6sjefDwtjkJhtVmH1F40xC1T_qhGbovvNvGNq0snMZQo1wQNasTipW_U"/>
+<div>
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl rounded-bl-none shadow-sm border border-slate-100 dark:border-slate-700">
+<p class="text-sm">Hi! Is the MacBook Pro still available for the ZMW 900 price?</p>
+</div>
+<span class="text-[10px] text-slate-400 mt-1 block px-1">10:48 AM</span>
+</div>
+</div>
+<!-- Outgoing Message (System Info Style) -->
+<div class="flex justify-center my-2">
+<div class="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+<span class="material-symbols-outlined text-sm">verified_user</span>
+                            Your transaction is protected by CampusCart SafePay
+                        </div>
+</div>
+</div>
+<!-- Input Area -->
+<footer class="p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+<!-- Quick Replies -->
+<div class="flex gap-2 mb-4 overflow-x-auto pb-1 no-scrollbar">
+<button class="shrink-0 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-[11px] font-semibold hover:bg-primary/10 hover:border-primary/30 transition-colors">Is this still available?</button>
+<button class="shrink-0 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-[11px] font-semibold hover:bg-primary/10 hover:border-primary/30 transition-colors">Where can we meet?</button>
+<button class="shrink-0 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-[11px] font-semibold hover:bg-primary/10 hover:border-primary/30 transition-colors">Can you do ZMW 850?</button>
+<button class="shrink-0 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-[11px] font-semibold hover:bg-primary/10 hover:border-primary/30 transition-colors">Is it in good condition?</button>
+</div>
+<div class="flex items-end gap-3">
+<div class="flex gap-1">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">image</span>
+</button>
+</div>
+<div class="flex-1 relative">
+<textarea class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 resize-none max-h-32" placeholder="Type a message..." rows="1"></textarea>
+<button class="absolute right-3 bottom-3 text-primary">
+<span class="material-symbols-outlined">mood</span>
+</button>
+</div>
+<button class="size-11 flex items-center justify-center rounded-full bg-gradient-to-tr from-primary to-blue-400 text-white shadow-lg shadow-primary/30 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</footer>
+</section>
+</main>
+</div>
+</body></html>

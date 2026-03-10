@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a2ce2",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191121",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>CampusCart - Sarah Jenkins Profile</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4 lg:px-20">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined">shopping_cart</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">CampusCart</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center bg-slate-100 dark:bg-primary/10 rounded-full px-4 py-2 border border-transparent focus-within:border-primary">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-xl">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-64 placeholder:text-slate-500" placeholder="Search textbooks, dorm gear..." type="text"/>
+</div>
+<button class="p-2 hover:bg-slate-100 dark:hover:bg-primary/20 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-10 rounded-full bg-slate-200 dark:bg-primary/30 flex items-center justify-center overflow-hidden border-2 border-primary">
+<img alt="User Avatar" data-alt="Portrait of Sarah Jenkins, a female college student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAfIaPCTVcNfCMjWCBoKCv7eS8ZGRIYPRkAfMeZleEQf_cf14t_1SE1KzifpzvuYU9f76acWmXNExRXTb1geFYkynTtxFgduLRCWRBvlYsBoraO8soYTtA1Lxl2N-mjsFM9XwttuKBQ_0Tz3i6cRBeBwDI6YrOAJuw_ppmaVNcY7xjjZ9PPf4yMR0hQYOeRsid4icmErIuK-YVIenOf-qTRv59hZeTfzYsbt0sXdDVX02dg9snD9FPl66Lpz-RO5JV3uFcN4d-Qac"/>
+</div>
+</div>
+</header>
+<main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8 lg:px-20">
+<!-- Profile Header Section -->
+<section class="flex flex-col md:flex-row gap-8 items-center md:items-start mb-12">
+<div class="relative">
+<div class="size-32 md:size-40 rounded-full border-4 border-primary p-1">
+<img alt="Sarah Jenkins" class="w-full h-full rounded-full object-cover" data-alt="Close up portrait of Sarah Jenkins smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDdILsNJcYKWotgWBAKJRgbnYttsGbLcp_2aFholfb0uXa2H6yMSr3Tesao_lae4hLOs3mufleX30S8D8hmScW5UDXKPnctUvM16Rqp9Mc_7DheMivdsOH_BwG7wiac9FlpsXj2q9cvfd2WvwRQbGO8hR_-89qijArWu2jeVHtEaEPgDSlKRsDjKIN3pD3GRZ9NMqFwnikwkgy6Y5xJOmHxDwdAdOt6fdPfFxDCjYcRkEspk4u6cpEGXpUIsQ9HJADpCoH5Tvjjvgg"/>
+</div>
+<div class="absolute bottom-2 right-2 bg-primary text-white p-1 rounded-full border-2 border-background-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">verified</span>
+</div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-2">
+<h1 class="text-3xl font-bold">Sarah Jenkins</h1>
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-primary/20 text-primary border border-primary/30">
+                            Verified Student
+                        </span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-lg mb-6">Senior at Stanford University • Computer Science</p>
+<div class="flex flex-wrap justify-center md:justify-start gap-4">
+<div class="bg-slate-50 dark:bg-primary/5 rounded-xl border border-slate-200 dark:border-primary/20 p-4 min-w-[100px] text-center">
+<div class="flex items-center justify-center gap-1 text-primary mb-1">
+<span class="material-symbols-outlined text-xl">star</span>
+<span class="text-2xl font-bold">4.9</span>
+</div>
+<p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Rating</p>
+</div>
+<div class="bg-slate-50 dark:bg-primary/5 rounded-xl border border-slate-200 dark:border-primary/20 p-4 min-w-[100px] text-center">
+<span class="text-2xl font-bold block mb-1">45</span>
+<p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Sold</p>
+</div>
+<div class="bg-slate-50 dark:bg-primary/5 rounded-xl border border-slate-200 dark:border-primary/20 p-4 min-w-[100px] text-center">
+<span class="text-2xl font-bold block mb-1">12</span>
+<p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">Active</p>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-bold transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">mail</span>
+                        Message
+                    </button>
+<button class="bg-slate-100 dark:bg-primary/10 hover:bg-slate-200 dark:hover:bg-primary/20 px-4 py-3 rounded-full font-bold transition-all flex items-center justify-center">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</section>
+<!-- Tabs Section -->
+<div class="border-b border-slate-200 dark:border-slate-800 mb-8 overflow-x-auto">
+<div class="flex gap-8 min-w-max">
+<button class="border-b-4 border-primary text-primary pb-4 font-bold flex items-center gap-2">
+                        Active Listings
+                        <span class="bg-primary/20 text-primary text-xs py-0.5 px-2 rounded-full">12</span>
+</button>
+<button class="border-b-4 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary pb-4 font-bold transition-all">
+                        Sold Items
+                    </button>
+<button class="border-b-4 border-transparent text-slate-500 dark:text-slate-400 hover:text-primary pb-4 font-bold transition-all">
+                        Reviews
+                    </button>
+</div>
+</div>
+<!-- Active Listings Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-16">
+<!-- Item 1 -->
+<div class="bg-white dark:bg-slate-900/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group cursor-pointer hover:shadow-xl hover:shadow-primary/5 transition-all">
+<div class="h-48 overflow-hidden relative">
+<img alt="Textbook" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Used organic chemistry textbook with minor wear" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTaFAEcDGRQShbxEPL7O02KB9ZrezBCmLLEMX-Q3NbhDmNQxceMqdaivlIQRNii0Du3iHc0M-MNXCS-e4J5VC_ZrFigUWaagOeFDlu7tm5_McZLPpoquvsSYt960X7NCdcW3CqdbRUY6GVYrFSZK9kWedUUKCMBRfcUItWHaWECYFxBFnFILEQcQBFYM_9nva3QV4s518pmeA9is-meV2vQPyXrAY4YgE5-ddpBAO9HT1Pr1yjhajZIqYa9bc-7Uzo5Cvd8vHwkIo"/>
+<div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full uppercase font-bold tracking-wider">
+                            Near Mint
+                        </div>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg mb-1 truncate">Organic Chemistry (8th Ed)</h3>
+<p class="text-primary font-bold text-xl mb-3">ZMW 450</p>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                            Tresidder Union
+                        </div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-white dark:bg-slate-900/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group cursor-pointer hover:shadow-xl hover:shadow-primary/5 transition-all">
+<div class="h-48 overflow-hidden relative">
+<img alt="Headphones" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Noise cancelling headphones on a desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyMsy3EfoHKvrCu8krfJAi7xlZA-Pd3y-GlSYGy6FVLVecC-pG0EP12POHM5_fFCdeOy5QaygTCEPQGm8nCNw8oLDW8pkNqAgDz-ndk7xBfK5wi2lj3IAHSRqpSgI3yRYL7A5W6ygHa_6om0hVFFvkRoLhE3BbZfi1s-tSjzMsheP1kH9gks5EFufK_OA8Td6C24FRaeumY7wfg7_2RpQZSKycgZb_ls2iTSsLfkb9XyT3NrXwQmwHoFfKvfwhOu1Dad6j4o3BoTg"/>
+<div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full uppercase font-bold tracking-wider">
+                            Like New
+                        </div>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg mb-1 truncate">Sony WH-1000XM4</h3>
+<p class="text-primary font-bold text-xl mb-3">ZMW 3,200</p>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                            Meyer Library
+                        </div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-white dark:bg-slate-900/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group cursor-pointer hover:shadow-xl hover:shadow-primary/5 transition-all">
+<div class="h-48 overflow-hidden relative">
+<img alt="Calculator" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Graphing calculator on graph paper" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSUwc9qiY4u_33WJY9n1UzBPl7BQJy5DqM-k6ilD664ff6HFUSZrGHZPiWwkjSEpyPpQN7SiS-qf0Lew4RpcdaZF7yr-SVGy1LgaMOfXdAftrawDd1id39ywg394DG_uPkP8AaF4hCfcdeyTNwvBTwjVoXH6gTnfbB8wdKMzpTh3jSi8YVAfoa741Gl8mI4N4Fqg2hsvQOOm5SyOXvlhxqfQ7b85Pvld4sTCRPLrXWmZs5hvGe1UyXkgUjR0h5ULsK0ozbMAwIywU"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg mb-1 truncate">TI-84 Plus CE</h3>
+<p class="text-primary font-bold text-xl mb-3">ZMW 950</p>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                            Old Union
+                        </div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="bg-white dark:bg-slate-900/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group cursor-pointer hover:shadow-xl hover:shadow-primary/5 transition-all">
+<div class="h-48 overflow-hidden relative">
+<img alt="Laptop stand" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Aluminum laptop stand" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQjkHb8Q49XXH-FTHjsEu2ZmxYSwIxpghlnVxEfUaSvN1EWHvWkSjShw_3YCJDeL3VGn4k8NeEJpHXBVjrlPhfyiJi2ym04M1UUd1R_NwLneqOQG9ytjRjzSLEe2XLa0WxbzEVZPZ-wwnE503TTBaoRueR9SpZZFfUNCZ0Zx-ES6Q9qPbeYjwOqo8Rl1UJHsY_LXSp9ZgU8lTw_VJn_yDqe4_Hz5SX1MkK8CFk086h4dyifCRpWpuK2Ju_ppiDnN6LOYTEHq6Clls"/>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg mb-1 truncate">Ergonomic Laptop Stand</h3>
+<p class="text-primary font-bold text-xl mb-3">ZMW 300</p>
+<div class="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                            Wilbur Hall
+                        </div>
+</div>
+</div>
+</div>
+<!-- Recent Seller Reviews Section -->
+<section class="max-w-4xl mx-auto">
+<div class="flex items-center justify-between mb-6">
+<h2 class="text-2xl font-bold">Recent Seller Reviews</h2>
+<button class="text-primary font-bold text-sm hover:underline">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Review 1 -->
+<div class="bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+<img alt="Marcus" data-alt="Profile photo of Marcus, a young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKRd6ybY28RLiNWa93P028teLR6BPm_u3OzpW74LAewUsQ5GrU1pGmlhg5FT9Y71B1cdw9ZxgyndvnoKv8ZIcrWpatlzP2yewilKXO-vZ_74IaHLhoDl5rWOx-3eQeks9UBXwr6hojYSieysA7Euj4Y-B3cFMZ_RMaQHvWqgs69JIeAyS-SSmFdOs6h1PmlkX26bpdawkPFWNWA_oj0P6yFjBuRcv6BBPJAmP91A0cV56i-5SLcbDmOgzYITlv-csBzJ6Dw3pDICw"/>
+</div>
+<div>
+<p class="font-bold">Marcus T.</p>
+<p class="text-xs text-slate-500">2 days ago</p>
+</div>
+</div>
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+</div>
+</div>
+<p class="text-slate-700 dark:text-slate-300">
+                            "Super easy to communicate with. The textbook was exactly as described, even better actually. Would definitely buy from Sarah again!"
+                        </p>
+<div class="mt-4 flex items-center gap-2 text-xs font-bold text-slate-500">
+                            Purchased: <span class="text-slate-900 dark:text-slate-100">Intro to Psychology Vol. 2</span>
+</div>
+</div>
+<!-- Review 2 -->
+<div class="bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-slate-200 dark:border-slate-800 p-6">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+<img alt="Alex" data-alt="Profile photo of Alex, a young woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtaBO6ciHhm0dObhpCznr0hs7xuJLGzPSCUIDXpO0Xa87XhP0TtasSj5RfydNssv--_yQPNfCn1DVd07h7yQE5IuGQXD997MuN27bykxSoqVm82gEcyxVsF1zOHQ0N_6VlqPx-a3DjWOtt--7DAAIBzAWXfJt3fTR9TDqARWkL-GSgMlaHLjBrNaLSY7sBS9Zcb3L1VsX4iOKOl2psdBisen0eRKYQd_z0zrj4HlxTNR_mMZxPIVp9DxdVOYZDgSvUJ1KHu9kblsM"/>
+</div>
+<div>
+<p class="font-bold">Alex P.</p>
+<p class="text-xs text-slate-500">1 week ago</p>
+</div>
+</div>
+<div class="flex text-amber-400">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star_half</span>
+</div>
+</div>
+<p class="text-slate-700 dark:text-slate-300">
+                            "Quick response and flexible with the meetup time. The desk lamp works perfectly. Thanks Sarah!"
+                        </p>
+<div class="mt-4 flex items-center gap-2 text-xs font-bold text-slate-500">
+                            Purchased: <span class="text-slate-900 dark:text-slate-100">LED Dorm Lamp</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Sidebar Navigation (Desktop Floating) -->
+<nav class="fixed left-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-4 bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-3xl">
+<a class="p-3 bg-primary text-white rounded-2xl flex items-center justify-center transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+</a>
+<a class="p-3 text-slate-400 hover:text-primary rounded-2xl flex items-center justify-center transition-all" href="#">
+<span class="material-symbols-outlined">explore</span>
+</a>
+<a class="p-3 text-slate-400 hover:text-primary rounded-2xl flex items-center justify-center transition-all" href="#">
+<span class="material-symbols-outlined">chat_bubble</span>
+</a>
+<a class="p-3 text-slate-400 hover:text-primary rounded-2xl flex items-center justify-center transition-all" href="#">
+<span class="material-symbols-outlined">favorite</span>
+</a>
+<div class="h-px bg-slate-800 mx-2"></div>
+<a class="p-3 text-slate-400 hover:text-primary rounded-2xl flex items-center justify-center transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+</a>
+</nav>
+<!-- Bottom Navigation (Mobile) -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] md:w-fit bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-2 rounded-full flex gap-2 xl:hidden z-50">
+<button class="flex-1 md:px-6 py-3 rounded-full bg-primary text-white flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">home</span>
+<span class="hidden md:inline text-sm font-bold">Home</span>
+</button>
+<button class="flex-1 md:px-6 py-3 rounded-full text-slate-400 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">search</span>
+<span class="hidden md:inline text-sm font-bold">Search</span>
+</button>
+<button class="flex-1 md:px-6 py-3 rounded-full text-slate-400 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="hidden md:inline text-sm font-bold">Sell</span>
+</button>
+<button class="flex-1 md:px-6 py-3 rounded-full text-slate-400 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">person</span>
+<span class="hidden md:inline text-sm font-bold">Profile</span>
+</button>
+</nav>
+</div>
+</body></html>

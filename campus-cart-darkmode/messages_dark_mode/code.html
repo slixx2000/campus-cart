@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CampusCart Messaging</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a2ce2",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191121",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="flex h-screen w-full flex-col overflow-hidden">
+<!-- Top Nav Bar -->
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-primary/20 px-6 py-3 bg-white dark:bg-background-dark/50 backdrop-blur-md shrink-0">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-tight">CampusCart</h2>
+</div>
+<div class="flex flex-1 justify-center max-w-xl px-8">
+<label class="relative flex w-full">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-slate-500">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="w-full rounded-full border-none bg-slate-100 dark:bg-primary/10 py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary placeholder:text-slate-400 dark:placeholder:text-slate-500" placeholder="Search for items or users" type="text"/>
+</label>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center rounded-full size-10 bg-slate-100 dark:bg-primary/20 text-slate-600 dark:text-slate-200 hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-full size-10 bg-slate-100 dark:bg-primary/20 text-slate-600 dark:text-slate-200 hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+</button>
+<div class="size-10 rounded-full bg-primary/30 border-2 border-primary/50 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile picture showing a young student smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUuZYBbgkOPFGf4x-GD2JUkI4rTGNYCACynnEdfkVCBVanDF6Ym14__BUtdU9aQj32-QM9wG9atNd7WTK4A6KR-KUnysT23HJ3yUMRr5jEmc5_wbQrg6Mrr7fuUNBTKKmPdMGJ_E_nghQhmEQRcIJbxClQrXf2i-Arl1Qup4gG8fuMKM4NERmzC9N_6xBSt4NVd2cfHGoP1a47oGK_YsHr3ocb7edv0Ra4_HJqPyruOfOyQKR6uuuDoYYhoqdSZhZ8px6eb87K224"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Sidebar: Active Chats -->
+<aside class="w-80 flex flex-col border-r border-slate-200 dark:border-primary/20 bg-slate-50 dark:bg-background-dark/30 overflow-y-auto shrink-0">
+<div class="p-6">
+<h1 class="text-lg font-bold mb-1">Active Chats</h1>
+<p class="text-sm text-slate-500 dark:text-slate-400">4 unread messages</p>
+</div>
+<nav class="px-3 flex flex-col gap-1">
+<!-- Alex Rivera (Active) -->
+<button class="flex items-center gap-3 w-full p-3 rounded-xl bg-primary/10 border-l-4 border-primary dark:bg-primary/20 text-left">
+<div class="relative">
+<img class="size-12 rounded-full object-cover" data-alt="Portrait of Alex Rivera, a verified student" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDn-PuHBTgG3AJ4XHCx-UZEUnMpnfJUxkit9cn4ew9sGQJWqE9w276xbsaZSozO4dO0gHGM7ZgsCe7o-nenqQRIMhJJghMM9p9hGS-TBHCXHe4au0RdRn4bqSfuRdOQVam69kJDhfrq4ca6z0hSp4fMiAoBXSnuEE-t9HZfrC5DaXmX1_u_Zi2yU3tW0qSKm2Sp_zwySZzf-MRE77msrCQppH1QG_v1XZ2-0tFQxDEgh9bWVQKy_8JRNYN0K48gnAT3ngiwlEMvJXQ"/>
+<span class="absolute bottom-0 right-0 size-3 bg-green-500 border-2 border-white dark:border-background-dark rounded-full"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline">
+<span class="font-semibold text-slate-900 dark:text-slate-100 truncate">Alex Rivera</span>
+<span class="text-[10px] text-primary font-bold uppercase">Active</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 truncate">Is the price firm?</p>
+</div>
+</button>
+<!-- Jordan Smith -->
+<button class="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-slate-200 dark:hover:bg-primary/10 transition-colors text-left group">
+<img class="size-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Portrait of Jordan Smith" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5d94npPvUZKGx6KR5g-IKfzKl0afUBVy7ZlqyW759giLJcJUzdXX9CqM8qJMHvvWfBgwQqB7Gn_bjHTloSWMT9fZ_0CuwbzG_VjuTavyeGudv012TbXXS5X6Af1RbPvgJmcNCdx4t-E-eDonhoUtKLXBR_7etGN5kqR-ObHHUF8LSC_V6ZvApTgYr4AjKkJ8ccHg6y0ZZaqo2NXSUm8JNaUuPdyaZrja-ebZZeyRBe51uxyu3XG2mALwgBWSA3LN1akvZEYLiGcE"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline">
+<span class="font-medium text-slate-700 dark:text-slate-300">Jordan Smith</span>
+<span class="text-[10px] text-slate-400">2h ago</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500 truncate font-semibold">Sent a photo</p>
+</div>
+</button>
+<!-- Sarah Chen -->
+<button class="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-slate-200 dark:hover:bg-primary/10 transition-colors text-left group">
+<img class="size-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Portrait of Sarah Chen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2x83r_cxLGKDTFxxnwXqg0xDnJIzITiofE6GzeyqXEgYRuhsHhUqZjdz3G1DzQjnFDDbsx9MyuS9ib1_tpxJbA0TZs9mRkGhIuECFCmYvvaLUlE1lsIRYHCo9dYAW8IALve4EGj-QBkG-GZc83cP4i_2V5L3tWXLp3TKQDZpWR-tonLR2ZQXhAuHuiFa2FqOgEJkLzx2LpEcw3qI8-IL26FtrXzjNqd6TPo3VDTJS2-6dKhJkNUk8EezehDfOvluCQvn1HD4i--Q"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline">
+<span class="font-medium text-slate-700 dark:text-slate-300">Sarah Chen</span>
+<span class="text-[10px] text-slate-400">5h ago</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500 truncate">Thanks for the book!</p>
+</div>
+</button>
+<!-- Chris Taylor -->
+<button class="flex items-center gap-3 w-full p-3 rounded-xl hover:bg-slate-200 dark:hover:bg-primary/10 transition-colors text-left group">
+<img class="size-12 rounded-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Portrait of Chris Taylor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaRAFpR95cpYlnR1YQF3Wygpl0XX4wSDWfysjAEAXbrjUv9gtGad0Zbif0GMYnrPp9p9wg4M2C0Kis7kFwGPri7eJpsaPXB2Fzb3Wg1FG2Eqhun2gKkW0U9L8I_z9OukJ1OFAsD9FN-cDKp3tUBHp8at68Z4gwqPTopESTllqgO0VUHsK_5ve-7oVS9Tm4go6rLuj3BrfGsLoGMPb4otdUuNUQXB-4d7GH9CseN24qmIxjtINZ9sQgCYpe0DPXmJIpzLrBUU-B9qc"/>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-baseline">
+<span class="font-medium text-slate-700 dark:text-slate-300">Chris Taylor</span>
+<span class="text-[10px] text-slate-400">Yesterday</span>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-500 truncate">Is it still available?</p>
+</div>
+</button>
+</nav>
+</aside>
+<!-- Main Chat Window -->
+<main class="flex-1 flex flex-col bg-white dark:bg-background-dark relative">
+<!-- Chat Header -->
+<div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-primary/20 shrink-0">
+<div class="flex items-center gap-4">
+<div class="relative">
+<img class="size-14 rounded-full object-cover" data-alt="Alex Rivera profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-SP37PHSZ-jC3PnkfEQmItXo1r1JHTEqCP4INNnB64K4n_78GA87iF1MalIhzrUFx8wcMLoBq5fcncCVrpJWLNkK8B2Gm6ucG7znHi0ExdSzShQ590OaUGbOVJcv-h9RTUikR0jEiAT5NFFKk4dF9WUKB-AeUJYdI73KmCcVZgeGzlu-Ax2LpGs71NSKPm2uqU6eXPzgkTlUWbpY67a6pdvREVwSKcHNYZdZqSHKhu_lFFeuYWTzNrnZ37nuFkMInlNYw0cEkszU"/>
+<span class="absolute bottom-0 right-0 size-4 bg-green-500 border-2 border-white dark:border-background-dark rounded-full"></span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h3 class="text-xl font-bold">Alex Rivera</h3>
+<span class="flex items-center gap-0.5 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold rounded-full uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+                                Verified
+                            </span>
+</div>
+<div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-[18px] fill-current">star</span>
+                                4.9 Rating
+                            </span>
+<span>•</span>
+<span>Senior, CS Major</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">call</span>
+</button>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Messages Area -->
+<div class="flex-1 overflow-y-auto p-6 flex flex-col gap-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent">
+<!-- Timestamp -->
+<div class="flex justify-center">
+<span class="px-3 py-1 bg-slate-100 dark:bg-primary/10 rounded-full text-[11px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-widest">Today, 2:45 PM</span>
+</div>
+<!-- Received Message -->
+<div class="flex items-end gap-3 max-w-[80%]">
+<img class="size-8 rounded-full object-cover" data-alt="Alex Rivera profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2JIwSsP04rLWXVh5Cwzn5u7rmj6A85N3mOogsh0iLHX6YvXKT9prIJ8gAsDHqxkZjl__4mDOKe5RJEyrt7HitXYk3kMqO9-Efs0iFr6J5LugSC7Zwg4P7kp5lbCs2ZGgoNIniqkEECvFTXDBmRu6dGgOkFqObd7WQFREVFi6y4XuHq28g8XSCjXY1RWG7xkylp5-cLpUk51dAJgTIHgnbgj1hasavdNXA3msBsLGFc7_ves6pEE9uq1JAlS9dFKtfrVZH2sU5P9c"/>
+<div class="flex flex-col gap-1">
+<div class="bg-slate-100 dark:bg-primary/10 px-4 py-3 rounded-2xl rounded-bl-none text-slate-800 dark:text-slate-100 shadow-sm">
+                            Hey! Are you still interested in the chemistry textbook? I have someone else asking but you were first.
+                        </div>
+<span class="text-[10px] text-slate-400 ml-1">2:46 PM</span>
+</div>
+</div>
+<!-- Sent Message -->
+<div class="flex items-end gap-3 max-w-[80%] self-end flex-row-reverse">
+<div class="size-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs border border-primary/30">ME</div>
+<div class="flex flex-col gap-1 items-end">
+<div class="bg-primary px-4 py-3 rounded-2xl rounded-br-none text-white shadow-lg shadow-primary/20">
+                            Yes, I am! Is the price firm? I'm on a bit of a budget this semester.
+                        </div>
+<span class="text-[10px] text-slate-400 mr-1 flex items-center gap-1">
+                            2:48 PM
+                            <span class="material-symbols-outlined text-[14px] text-primary">done_all</span>
+</span>
+</div>
+</div>
+<!-- Received Message with Item -->
+<div class="flex items-end gap-3 max-w-[80%]">
+<img class="size-8 rounded-full object-cover" data-alt="Alex Rivera profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqSS0qPJTDS1YoiNaE5WozdLQavZWH7H_pCXFUoI2rCvmh4bCjFaEb8xIuPo-cwXkUsPMoLzm4bIFFlPys1EVG6ihhHia7HGxjNmwoNHekHFM4Kw_Wkusc9ymJat9DZEYW10AH2o9n07Bzp6uBvTQ5uvwo8RGkpob8TJmcaohUyzr4eP1FYx1ubtn378HL86nb3WYqrNljZ74EUVk9-xf5-uHGMkslM7gQRUx3GZT-Ch4timNvNLIS70723A-SdvTnz-w__il57x8"/>
+<div class="flex flex-col gap-2">
+<div class="bg-slate-100 dark:bg-primary/10 px-4 py-3 rounded-2xl rounded-bl-none text-slate-800 dark:text-slate-100 shadow-sm">
+                            I could do ZMW 450 if you can meet me at the library tomorrow. It's in great condition, no highlighting.
+                        </div>
+<div class="rounded-xl overflow-hidden border border-slate-200 dark:border-primary/20 w-64 bg-white dark:bg-background-dark/50">
+<div class="h-32 bg-slate-200 dark:bg-primary/5 relative">
+<img class="w-full h-full object-cover" data-alt="Chemistry textbook on a table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXF-wRBd3k-OkTQEtgOdcuuQlfgsZlFtpfX72paOMc41Kpg_VAzW07Xf-RKa0hBz4yuDbPKeuFSsR6aobPiHLYeQhzC6bDfNGctxv5lJ1Ao3DgXxD5qnrLVgwqcnuU0KXUIZ0uYNkVWek41mchbQjIL260GgkkLzsiwmmrxLRozO2lMQEP9VhqpTVlhYH82KUKMRDwNKqy82ap3-mPOr_UClqFsohHywdNYk7Oa4bLlCFxf06rIy0SEsJCxe_iO3kt6a_ONDOpq4k"/>
+<div class="absolute top-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-sm rounded text-[10px] text-white">4 Photos</div>
+</div>
+<div class="p-3">
+<p class="text-xs font-bold truncate">Organic Chemistry (12th Ed)</p>
+<p class="text-primary font-bold text-sm">ZMW 450</p>
+</div>
+</div>
+<span class="text-[10px] text-slate-400 ml-1">2:52 PM</span>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-4 border-t border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark/80 backdrop-blur-md shrink-0">
+<!-- Quick Replies -->
+<div class="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary text-xs font-medium transition-colors">
+                        Is this still available?
+                    </button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary text-xs font-medium transition-colors">
+                        Can you do ZMW 400?
+                    </button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary text-xs font-medium transition-colors">
+                        Where can we meet?
+                    </button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary text-xs font-medium transition-colors">
+                        Send more photos
+                    </button>
+</div>
+<div class="flex items-center gap-3 bg-slate-100 dark:bg-primary/10 p-2 rounded-2xl">
+<button class="flex items-center justify-center size-10 rounded-xl text-slate-500 dark:text-slate-300 hover:bg-primary/20 hover:text-primary transition-all">
+<span class="material-symbols-outlined">attach_file</span>
+</button>
+<button class="flex items-center justify-center size-10 rounded-xl text-slate-500 dark:text-slate-300 hover:bg-primary/20 hover:text-primary transition-all">
+<span class="material-symbols-outlined">image</span>
+</button>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500" placeholder="Type a message..." type="text"/>
+<button class="flex items-center justify-center size-10 rounded-xl text-slate-500 dark:text-slate-300 hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">mood</span>
+</button>
+<button class="flex items-center justify-center size-10 rounded-xl bg-primary text-white shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>
