@@ -2,103 +2,120 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-green-800 text-green-100 mt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-2xl">🛒</span>
-              <span className="font-bold text-xl text-white">
-                Campus<span className="text-yellow-300">Cart</span>
+    <footer className="bg-white border-t border-slate-200 py-12 px-6 mt-auto">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+        {/* Brand */}
+        <div className="col-span-1">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="bg-primary p-1.5 rounded-md text-white">
+              <span className="material-symbols-outlined block text-xl leading-none">
+                shopping_cart
               </span>
             </div>
-            <p className="text-sm text-green-200 leading-relaxed">
-              Zambia&apos;s campus marketplace — connecting student entrepreneurs
-              with fellow students across universities.
-            </p>
+            <span className="font-extrabold text-xl tracking-tight text-primary">
+              CampusCart
+            </span>
           </div>
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="font-semibold text-white mb-3">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/" className="hover:text-yellow-300 transition">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/browse"
-                  className="hover:text-yellow-300 transition"
-                >
-                  Browse Listings
-                </Link>
-              </li>
-              <li>
-                <Link href="/sell" className="hover:text-yellow-300 transition">
-                  Post a Listing
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="hover:text-yellow-300 transition"
-                >
-                  About CampusCart
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Categories */}
-          <div>
-            <h3 className="font-semibold text-white mb-3">Categories</h3>
-            <ul className="space-y-2 text-sm">
-              {[
-                "Food & Drinks",
-                "Electronics",
-                "Books & Stationery",
-                "Tutoring",
-                "Services",
-              ].map((cat) => (
-                <li key={cat}>
-                  <Link
-                    href={`/browse?category=${encodeURIComponent(cat)}`}
-                    className="hover:text-yellow-300 transition"
-                  >
-                    {cat}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Universities */}
-          <div>
-            <h3 className="font-semibold text-white mb-3">Universities</h3>
-            <ul className="space-y-2 text-sm">
-              {["UNZA", "CBU", "Mulungushi University", "Northrise University", "Cavendish University Zambia"].map(
-                (uni) => (
-                  <li key={uni}>
-                    <Link
-                      href={`/browse?university=${encodeURIComponent(uni)}`}
-                      className="hover:text-yellow-300 transition"
-                    >
-                      {uni}
-                    </Link>
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
+          <p className="text-slate-500 text-sm leading-relaxed">
+            The student-first marketplace. Helping university students in Zambia
+            save money and reduce waste.
+          </p>
         </div>
 
-        <div className="border-t border-green-700 mt-10 pt-6 text-center text-xs text-green-400">
-          © {new Date().getFullYear()} CampusCart Zambia. Built for students,
-          by students. 🇿🇲
+        {/* Marketplace */}
+        <div>
+          <h5 className="font-bold mb-4 text-slate-900">Marketplace</h5>
+          <ul className="space-y-2 text-sm text-slate-500">
+            <li>
+              <Link
+                href="/browse"
+                className="hover:text-primary transition-colors"
+              >
+                All Categories
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/sell"
+                className="hover:text-primary transition-colors"
+              >
+                Sell an Item
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/about"
+                className="hover:text-primary transition-colors"
+              >
+                Trust &amp; Safety
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/browse"
+                className="hover:text-primary transition-colors"
+              >
+                Verified Students
+              </Link>
+            </li>
+          </ul>
         </div>
+
+        {/* Community */}
+        <div>
+          <h5 className="font-bold mb-4 text-slate-900">Community</h5>
+          <ul className="space-y-2 text-sm text-slate-500">
+            <li>
+              <Link
+                href="/about"
+                className="hover:text-primary transition-colors"
+              >
+                Campus Ambassadors
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/about"
+                className="hover:text-primary transition-colors"
+              >
+                Help Center
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/about"
+                className="hover:text-primary transition-colors"
+              >
+                Privacy Policy
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* Newsletter */}
+        <div>
+          <h5 className="font-bold mb-4 text-slate-900">Stay Updated</h5>
+          <p className="text-sm text-slate-500 mb-4">
+            Join our newsletter for the best deals on campus.
+          </p>
+          <div className="flex gap-2">
+            <input
+              className="bg-slate-100 border-none rounded-full px-4 py-2 text-sm focus:ring-1 focus:ring-primary w-full outline-none placeholder-slate-400"
+              placeholder="Email"
+              type="email"
+            />
+            <button className="bg-primary p-2 rounded-full text-white hover:opacity-90 transition-opacity shrink-0">
+              <span className="material-symbols-outlined block leading-none">
+                send
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-100 text-center text-slate-400 text-xs">
+        © {new Date().getFullYear()} CampusCart Zambia. Built for students, by
+        students. 🇿🇲
       </div>
     </footer>
   );

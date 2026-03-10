@@ -23,7 +23,7 @@ export const UNIVERSITIES: University[] = [
     province: "Central",
   },
   {
-    id: "natsz",
+    id: "northrise",
     name: "Northrise University",
     shortName: "Northrise",
     city: "Ndola",
@@ -44,7 +44,7 @@ export const UNIVERSITIES: University[] = [
     province: "Lusaka",
   },
   {
-    id: "luse",
+    id: "lamu",
     name: "Lusaka Apex Medical University",
     shortName: "LAMU",
     city: "Lusaka",
@@ -59,37 +59,72 @@ export const UNIVERSITIES: University[] = [
   },
 ];
 
-export const CATEGORIES: { label: Category; icon: string; color: string }[] = [
-  { label: "Food & Drinks", icon: "🍔", color: "bg-orange-100 text-orange-700" },
+export const CATEGORIES: {
+  label: Category;
+  icon: string;
+  materialIcon: string;
+  color: string;
+}[] = [
+  {
+    label: "Food & Drinks",
+    icon: "🍔",
+    materialIcon: "restaurant",
+    color: "bg-orange-100 text-orange-600",
+  },
   {
     label: "Clothing & Fashion",
     icon: "👕",
-    color: "bg-purple-100 text-purple-700",
+    materialIcon: "checkroom",
+    color: "bg-purple-100 text-purple-600",
   },
   {
     label: "Electronics",
     icon: "📱",
-    color: "bg-blue-100 text-blue-700",
+    materialIcon: "devices",
+    color: "bg-blue-100 text-blue-600",
   },
   {
     label: "Books & Stationery",
     icon: "📚",
-    color: "bg-yellow-100 text-yellow-700",
+    materialIcon: "auto_stories",
+    color: "bg-yellow-100 text-yellow-600",
   },
-  { label: "Services", icon: "🔧", color: "bg-teal-100 text-teal-700" },
+  {
+    label: "Services",
+    icon: "🔧",
+    materialIcon: "construction",
+    color: "bg-teal-100 text-teal-600",
+  },
   {
     label: "Beauty & Personal Care",
     icon: "💄",
-    color: "bg-pink-100 text-pink-700",
+    materialIcon: "spa",
+    color: "bg-pink-100 text-pink-600",
   },
   {
     label: "Sports & Fitness",
     icon: "⚽",
-    color: "bg-green-100 text-green-700",
+    materialIcon: "sports_soccer",
+    color: "bg-green-100 text-green-600",
   },
-  { label: "Home & Dorm", icon: "🏠", color: "bg-indigo-100 text-indigo-700" },
-  { label: "Tutoring", icon: "🎓", color: "bg-red-100 text-red-700" },
-  { label: "Other", icon: "📦", color: "bg-gray-100 text-gray-700" },
+  {
+    label: "Home & Dorm",
+    icon: "🏠",
+    materialIcon: "chair_alt",
+    color: "bg-indigo-100 text-indigo-600",
+  },
+  {
+    label: "Tutoring",
+    icon: "🎓",
+    materialIcon: "school",
+    color: "bg-red-100 text-red-600",
+  },
+  {
+    label: "Other",
+    icon: "📦",
+    materialIcon: "inventory_2",
+    color: "bg-slate-100 text-slate-600",
+  },
 ];
 
 export const SAMPLE_LISTINGS: Listing[] = [
@@ -101,7 +136,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     price: 1800,
     category: "Electronics",
     condition: "Like New",
-    university: "UNZA",
+    university: "University of Zambia",
     sellerName: "Mwila Banda",
     sellerPhone: "+260 97 1234567",
     images: ["/images/placeholder-electronics.svg"],
@@ -115,13 +150,12 @@ export const SAMPLE_LISTINGS: Listing[] = [
       "Hot and fresh nshima with grilled chicken, served with relish and vegetables. Available Monday to Friday near the UNZA main gate.",
     price: 45,
     category: "Food & Drinks",
-    university: "UNZA",
+    university: "University of Zambia",
     sellerName: "Charity Phiri",
     sellerPhone: "+260 96 7654321",
     images: ["/images/placeholder-food.svg"],
     createdAt: "2026-03-02T10:30:00Z",
     featured: true,
-    isService: false,
   },
   {
     id: "3",
@@ -131,7 +165,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
     price: 350,
     category: "Books & Stationery",
     condition: "Good",
-    university: "CBU",
+    university: "Copperbelt University",
     sellerName: "Kelvin Mwanza",
     sellerPhone: "+260 95 3456789",
     images: ["/images/placeholder-books.svg"],
@@ -145,7 +179,7 @@ export const SAMPLE_LISTINGS: Listing[] = [
       "Experienced 3rd-year Engineering student offering affordable maths and physics tutoring sessions for 1st and 2nd year students. Online or in-person at CBU library.",
     price: 80,
     category: "Tutoring",
-    university: "CBU",
+    university: "Copperbelt University",
     sellerName: "Bwalya Mutale",
     sellerPhone: "+260 97 9876543",
     images: ["/images/placeholder-tutoring.svg"],
@@ -187,11 +221,11 @@ export const SAMPLE_LISTINGS: Listing[] = [
     id: "7",
     title: "Natural Hair Care Products",
     description:
-      "Handmade natural hair butter and edge control using shea butter, coconut oil, and castor oil. Great for protective styles. Available for delivery on campus.",
+      "Handmade natural hair butter and edge control using shea butter, coconut oil, and castor oil. Great for protective styles.",
     price: 60,
     category: "Beauty & Personal Care",
     condition: "New",
-    university: "UNZA",
+    university: "University of Zambia",
     sellerName: "Luyando Mulenga",
     sellerPhone: "+260 95 5566778",
     images: ["/images/placeholder-beauty.svg"],
@@ -216,5 +250,5 @@ export const SAMPLE_LISTINGS: Listing[] = [
 ];
 
 export const formatPrice = (amount: number): string => {
-  return `K${amount.toLocaleString("en-ZM")}`;
+  return `ZMW ${amount.toLocaleString("en-ZM")}`;
 };

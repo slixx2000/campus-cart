@@ -3,170 +3,184 @@ import { UNIVERSITIES, CATEGORIES } from "@/lib/data";
 
 export default function AboutPage() {
   return (
-    <div>
+    <div className="bg-background-light min-h-screen">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-green-700 to-green-500 text-white py-16 px-4 text-center">
-        <div className="max-w-3xl mx-auto">
-          <span className="text-5xl mb-4 block">🛒</span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold mb-4">
-            About CampusCart
+      <section className="bg-slate-900 py-24 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 bg-primary/20 text-primary font-bold text-sm px-4 py-2 rounded-full mb-6">
+            <span className="material-symbols-outlined text-lg leading-none">
+              school
+            </span>
+            Built for Zambian students
+          </div>
+          <h1 className="text-white text-4xl sm:text-5xl font-extrabold leading-tight mb-6">
+            The Marketplace for Your{" "}
+            <span className="text-primary">Campus</span>
           </h1>
-          <p className="text-green-100 text-lg leading-relaxed">
-            Zambia&apos;s first dedicated campus marketplace — empowering student
-            entrepreneurs and making campus life easier for everyone.
+          <p className="text-white/70 text-lg leading-relaxed">
+            CampusCart connects student entrepreneurs with fellow students
+            across universities in Zambia — making it easier to buy, sell, and
+            discover products and services right on campus.
           </p>
         </div>
       </section>
 
-      {/* Mission */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Our Mission
-            </h2>
-            <p className="text-gray-600 leading-relaxed mb-4">
-              CampusCart was created to bridge the gap between young student
-              entrepreneurs and the thousands of students on Zambian university
-              campuses. Many talented students run small businesses — selling
-              food, clothing, electronics, offering tutoring or services — but
-              struggle to reach their target audience.
-            </p>
-            <p className="text-gray-600 leading-relaxed">
-              By creating a trusted, campus-focused marketplace, we make it
-              easier for businesses to grow and for students to find what they
-              need right on their doorstep.
-            </p>
-          </div>
-          <div className="bg-green-50 rounded-2xl p-6 border border-green-100">
-            <ul className="space-y-4">
-              {[
-                { icon: "🌱", title: "Empower entrepreneurs", desc: "Help student business owners reach more customers." },
-                { icon: "🔍", title: "Easy discovery", desc: "Students find products and services quickly, on campus." },
-                { icon: "🤝", title: "Trust & safety", desc: "Campus-verified listings and safety guidelines." },
-                { icon: "🇿🇲", title: "Made for Zambia", desc: "Built around Zambian campuses, culture and currency (ZMW)." },
-              ].map((item) => (
-                <li key={item.title} className="flex gap-3">
-                  <span className="text-2xl shrink-0">{item.icon}</span>
-                  <div>
-                    <p className="font-semibold text-gray-800 text-sm">
-                      {item.title}
-                    </p>
-                    <p className="text-xs text-gray-500">{item.desc}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
       {/* How it works */}
-      <section className="bg-white py-14">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-10 text-center">
-            How It Works
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-            {[
-              {
-                step: "1",
-                icon: "📝",
-                title: "Post a Listing",
-                desc: "Create a free listing in minutes. Add a title, description, price, category and your contact details.",
-              },
-              {
-                step: "2",
-                icon: "👀",
-                title: "Students Discover You",
-                desc: "Your listing appears in search results for students at your university and beyond.",
-              },
-              {
-                step: "3",
-                icon: "💬",
-                title: "Connect & Sell",
-                desc: "Buyers contact you directly via phone or WhatsApp. Meet on campus and complete the sale safely.",
-              },
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="w-14 h-14 rounded-full bg-green-100 text-green-700 font-bold text-xl flex items-center justify-center mx-auto mb-4">
-                  {item.step}
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <h2 className="text-2xl font-extrabold text-slate-900 mb-12 flex items-center gap-2">
+          <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+            help_outline
+          </span>
+          How CampusCart Works
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            {
+              step: "1",
+              icon: "add_circle",
+              title: "Post for Free",
+              desc: "List your product or service in minutes. No fees, no commissions. Just describe your item, set your price, and add your contact.",
+            },
+            {
+              step: "2",
+              icon: "search",
+              title: "Students Discover You",
+              desc: "Verified students on your campus browse and search listings by category, price, and university. Your listing reaches your entire campus community.",
+            },
+            {
+              step: "3",
+              icon: "handshake",
+              title: "Connect & Trade",
+              desc: "Buyers contact you directly via WhatsApp or phone. Meet in a safe public place on campus and complete your transaction.",
+            },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="bg-white rounded-xl border border-slate-200 p-8 hover:shadow-xl hover:shadow-primary/5 hover:border-primary transition-all group"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                  <span className="material-symbols-outlined text-2xl leading-none">
+                    {item.icon}
+                  </span>
                 </div>
-                <div className="text-3xl mb-2">{item.icon}</div>
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  {item.desc}
-                </p>
+                <span className="text-4xl font-extrabold text-slate-100">
+                  0{item.step}
+                </span>
               </div>
-            ))}
-          </div>
+              <h3 className="font-bold text-xl text-slate-900 mb-2">
+                {item.title}
+              </h3>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Universities */}
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 py-14">
-        <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
-          Partner Universities 🎓
+      {/* Stats */}
+      <section className="bg-white py-16 px-6 border-y border-slate-100">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { value: "8+", label: "Universities" },
+            { value: "10", label: "Categories" },
+            { value: "Free", label: "Listings" },
+            { value: "🇿🇲", label: "Zambia" },
+          ].map((s) => (
+            <div key={s.label}>
+              <p className="text-4xl font-extrabold text-primary mb-1">
+                {s.value}
+              </p>
+              <p className="text-slate-500 text-sm font-medium">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Partner Universities */}
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <h2 className="text-2xl font-extrabold text-slate-900 mb-8 flex items-center gap-2">
+          <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+            apartment
+          </span>
+          Partner Universities 🇿🇲
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {UNIVERSITIES.map((uni) => (
             <Link
               key={uni.id}
               href={`/browse?university=${encodeURIComponent(uni.name)}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-green-400 hover:shadow-sm transition"
+              className="bg-white border border-slate-200 rounded-xl p-4 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all text-center group"
             >
-              <p className="font-bold text-green-700 text-base">
+              <p className="font-bold text-primary text-lg group-hover:scale-105 transition-transform inline-block">
                 {uni.shortName}
               </p>
-              <p className="text-xs text-gray-500 mt-1">{uni.city}</p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                {uni.name}
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">{uni.city}</p>
             </Link>
           ))}
         </div>
       </section>
 
       {/* Categories */}
-      <section className="bg-gray-50 py-14">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">
+      <section className="bg-white py-16 px-6 border-t border-slate-100">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-8 flex items-center gap-2">
+            <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+              category
+            </span>
             What You Can Buy &amp; Sell
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {CATEGORIES.map((cat) => (
-              <div
+              <Link
                 key={cat.label}
-                className={`${cat.color} rounded-xl p-4 text-center`}
+                href={`/browse?category=${encodeURIComponent(cat.label)}`}
+                className={`p-4 rounded-xl border border-slate-200 hover:border-primary hover:shadow-md hover:shadow-primary/5 transition-all flex flex-col items-center text-center gap-2 group`}
               >
-                <div className="text-2xl mb-1">{cat.icon}</div>
-                <p className="text-xs font-semibold">{cat.label}</p>
-              </div>
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform ${cat.color}`}
+                >
+                  <span className="material-symbols-outlined text-2xl leading-none">
+                    {cat.materialIcon}
+                  </span>
+                </div>
+                <span className="text-xs font-bold text-slate-700">
+                  {cat.label}
+                </span>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-r from-yellow-400 to-yellow-300 py-14">
-        <div className="max-w-2xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-green-900 mb-3">
+      <section className="bg-slate-900 py-20 px-6">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-extrabold text-white mb-4">
             Ready to get started?
           </h2>
-          <p className="text-green-800 mb-6">
-            Post your first listing for free or browse what&apos;s available on your campus.
+          <p className="text-white/70 mb-8 text-base">
+            Join thousands of Zambian students already buying and selling on
+            CampusCart.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/sell"
-              className="bg-green-700 text-white font-bold px-8 py-3 rounded-full hover:bg-green-800 transition"
+              href="/browse"
+              className="inline-flex items-center gap-2 bg-white text-slate-900 font-bold px-8 py-4 rounded-full hover:scale-105 transition-transform"
             >
-              + Post a Listing
+              <span className="material-symbols-outlined">explore</span>
+              Browse Listings
             </Link>
             <Link
-              href="/browse"
-              className="bg-white text-green-800 font-bold px-8 py-3 rounded-full hover:bg-green-50 transition"
+              href="/sell"
+              className="inline-flex items-center gap-2 bg-primary text-white font-bold px-8 py-4 rounded-full hover:opacity-90 transition-opacity"
             >
-              Browse Listings
+              <span className="material-symbols-outlined">add_circle</span>
+              Post for Free
             </Link>
           </div>
         </div>

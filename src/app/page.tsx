@@ -8,93 +8,105 @@ export default function HomePage() {
   const recentListings = SAMPLE_LISTINGS.slice(0, 8);
 
   return (
-    <div>
+    <div className="bg-background-light">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-green-700 via-green-600 to-green-500 text-white py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 text-sm mb-6">
-            <span>🇿🇲</span>
-            <span>Zambia&apos;s Campus Marketplace</span>
-          </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">
-            Buy &amp; Sell on Your{" "}
-            <span className="text-yellow-300">Campus</span>
-          </h1>
-          <p className="text-lg sm:text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-            CampusCart connects student entrepreneurs with fellow students
-            across Zambian universities. Find products, food, services and more
-            — all on campus.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/browse"
-              className="bg-white text-green-800 font-bold px-8 py-3 rounded-full hover:bg-green-50 transition text-base"
-            >
-              Browse Listings
-            </Link>
-            <Link
-              href="/sell"
-              className="bg-yellow-400 text-green-900 font-bold px-8 py-3 rounded-full hover:bg-yellow-300 transition text-base"
-            >
-              + Post a Listing
-            </Link>
+      <section className="max-w-[1200px] mx-auto px-6 pt-10 pb-6">
+        <div className="relative overflow-hidden rounded-xl bg-slate-900 p-8 md:p-20 text-center min-h-[520px] flex flex-col items-center justify-center">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 opacity-40 fluid-gradient" />
+
+          <div className="relative z-10 max-w-3xl">
+            <h1 className="text-white text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6">
+              The Marketplace for Your{" "}
+              <span className="text-primary italic">Campus</span>
+            </h1>
+            <p className="text-white/80 text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto">
+              Buy, sell, and trade with students on your campus instantly.
+              Secure, verified, and student-only.
+            </p>
+
+            {/* Hero search */}
+            <div className="relative w-full max-w-2xl mx-auto mb-8">
+              <div className="bg-white/10 backdrop-blur-md p-2 rounded-full border border-white/20 flex items-center shadow-2xl">
+                <span className="material-symbols-outlined ml-4 text-white/60">
+                  search
+                </span>
+                <input
+                  className="w-full bg-transparent border-none focus:ring-0 text-white placeholder:text-white/50 px-4 py-3 text-lg outline-none"
+                  placeholder="Search for textbooks, electronics, or services..."
+                  type="text"
+                  readOnly
+                />
+                <Link
+                  href="/browse"
+                  className="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg hover:opacity-90 transition-all shrink-0"
+                >
+                  Search
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                href="/browse"
+                className="bg-white text-slate-900 px-8 py-4 rounded-full font-bold shadow-xl hover:scale-105 transition-transform flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined">explore</span>
+                Browse
+              </Link>
+              <Link
+                href="/sell"
+                className="bg-primary/20 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-full font-bold hover:bg-primary/30 transition-all flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined">add_circle</span>
+                Sell Item
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats bar */}
-      <section className="bg-green-800 text-white py-4">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-          <div>
-            <p className="text-2xl font-bold text-yellow-300">8+</p>
-            <p className="text-xs text-green-200">Universities</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-yellow-300">10</p>
-            <p className="text-xs text-green-200">Categories</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-yellow-300">Free</p>
-            <p className="text-xs text-green-200">To List</p>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-yellow-300">🇿🇲</p>
-            <p className="text-xs text-green-200">Campus-first</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
-          Browse by Category
+      {/* Featured Categories */}
+      <section className="max-w-[1200px] mx-auto px-6 mt-16">
+        <h2 className="text-2xl font-extrabold mb-8 flex items-center gap-2">
+          <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+            category
+          </span>
+          Featured Categories
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-          {CATEGORIES.map((cat) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {CATEGORIES.slice(0, 10).map((cat) => (
             <CategoryCard
               key={cat.label}
               label={cat.label}
               icon={cat.icon}
+              materialIcon={cat.materialIcon}
               color={cat.color}
             />
           ))}
         </div>
       </section>
 
-      {/* Featured Listings */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
-            ⭐ Featured Listings
+      {/* Trending Listings */}
+      <section className="max-w-[1200px] mx-auto px-6 mt-20 pb-6">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-extrabold flex items-center gap-2">
+            <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+              trending_up
+            </span>
+            Trending Listings
           </h2>
           <Link
             href="/browse"
-            className="text-sm text-green-700 font-medium hover:underline"
+            className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
           >
-            View all →
+            View all{" "}
+            <span className="material-symbols-outlined text-sm">
+              arrow_forward
+            </span>
           </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredListings.map((listing) => (
             <ProductCard key={listing.id} listing={listing} />
           ))}
@@ -102,20 +114,26 @@ export default function HomePage() {
       </section>
 
       {/* Recent Listings */}
-      <section className="bg-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
-              🆕 Recent Listings
+      <section className="bg-white py-16">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-extrabold flex items-center gap-2">
+              <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+                schedule
+              </span>
+              Recent Listings
             </h2>
             <Link
               href="/browse"
-              className="text-sm text-green-700 font-medium hover:underline"
+              className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
             >
-              View all →
+              View all{" "}
+              <span className="material-symbols-outlined text-sm">
+                arrow_forward
+              </span>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {recentListings.map((listing) => (
               <ProductCard key={listing.id} listing={listing} />
             ))}
@@ -123,41 +141,50 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Universities */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
-          🎓 Partner Universities
+      {/* Partner Universities */}
+      <section className="max-w-[1200px] mx-auto px-6 py-16">
+        <h2 className="text-2xl font-extrabold mb-8 flex items-center gap-2">
+          <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+            apartment
+          </span>
+          Partner Universities 🇿🇲
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {UNIVERSITIES.map((uni) => (
             <Link
               key={uni.id}
               href={`/browse?university=${encodeURIComponent(uni.name)}`}
-              className="bg-white border border-gray-200 rounded-xl p-4 hover:border-green-400 hover:shadow-sm transition text-center"
+              className="bg-white border border-slate-200 rounded-xl p-4 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all text-center group"
             >
-              <p className="font-bold text-green-700 text-lg">{uni.shortName}</p>
-              <p className="text-xs text-gray-500 mt-1 line-clamp-2">{uni.name}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{uni.city}</p>
+              <p className="font-bold text-primary text-lg group-hover:scale-105 transition-transform inline-block">
+                {uni.shortName}
+              </p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-2">
+                {uni.name}
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">{uni.city}</p>
             </Link>
           ))}
         </div>
       </section>
 
       {/* CTA Banner */}
-      <section className="bg-gradient-to-r from-yellow-400 to-yellow-300 py-12">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-green-900 mb-3">
+      <section className="bg-slate-900 py-16 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="absolute inset-0 opacity-40 fluid-gradient pointer-events-none" />
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
             Got something to sell?
           </h2>
-          <p className="text-green-800 mb-6 text-base">
-            Post your listing for free and reach thousands of students on
+          <p className="text-white/70 mb-8 text-lg">
+            List your items for free and reach thousands of verified students on
             campus.
           </p>
           <Link
             href="/sell"
-            className="bg-green-700 text-white font-bold px-8 py-3 rounded-full hover:bg-green-800 transition text-base inline-block"
+            className="inline-flex items-center gap-2 bg-primary text-white font-bold px-10 py-4 rounded-full hover:scale-105 transition-transform shadow-lg shadow-primary/30 text-base"
           >
-            + Post a Free Listing
+            <span className="material-symbols-outlined">add_circle</span>
+            Post a Free Listing
           </Link>
         </div>
       </section>
