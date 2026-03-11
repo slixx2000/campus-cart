@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#dcfce7"/>
+  <circle cx="200" cy="150" r="55" fill="#22c55e"/>
+  <circle cx="200" cy="150" r="35" fill="#16a34a"/>
+  <circle cx="200" cy="150" r="15" fill="#15803d"/>
+  <line x1="200" y1="95" x2="200" y2="205" stroke="white" stroke-width="3"/>
+  <line x1="145" y1="150" x2="255" y2="150" stroke="white" stroke-width="3"/>
+  <text x="200" y="235" text-anchor="middle" font-family="Arial" font-size="16" fill="#14532d">Sports &amp; Fitness</text>
+</svg>
