@@ -7,17 +7,17 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
   const [state, formAction, pending] = useActionState(signInAction, {});
 
   return (
-    <form action={formAction} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-5">
+    <form action={formAction} className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
       {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
 
       {state.message && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
           {state.message}
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">
+        <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
           Email
         </label>
         <input
@@ -26,7 +26,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
           required
           autoComplete="email"
           placeholder="you@university.ac.zm"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         {state.errors?.email && (
           <p className="text-xs text-red-500 mt-1">{state.errors.email[0]}</p>
@@ -34,7 +34,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
       </div>
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">
+        <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
           Password
         </label>
         <input
@@ -43,7 +43,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
           required
           autoComplete="current-password"
           placeholder="••••••••"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         {state.errors?.password && (
           <p className="text-xs text-red-500 mt-1">{state.errors.password[0]}</p>
@@ -53,7 +53,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full h-12 rounded-full bg-gradient-to-r from-primary to-blue-500 text-white font-bold hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
       >
         {pending ? (
           <span className="material-symbols-outlined animate-spin text-xl">

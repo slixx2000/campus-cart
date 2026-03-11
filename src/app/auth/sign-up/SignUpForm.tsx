@@ -8,28 +8,28 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
 
   if (state.message && !state.errors) {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
-        <span className="material-symbols-outlined text-green-500 text-4xl block mb-4">
+      <div className="rounded-[1.75rem] border border-green-200 bg-green-50 p-8 text-center dark:border-emerald-300/20 dark:bg-emerald-300/10">
+        <span className="material-symbols-outlined mb-4 block text-4xl text-green-500 dark:text-emerald-300">
           mark_email_read
         </span>
-        <p className="font-bold text-slate-900 mb-2">Check your inbox</p>
-        <p className="text-slate-500 text-sm">{state.message}</p>
+        <p className="mb-2 font-bold text-slate-900 dark:text-white">Check your inbox</p>
+        <p className="text-sm text-slate-500 dark:text-slate-300">{state.message}</p>
       </div>
     );
   }
 
   return (
-    <form action={formAction} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-5">
+    <form action={formAction} className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
       {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
 
       {state.message && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
           {state.message}
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">
+        <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
           Full Name <span className="text-red-500">*</span>
         </label>
         <input
@@ -37,7 +37,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           name="fullName"
           required
           placeholder="e.g. Mwila Banda"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         {state.errors?.fullName && (
           <p className="text-xs text-red-500 mt-1">{state.errors.fullName[0]}</p>
@@ -45,7 +45,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
       </div>
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">
+        <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
           Email <span className="text-red-500">*</span>
         </label>
         <input
@@ -54,7 +54,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           required
           autoComplete="email"
           placeholder="you@university.ac.zm"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         {state.errors?.email && (
           <p className="text-xs text-red-500 mt-1">{state.errors.email[0]}</p>
@@ -62,19 +62,19 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
       </div>
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">
+        <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
           Phone (WhatsApp)
         </label>
         <input
           type="tel"
           name="phone"
           placeholder="+260 97 1234567"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-bold text-slate-700 mb-2">
+        <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
           Password <span className="text-red-500">*</span>
         </label>
         <input
@@ -83,7 +83,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           required
           autoComplete="new-password"
           placeholder="At least 8 characters"
-          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm"
+          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         {state.errors?.password && (
           <p className="text-xs text-red-500 mt-1">{state.errors.password[0]}</p>
@@ -93,7 +93,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full h-12 rounded-full bg-gradient-to-r from-primary to-blue-500 text-white font-bold hover:opacity-90 transition-opacity disabled:opacity-60 flex items-center justify-center gap-2"
+        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
       >
         {pending ? (
           <span className="material-symbols-outlined animate-spin text-xl">
@@ -104,7 +104,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
         )}
       </button>
 
-      <p className="text-xs text-slate-400 text-center">
+      <p className="text-center text-xs text-slate-400 dark:text-slate-500">
         By signing up you agree to our Terms of Service and Privacy Policy.
       </p>
     </form>

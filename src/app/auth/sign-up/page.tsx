@@ -19,25 +19,25 @@ export default async function SignUpPage({
   if (user) redirect(redirectTo ?? "/");
 
   return (
-    <div className="min-h-screen bg-background-light flex items-center justify-center px-4 py-16">
+    <div className="fluid-gradient-dark flex min-h-screen items-center justify-center bg-background-light px-4 py-16 transition-colors dark:bg-[#07111f]">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <span className="material-symbols-outlined text-primary text-5xl">
+        <div className="mb-8 text-center">
+          <span className="material-symbols-outlined text-5xl text-primary dark:text-sky-300">
             shopping_cart_checkout
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 mt-4">
+          <h1 className="mt-4 text-3xl font-extrabold text-slate-900 dark:text-white">
             Join CampusCart
           </h1>
-          <p className="text-slate-500 mt-2 text-sm">
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
             Create a free account and start buying or selling today
           </p>
         </div>
         <SignUpForm redirectTo={redirectTo} />
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
           Already have an account?{" "}
           <a
             href={`/auth/sign-in${redirectTo ? `?redirect=${redirectTo}` : ""}`}
-            className="text-primary font-semibold hover:underline"
+            className="font-semibold text-primary hover:underline dark:text-sky-300"
           >
             Sign in
           </a>

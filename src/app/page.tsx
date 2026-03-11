@@ -15,12 +15,15 @@ export default async function HomePage() {
   const recentListings = recentRows.map(dbListingToUi);
 
   return (
-    <div className="bg-background-light">
+    <div className="bg-background-light transition-colors dark:bg-background-dark">
       {/* Hero */}
       <section className="max-w-[1200px] mx-auto px-6 pt-10 pb-6">
-        <div className="relative overflow-hidden rounded-xl bg-slate-900 p-8 md:p-20 text-center min-h-[520px] flex flex-col items-center justify-center">
+        <div className="relative flex min-h-[520px] flex-col items-center justify-center overflow-hidden rounded-xl bg-slate-900 p-8 text-center md:p-20 dark:glass-card-dark dark:bg-background-dark">
           {/* Gradient overlay */}
-          <div className="absolute inset-0 opacity-40 fluid-gradient" />
+          <div className="absolute inset-0 opacity-40 fluid-gradient dark:hidden" />
+          <div className="absolute inset-0 hidden fluid-gradient-dark dark:block" />
+          <div className="absolute -left-24 -top-24 hidden h-72 w-72 rounded-full bg-primary/10 blur-[100px] dark:block" />
+          <div className="absolute -bottom-16 -right-16 hidden h-64 w-64 rounded-full bg-blue-400/10 blur-[100px] dark:block" />
 
           <div className="relative z-10 max-w-3xl">
             <h1 className="text-white text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6">
@@ -34,7 +37,7 @@ export default async function HomePage() {
 
             {/* Hero search */}
             <div className="relative w-full max-w-2xl mx-auto mb-8">
-              <div className="bg-white/10 backdrop-blur-md p-2 rounded-full border border-white/20 flex items-center shadow-2xl">
+              <div className="flex items-center rounded-full border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur-md dark:border-primary/20 dark:bg-primary/5">
                 <span className="material-symbols-outlined ml-4 text-white/60">
                   search
                 </span>
@@ -56,7 +59,7 @@ export default async function HomePage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/browse"
-                className="bg-white text-slate-900 px-8 py-4 rounded-full font-bold shadow-xl hover:scale-105 transition-transform flex items-center gap-2"
+                className="flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-slate-900 shadow-xl transition-transform hover:scale-105 dark:bg-white/10 dark:text-white dark:backdrop-blur-sm"
               >
                 <span className="material-symbols-outlined">explore</span>
                 Browse
@@ -75,7 +78,7 @@ export default async function HomePage() {
 
       {/* Featured Categories */}
       <section className="max-w-[1200px] mx-auto px-6 mt-16">
-        <h2 className="text-2xl font-extrabold mb-8 flex items-center gap-2">
+        <h2 className="mb-8 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
           <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
             category
           </span>
@@ -97,7 +100,7 @@ export default async function HomePage() {
       {/* Trending Listings */}
       <section className="max-w-[1200px] mx-auto px-6 mt-20 pb-6">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-extrabold flex items-center gap-2">
+          <h2 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
             <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
               trending_up
             </span>
@@ -121,10 +124,10 @@ export default async function HomePage() {
       </section>
 
       {/* Recent Listings */}
-      <section className="bg-white py-16">
+      <section className="bg-white py-16 dark:bg-primary/5 dark:border-y dark:border-primary/10">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-extrabold flex items-center gap-2">
+            <h2 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
               <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
                 schedule
               </span>
@@ -150,7 +153,7 @@ export default async function HomePage() {
 
       {/* Partner Universities */}
       <section className="max-w-[1200px] mx-auto px-6 py-16">
-        <h2 className="text-2xl font-extrabold mb-8 flex items-center gap-2">
+        <h2 className="mb-8 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
           <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
             apartment
           </span>
@@ -160,9 +163,10 @@ export default async function HomePage() {
       </section>
 
       {/* CTA Banner */}
-      <section className="bg-slate-900 py-16 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="absolute inset-0 opacity-40 fluid-gradient pointer-events-none" />
+      <section className="bg-slate-900 px-6 py-16 dark:bg-background-dark">
+        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-xl bg-slate-900 px-8 py-14 text-center dark:glass-card-dark dark:bg-background-dark">
+          <div className="pointer-events-none absolute inset-0 opacity-40 fluid-gradient dark:hidden" />
+          <div className="pointer-events-none absolute inset-0 hidden fluid-gradient-dark dark:block" />
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
             Got something to sell?
           </h2>

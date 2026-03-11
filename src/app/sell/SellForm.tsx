@@ -29,21 +29,25 @@ export default function SellForm({ categories }: SellFormProps) {
   };
 
   return (
-    <div className="bg-background-light min-h-screen">
-      <div className="max-w-4xl mx-auto px-6 py-10">
+    <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="mb-10">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <span className="text-primary font-bold text-sm uppercase tracking-wider">
+              <span className="text-sm font-bold uppercase tracking-[0.28em] text-primary dark:text-sky-300">
                 Post a Listing
               </span>
-              <h1 className="text-3xl font-extrabold text-slate-900">
+              <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white sm:text-4xl">
                 Item Details
               </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+                Build a clean listing with strong visuals, accurate campus details,
+                and enough context for a buyer to act quickly.
+              </p>
             </div>
           </div>
           <div
-            className="h-3 w-full bg-slate-200 rounded-full overflow-hidden"
+            className="h-3 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10"
             role="progressbar"
             aria-valuenow={100}
             aria-valuemin={0}
@@ -58,16 +62,16 @@ export default function SellForm({ categories }: SellFormProps) {
           {/* Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Product/Service toggle */}
-            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-4">Listing Type</h3>
+            <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+              <h3 className="mb-4 font-bold text-slate-900 dark:text-white">Listing Type</h3>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setIsService(false)}
                   className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition-colors flex items-center justify-center gap-2 ${
                     !isService
-                      ? "border-primary bg-primary/5 text-primary"
-                      : "border-slate-200 text-slate-500"
+                      ? "border-primary bg-primary/5 text-primary dark:border-sky-300 dark:bg-sky-300/10 dark:text-sky-300"
+                      : "border-slate-200 text-slate-500 dark:border-white/10 dark:text-slate-400"
                   }`}
                 >
                   <span className="material-symbols-outlined text-lg leading-none">
@@ -80,8 +84,8 @@ export default function SellForm({ categories }: SellFormProps) {
                   onClick={() => setIsService(true)}
                   className={`flex-1 py-3 rounded-xl text-sm font-bold border-2 transition-colors flex items-center justify-center gap-2 ${
                     isService
-                      ? "border-teal-500 bg-teal-50 text-teal-700"
-                      : "border-slate-200 text-slate-500"
+                      ? "border-teal-500 bg-teal-50 text-teal-700 dark:border-cyan-300 dark:bg-cyan-300/10 dark:text-cyan-200"
+                      : "border-slate-200 text-slate-500 dark:border-white/10 dark:text-slate-400"
                   }`}
                 >
                   <span className="material-symbols-outlined text-lg leading-none">
@@ -92,20 +96,20 @@ export default function SellForm({ categories }: SellFormProps) {
               </div>
             </div>
 
-            <form action={formAction} className="bg-white rounded-xl p-8 border border-slate-200 shadow-sm space-y-6">
+            <form action={formAction} className="space-y-6 rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
               {/* Hidden inputs */}
               <input type="hidden" name="isService" value={String(isService)} />
               <input type="hidden" name="condition" value={condition} />
 
               {state.message && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+                <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
                   {state.message}
                 </div>
               )}
 
               {/* Title */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   Listing Title <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -118,8 +122,10 @@ export default function SellForm({ categories }: SellFormProps) {
                       ? "e.g. Maths Tutoring – 1st Year Level"
                       : "e.g. Samsung Galaxy A14 – Like New"
                   }
-                  className={`w-full px-4 py-3 rounded-xl border bg-slate-50 focus:ring-2 focus:ring-primary focus:border-primary outline-none text-sm ${
-                    state.errors?.title ? "border-red-400" : "border-slate-200"
+                  className={`w-full rounded-xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300 ${
+                    state.errors?.title
+                      ? "border-red-400 dark:border-rose-300"
+                      : "border-slate-200 dark:border-white/10"
                   }`}
                 />
                 {state.errors?.title && (
@@ -130,13 +136,13 @@ export default function SellForm({ categories }: SellFormProps) {
               {/* Category + Condition */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     Category <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="categoryId"
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer text-sm"
+                    className="w-full cursor-pointer appearance-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
                   >
                     <option value="">Select category…</option>
                     {categories.map((c) => (
@@ -152,7 +158,7 @@ export default function SellForm({ categories }: SellFormProps) {
 
                 {!isService && (
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                    <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                       Condition
                     </label>
                     <div className="flex gap-2 flex-wrap">
@@ -167,8 +173,8 @@ export default function SellForm({ categories }: SellFormProps) {
                           }
                           className={`px-4 py-2 rounded-full text-xs font-bold border-2 transition-all ${
                             condition === c.value
-                              ? "bg-primary text-white border-primary"
-                              : "bg-white text-slate-600 border-slate-200 hover:border-primary"
+                              ? "border-primary bg-primary text-white dark:border-sky-300 dark:bg-sky-300 dark:text-slate-950"
+                              : "border-slate-200 bg-white text-slate-600 hover:border-primary dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-sky-300"
                           }`}
                         >
                           {c.label}
@@ -182,11 +188,11 @@ export default function SellForm({ categories }: SellFormProps) {
               {/* Price + University */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     Price (ZMW) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 dark:text-slate-500">
                       ZMW
                     </span>
                     <input
@@ -196,8 +202,10 @@ export default function SellForm({ categories }: SellFormProps) {
                       min={1}
                       max={999999}
                       placeholder="0.00"
-                      className={`w-full pr-4 py-3 pl-16 rounded-xl border bg-slate-50 focus:ring-2 focus:ring-primary outline-none text-sm ${
-                        state.errors?.price ? "border-red-400" : "border-slate-200"
+                      className={`w-full rounded-xl border bg-slate-50 py-3 pl-16 pr-4 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300 ${
+                        state.errors?.price
+                          ? "border-red-400 dark:border-rose-300"
+                          : "border-slate-200 dark:border-white/10"
                       }`}
                     />
                   </div>
@@ -207,11 +215,11 @@ export default function SellForm({ categories }: SellFormProps) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">
+                  <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     University <span className="text-red-500">*</span>
                   </label>
                   {error && (
-                    <p className="text-xs text-amber-700 mb-2">
+                    <p className="mb-2 text-xs text-amber-700 dark:text-amber-300">
                       {error}
                     </p>
                   )}
@@ -219,8 +227,10 @@ export default function SellForm({ categories }: SellFormProps) {
                     name="universityId"
                     required
                     disabled={isLoading || universities.length === 0}
-                    className={`w-full px-4 py-3 rounded-xl border bg-slate-50 focus:ring-2 focus:ring-primary outline-none appearance-none cursor-pointer text-sm ${
-                      state.errors?.universityId ? "border-red-400" : "border-slate-200"
+                    className={`w-full cursor-pointer appearance-none rounded-xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300 ${
+                      state.errors?.universityId
+                        ? "border-red-400 dark:border-rose-300"
+                        : "border-slate-200 dark:border-white/10"
                     }`}
                   >
                     <option value="">
@@ -240,7 +250,7 @@ export default function SellForm({ categories }: SellFormProps) {
                     <p className="text-xs text-red-500 mt-1">{state.errors.universityId[0]}</p>
                   )}
                   {!isLoading && !error && universities.length === 0 && (
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                       Add universities in Supabase before posting listings.
                     </p>
                   )}
@@ -249,7 +259,7 @@ export default function SellForm({ categories }: SellFormProps) {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   Description <span className="text-red-500">*</span>
                 </label>
                 <textarea
@@ -258,8 +268,10 @@ export default function SellForm({ categories }: SellFormProps) {
                   maxLength={2000}
                   rows={4}
                   placeholder="Tell buyers more about your item..."
-                  className={`w-full px-4 py-3 rounded-xl border bg-slate-50 focus:ring-2 focus:ring-primary outline-none resize-none text-sm ${
-                    state.errors?.description ? "border-red-400" : "border-slate-200"
+                  className={`w-full resize-none rounded-xl border bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300 ${
+                    state.errors?.description
+                      ? "border-red-400 dark:border-rose-300"
+                      : "border-slate-200 dark:border-white/10"
                   }`}
                 />
                 {state.errors?.description && (
@@ -269,7 +281,7 @@ export default function SellForm({ categories }: SellFormProps) {
 
               {/* Image Upload */}
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">
+                <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   Photos (up to 5)
                 </label>
                 <input
@@ -278,10 +290,10 @@ export default function SellForm({ categories }: SellFormProps) {
                   multiple
                   accept="image/jpeg,image/png,image/webp"
                   onChange={handleImageChange}
-                  className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+                  className="w-full text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-2 file:text-sm file:font-bold file:text-primary hover:file:bg-primary/20 dark:text-slate-400 dark:file:bg-sky-300/10 dark:file:text-sky-300 dark:hover:file:bg-sky-300/20"
                 />
                 {selectedImages.length > 0 && (
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     {selectedImages.length} file{selectedImages.length > 1 ? "s" : ""} selected
                   </p>
                 )}
@@ -292,7 +304,7 @@ export default function SellForm({ categories }: SellFormProps) {
                 <button
                   type="submit"
                   disabled={pending}
-                  className="px-10 py-3 rounded-full font-bold text-white bg-gradient-to-r from-primary to-blue-400 hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-2 disabled:opacity-60"
+                  className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-400 px-10 py-3 font-bold text-white transition-all hover:shadow-lg hover:shadow-primary/30 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950 dark:hover:shadow-sky-400/20"
                 >
                   {pending ? (
                     <span className="material-symbols-outlined animate-spin text-lg leading-none">
@@ -313,36 +325,36 @@ export default function SellForm({ categories }: SellFormProps) {
 
           {/* Sidebar tips */}
           <div className="space-y-6">
-            <div className="bg-primary/10 p-6 rounded-xl border border-primary/20">
-              <h4 className="font-bold text-primary flex items-center gap-2 mb-3">
+            <div className="rounded-[1.75rem] border border-primary/20 bg-primary/10 p-6 dark:border-sky-400/20 dark:bg-sky-400/10">
+              <h4 className="mb-3 flex items-center gap-2 font-bold text-primary dark:text-sky-200">
                 <span className="material-symbols-outlined">lightbulb</span>
                 Selling Tips
               </h4>
-              <ul className="text-sm text-slate-600 space-y-3">
+              <ul className="space-y-3 text-sm text-slate-600 dark:text-slate-300">
                 <li className="flex gap-2">
-                  <span className="material-symbols-outlined text-primary text-lg leading-none shrink-0">check_circle</span>
+                  <span className="material-symbols-outlined shrink-0 text-lg leading-none text-primary dark:text-sky-300">check_circle</span>
                   Items with 3+ photos sell 50% faster.
                 </li>
                 <li className="flex gap-2">
-                  <span className="material-symbols-outlined text-primary text-lg leading-none shrink-0">check_circle</span>
+                  <span className="material-symbols-outlined shrink-0 text-lg leading-none text-primary dark:text-sky-300">check_circle</span>
                   Be specific about the condition of the item.
                 </li>
                 <li className="flex gap-2">
-                  <span className="material-symbols-outlined text-primary text-lg leading-none shrink-0">check_circle</span>
+                  <span className="material-symbols-outlined shrink-0 text-lg leading-none text-primary dark:text-sky-300">check_circle</span>
                   Mention your preferred meeting spots on campus.
                 </li>
               </ul>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-              <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">security</span>
+            <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+              <h4 className="mb-4 flex items-center gap-2 font-bold text-slate-900 dark:text-white">
+                <span className="material-symbols-outlined text-primary dark:text-sky-300">security</span>
                 Safety First
               </h4>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
                 Always meet in well-lit, public campus areas.
               </p>
-              <div className="mt-4 p-3 bg-amber-50 rounded-xl border border-amber-100 text-xs text-amber-700">
+              <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 p-3 text-xs text-amber-700 dark:border-amber-300/20 dark:bg-amber-300/10 dark:text-amber-100">
                 ⚠️ Do not post illegal, counterfeit, or harmful items.
               </div>
             </div>

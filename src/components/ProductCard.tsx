@@ -10,7 +10,7 @@ interface ProductCardProps {
 export default function ProductCard({ listing }: ProductCardProps) {
   return (
     <Link href={`/product/${listing.id}`}>
-      <article className="bg-white rounded-xl border border-slate-200 overflow-hidden group hover:shadow-xl hover:shadow-primary/5 transition-all">
+      <article className="overflow-hidden rounded-xl border border-slate-200 bg-white group transition-all hover:shadow-xl hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-xl dark:hover:border-primary/40 dark:hover:shadow-2xl dark:hover:shadow-primary/10">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden">
           <Image
@@ -21,7 +21,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
             unoptimized
           />
           <button
-            className="absolute top-3 right-3 p-2 bg-white/90 rounded-full text-slate-400 hover:text-red-500 transition-colors backdrop-blur-sm"
+            className="absolute top-3 right-3 rounded-full bg-white/90 p-2 text-slate-400 backdrop-blur-sm transition-colors hover:text-red-500 dark:bg-background-dark/90 dark:text-slate-300"
             aria-label="Add to favorites"
           >
             <span className="material-symbols-outlined text-xl leading-none">
@@ -29,7 +29,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
             </span>
           </button>
           {listing.isService && (
-            <div className="absolute bottom-3 left-3 px-3 py-1 bg-white/90 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary backdrop-blur-sm">
+            <div className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary backdrop-blur-sm dark:bg-background-dark/90">
               Service
             </div>
           )}
@@ -43,13 +43,13 @@ export default function ProductCard({ listing }: ProductCardProps) {
         {/* Body */}
         <div className="p-4">
           <div className="flex justify-between items-start mb-2">
-            <h3 className="font-bold text-slate-900 truncate pr-3 text-sm">
+            <h3 className="truncate pr-3 text-sm font-bold text-slate-900 dark:text-white">
               {listing.title}
             </h3>
             <span className="font-black text-primary text-base shrink-0">
               {formatPrice(listing.price)}
               {listing.isService && (
-                <span className="text-xs text-slate-400 font-normal">/hr</span>
+                <span className="text-xs font-normal text-slate-400 dark:text-slate-500">/hr</span>
               )}
             </span>
           </div>
@@ -62,7 +62,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
                     ? "bg-green-500/10 text-green-600"
                     : listing.condition === "Like New"
                     ? "bg-primary/10 text-primary"
-                    : "bg-slate-100 text-slate-500"
+                    : "bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-slate-300"
                 }`}
               >
                 {listing.condition}
@@ -70,16 +70,16 @@ export default function ProductCard({ listing }: ProductCardProps) {
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+          <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-white/10">
             <div className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-slate-400 text-sm leading-none">
+              <span className="material-symbols-outlined text-sm leading-none text-slate-400 dark:text-slate-500">
                 school
               </span>
-              <span className="text-xs font-medium text-slate-500 truncate max-w-[110px]">
+              <span className="max-w-[110px] truncate text-xs font-medium text-slate-500 dark:text-slate-300">
                 {listing.university}
               </span>
             </div>
-            <span className="text-xs text-slate-400">{listing.category}</span>
+            <span className="text-xs text-slate-400 dark:text-slate-500">{listing.category}</span>
           </div>
         </div>
       </article>

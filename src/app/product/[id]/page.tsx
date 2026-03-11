@@ -29,28 +29,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 
   return (
-    <div className="bg-background-light min-h-screen">
-      <div className="pt-6 pb-20 px-4 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
+      <div className="mx-auto max-w-7xl px-4 pb-20 pt-6">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-sm text-slate-500 mb-8 flex-wrap">
-          <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+        <div className="mb-8 flex flex-wrap items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
+          <Link href="/" className="transition-colors hover:text-primary dark:hover:text-sky-300">Home</Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <Link href="/browse" className="hover:text-primary transition-colors">Browse</Link>
+          <Link href="/browse" className="transition-colors hover:text-primary dark:hover:text-sky-300">Browse</Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
           <Link
             href={`/browse?category=${encodeURIComponent(listing.category)}`}
-            className="hover:text-primary transition-colors"
+            className="transition-colors hover:text-primary dark:hover:text-sky-300"
           >
             {listing.category}
           </Link>
           <span className="material-symbols-outlined text-xs">chevron_right</span>
-          <span className="font-medium text-slate-900 truncate max-w-xs">{listing.title}</span>
+          <span className="max-w-xs truncate font-medium text-slate-900 dark:text-white">{listing.title}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left: Product Image */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="relative group aspect-[4/3] rounded-xl overflow-hidden bg-white shadow-sm border border-slate-200">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
               <Image
                 src={listing.images[0]}
                 alt={listing.title}
@@ -59,17 +59,42 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 unoptimized
               />
               {listing.featured && (
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900">
+                <div className="absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-900 backdrop-blur dark:bg-slate-950/70 dark:text-white">
                   Featured
                 </div>
               )}
+            </div>
+            <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-slate-400 dark:text-slate-500">
+                Listing overview
+              </p>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Type</p>
+                  <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">
+                    {listing.isService ? "Service" : "Product"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Seller</p>
+                  <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">
+                    {listing.sellerName}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Campus</p>
+                  <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">
+                    {listing.university}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Right: Product Details */}
           <div className="lg:col-span-5 space-y-5">
             {/* Price card */}
-            <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+            <div className="rounded-[2rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
               {/* Category badge */}
               <span
                 className={`inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full mb-4 ${categoryMeta?.color}`}
@@ -81,10 +106,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </span>
 
               <div className="flex justify-between items-start mb-4">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight pr-4">
+                <h1 className="pr-4 text-2xl font-extrabold leading-tight text-slate-900 dark:text-white sm:text-3xl">
                   {listing.title}
                 </h1>
-                <button className="text-slate-400 hover:text-red-500 transition-colors shrink-0">
+                <button className="shrink-0 text-slate-400 transition-colors hover:text-red-500 dark:text-slate-500 dark:hover:text-rose-400">
                   <span className="material-symbols-outlined text-2xl">favorite</span>
                 </button>
               </div>
@@ -94,33 +119,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   {formatPrice(listing.price)}
                 </span>
                 {listing.isService && (
-                  <span className="text-slate-500 text-base">/session</span>
+                  <span className="text-base text-slate-500 dark:text-slate-400">/session</span>
                 )}
               </div>
 
               {/* Meta chips */}
               <div className="space-y-3 mb-7">
                 {listing.condition && (
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-background-light border border-slate-100">
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-background-light p-3 dark:border-white/10 dark:bg-[#0d1a2b]">
                     <span className="material-symbols-outlined text-primary">verified_user</span>
                     <div>
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Condition</p>
-                      <p className="text-sm font-bold text-slate-900">{listing.condition}</p>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Condition</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">{listing.condition}</p>
                     </div>
                   </div>
                 )}
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-background-light border border-slate-100">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-background-light p-3 dark:border-white/10 dark:bg-[#0d1a2b]">
                   <span className="material-symbols-outlined text-primary">school</span>
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">University</p>
-                    <p className="text-sm font-bold text-slate-900">{listing.university}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">University</p>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{listing.university}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-background-light border border-slate-100">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-background-light p-3 dark:border-white/10 dark:bg-[#0d1a2b]">
                   <span className="material-symbols-outlined text-primary">calendar_today</span>
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Listed on</p>
-                    <p className="text-sm font-bold text-slate-900">{dateFormatted}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Listed on</p>
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">{dateFormatted}</p>
                   </div>
                 </div>
               </div>
@@ -131,7 +156,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   href={`https://wa.me/${listing.sellerPhone.replace(/[\s+]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full h-14 rounded-full bg-gradient-to-r from-primary to-blue-600 text-white font-bold text-lg shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all flex items-center justify-center gap-2"
+                  className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-600 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:shadow-primary/50 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950 dark:shadow-sky-400/20"
                 >
                   <span className="material-symbols-outlined">forum</span>
                   Chat with Seller
@@ -139,12 +164,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <div className="grid grid-cols-2 gap-3">
                   <a
                     href={`tel:${listing.sellerPhone.replace(/\s/g, "")}`}
-                    className="h-12 rounded-full border border-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors"
+                    className="flex h-12 items-center justify-center gap-2 rounded-full border border-slate-200 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
                   >
                     <span className="material-symbols-outlined text-xl">call</span>
                     Call
                   </a>
-                  <button className="h-12 rounded-full border border-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors">
+                  <button className="flex h-12 items-center justify-center gap-2 rounded-full border border-slate-200 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10">
                     <span className="material-symbols-outlined text-xl">bookmark</span>
                     Save
                   </button>
@@ -153,33 +178,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Seller info card */}
-            <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
+            <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+              <p className="mb-4 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
                 Seller Information
               </p>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="size-14 rounded-full border-2 border-primary/20 bg-primary/10 flex items-center justify-center">
-                    <span className="text-primary font-extrabold text-2xl">
+                  <div className="flex size-14 items-center justify-center rounded-full border-2 border-primary/20 bg-primary/10 dark:border-sky-400/20 dark:bg-sky-400/10">
+                    <span className="text-2xl font-extrabold text-primary dark:text-sky-300">
                       {listing.sellerName.charAt(0)}
                     </span>
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900">{listing.sellerName}</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-white">{listing.sellerName}</h4>
                     <div className="flex items-center gap-1 mt-0.5">
                       <span className="material-symbols-outlined text-amber-400 text-sm">star</span>
-                      <span className="text-sm font-bold text-slate-900">4.8</span>
-                      <span className="text-xs text-slate-500">(12 sales)</span>
+                      <span className="text-sm font-bold text-slate-900 dark:text-white">4.8</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">(12 sales)</span>
                     </div>
                   </div>
                 </div>
-                <button className="px-4 py-2 rounded-full text-xs font-bold text-primary border border-primary/30 hover:bg-primary/5 transition-colors">
+                <button className="rounded-full border border-primary/30 px-4 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary/5 dark:border-sky-400/30 dark:text-sky-300 dark:hover:bg-sky-400/10">
                   View Profile
                 </button>
               </div>
-              <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center text-xs">
-                <span className="text-slate-500">{listing.university}</span>
-                <span className="flex items-center gap-1 text-green-500 font-bold">
+              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs dark:border-white/10">
+                <span className="text-slate-500 dark:text-slate-400">{listing.university}</span>
+                <span className="flex items-center gap-1 font-bold text-green-500 dark:text-emerald-300">
                   <span className="material-symbols-outlined text-sm">bolt</span>
                   Quick Responder
                 </span>
@@ -187,8 +212,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Safety tip */}
-            <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-xs text-amber-800 flex gap-3">
-              <span className="material-symbols-outlined text-amber-500 shrink-0">
+            <div className="flex gap-3 rounded-[1.5rem] border border-amber-100 bg-amber-50 p-4 text-xs text-amber-800 dark:border-amber-300/20 dark:bg-amber-400/10 dark:text-amber-100">
+              <span className="material-symbols-outlined shrink-0 text-amber-500 dark:text-amber-300">
                 security
               </span>
               <div>
@@ -201,23 +226,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </div>
 
         {/* Description */}
-        <div className="mt-12 max-w-4xl">
-          <h3 className="text-2xl font-bold text-slate-900 mb-4">
+        <div className="mt-12 max-w-4xl rounded-[2rem] border border-slate-200/70 bg-white/80 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+          <h3 className="mb-4 text-2xl font-bold text-slate-900 dark:text-white">
             Item Description
           </h3>
-          <p className="text-slate-600 leading-relaxed">{listing.description}</p>
+          <p className="leading-relaxed text-slate-600 dark:text-slate-300">{listing.description}</p>
         </div>
 
         {/* Related listings */}
         {related.length > 0 && (
           <div className="mt-20">
             <div className="flex items-center justify-between mb-8">
-              <h3 className="text-2xl font-bold text-slate-900 tracking-tight">
+              <h3 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Similar Items for Sale
               </h3>
               <Link
                 href={`/browse?category=${encodeURIComponent(listing.category)}`}
-                className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
+                className="flex items-center gap-1 text-sm font-bold text-primary hover:underline dark:text-sky-300"
               >
                 See all{" "}
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>

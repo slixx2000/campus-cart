@@ -24,22 +24,32 @@ export default function EditListingForm({
   const [condition, setCondition] = useState(listing.condition ?? "");
 
   return (
-    <div className="bg-background-light min-h-screen">
-      <div className="max-w-2xl mx-auto px-6 py-10">
-        <h1 className="text-3xl font-extrabold text-slate-900 mb-8">Edit Listing</h1>
+    <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
+      <div className="mx-auto max-w-3xl px-6 py-10">
+        <div className="mb-8 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
+          <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/80 dark:text-sky-300">
+            Manage listing
+          </span>
+          <h1 className="mt-3 text-3xl font-extrabold text-slate-900 dark:text-white">
+            Edit Listing
+          </h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            Update the details buyers see before you republish changes.
+          </p>
+        </div>
 
         {state.message && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 mb-6">
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
             {state.message}
           </div>
         )}
 
-        <form action={formAction} className="bg-white rounded-xl p-8 border border-slate-200 shadow-sm space-y-6">
+        <form action={formAction} className="space-y-6 rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
           <input type="hidden" name="listingId" value={listing.id} />
           <input type="hidden" name="condition" value={condition} />
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">
+            <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
               Title <span className="text-red-500">*</span>
             </label>
             <input
@@ -47,7 +57,7 @@ export default function EditListingForm({
               name="title"
               defaultValue={listing.title}
               maxLength={100}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary outline-none text-sm"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
             />
             {state.errors?.title && (
               <p className="text-xs text-red-500 mt-1">{state.errors.title[0]}</p>
@@ -56,11 +66,11 @@ export default function EditListingForm({
 
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">Category</label>
+              <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">Category</label>
               <select
                 name="categoryId"
                 defaultValue={listing.category_id}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary outline-none text-sm"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -71,7 +81,7 @@ export default function EditListingForm({
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">
+              <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                 Price (ZMW)
               </label>
               <input
@@ -79,14 +89,14 @@ export default function EditListingForm({
                 name="price"
                 defaultValue={Number(listing.price)}
                 min={1}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary outline-none text-sm"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
               />
             </div>
           </div>
 
           {!listing.is_service && (
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">Condition</label>
+              <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">Condition</label>
               <div className="flex gap-2 flex-wrap">
                 {CONDITIONS.map((c) => (
                   <button
@@ -95,8 +105,8 @@ export default function EditListingForm({
                     onClick={() => setCondition((prev) => prev === c.value ? "" : c.value)}
                     className={`px-4 py-2 rounded-full text-xs font-bold border-2 transition-all ${
                       condition === c.value
-                        ? "bg-primary text-white border-primary"
-                        : "bg-white text-slate-600 border-slate-200"
+                        ? "border-primary bg-primary text-white dark:border-sky-300 dark:bg-sky-300 dark:text-slate-950"
+                        : "border-slate-200 bg-white text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
                     }`}
                   >
                     {c.label}
@@ -107,27 +117,27 @@ export default function EditListingForm({
           )}
 
           <div>
-            <label className="block text-sm font-bold text-slate-700 mb-2">Description</label>
+            <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">Description</label>
             <textarea
               name="description"
               defaultValue={listing.description}
               maxLength={2000}
               rows={5}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:ring-2 focus:ring-primary outline-none resize-none text-sm"
+              className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
             />
           </div>
 
           <div className="flex justify-end gap-4">
             <a
               href="/my-listings"
-              className="px-8 py-3 rounded-full font-bold text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors"
+              className="rounded-full border border-slate-200 px-8 py-3 font-bold text-slate-600 transition-colors hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/10"
             >
               Cancel
             </a>
             <button
               type="submit"
               disabled={pending}
-              className="px-10 py-3 rounded-full font-bold text-white bg-gradient-to-r from-primary to-blue-400 hover:shadow-lg transition-all disabled:opacity-60 flex items-center gap-2"
+              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-400 px-10 py-3 font-bold text-white transition-all hover:shadow-lg disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
             >
               {pending ? (
                 <span className="material-symbols-outlined animate-spin text-lg leading-none">

@@ -1,18 +1,20 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, type ReactNode } from "react";
 import { useUniversities } from "@/hooks/useUniversities";
 import type { CategoryRow } from "@/types/database";
 
 interface BrowseFiltersProps {
   categories: CategoryRow[];
   count: number;
+  children: ReactNode;
 }
 
 export default function BrowseFilters({
   categories,
   count,
+  children,
 }: BrowseFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -43,17 +45,15 @@ export default function BrowseFilters({
   const currentPage = Number(get("page") || 1);
 
   return (
-    <div className="bg-background-light min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-8">
-        {/* Sidebar */}
-        <aside className="w-full md:w-64 shrink-0 space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+    <div className="flex flex-col gap-8 md:flex-row">
+      <aside className="w-full shrink-0 space-y-6 md:w-72">
+        <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-lg text-slate-900">Filters</h3>
+              <h3 className="font-bold text-lg text-slate-900 dark:text-white">Filters</h3>
               {hasFilters && (
                 <button
                   onClick={clearAll}
-                  className="text-sm text-primary font-medium hover:underline"
+                  className="text-sm font-medium text-primary hover:underline dark:text-sky-300"
                 >
                   Clear all
                 </button>
@@ -75,18 +75,18 @@ export default function BrowseFilters({
                       push({ q: (e.target as HTMLInputElement).value });
                   }}
                   onBlur={(e) => push({ q: e.target.value })}
-                  className="w-full pl-10 pr-3 py-2 bg-slate-100 rounded-full text-sm border-none outline-none focus:ring-2 focus:ring-primary transition-all"
+                  className="w-full rounded-full border border-slate-200 bg-slate-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
                 />
               </div>
             </div>
 
             {/* Category */}
             <fieldset className="space-y-3 mb-6">
-              <legend className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Category
               </legend>
               <div className="space-y-2 mt-2">
-                <label className="flex items-center gap-3 cursor-pointer group">
+                <label className="group flex cursor-pointer items-center gap-3">
                   <input
                     type="radio"
                     name="category"
@@ -94,14 +94,14 @@ export default function BrowseFilters({
                     onChange={() => push({ category: "" })}
                     className="text-primary focus:ring-primary"
                   />
-                  <span className="text-sm font-medium group-hover:text-primary">
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
                     All Categories
                   </span>
                 </label>
                 {categories.map((c) => (
                   <label
                     key={c.id}
-                    className="flex items-center gap-3 cursor-pointer group"
+                    className="group flex cursor-pointer items-center gap-3"
                   >
                     <input
                       type="radio"
@@ -110,7 +110,7 @@ export default function BrowseFilters({
                       onChange={() => push({ category: c.slug })}
                       className="text-primary focus:ring-primary"
                     />
-                    <span className="text-sm font-medium group-hover:text-primary">
+                    <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
                       {c.name}
                     </span>
                   </label>
@@ -120,7 +120,7 @@ export default function BrowseFilters({
 
             {/* Price Range */}
             <div className="space-y-3 mb-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Max Price (ZMW)
               </h4>
               <input
@@ -132,23 +132,23 @@ export default function BrowseFilters({
                   if (e.key === "Enter")
                     push({ maxPrice: (e.target as HTMLInputElement).value });
                 }}
-                className="w-full px-3 py-2 bg-slate-100 rounded-md text-sm border-none outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
               />
             </div>
 
             {/* University */}
             <div className="space-y-3 mb-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 University
               </h4>
               {error && (
-                <p className="text-xs text-amber-700">{error}</p>
+                <p className="text-xs text-amber-700 dark:text-amber-300">{error}</p>
               )}
               <select
                 value={get("university")}
                 disabled={isLoading || universities.length === 0}
                 onChange={(e) => push({ university: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-100 rounded-md text-sm border-none outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
               >
                 <option value="">
                   {isLoading
@@ -164,7 +164,7 @@ export default function BrowseFilters({
                 ))}
               </select>
               {!isLoading && !error && universities.length === 0 && (
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   No universities found in the database.
                 </p>
               )}
@@ -172,7 +172,7 @@ export default function BrowseFilters({
 
             {/* Listing Type */}
             <fieldset className="space-y-3">
-              <legend className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Listing Type
               </legend>
               <div className="space-y-2 mt-2">
@@ -185,7 +185,7 @@ export default function BrowseFilters({
                 ).map(({ value, label }) => (
                   <label
                     key={label}
-                    className="flex items-center gap-3 cursor-pointer group"
+                    className="group flex cursor-pointer items-center gap-3"
                   >
                     <input
                       type="radio"
@@ -194,28 +194,27 @@ export default function BrowseFilters({
                       onChange={() => push({ type: value })}
                       className="text-primary focus:ring-primary"
                     />
-                    <span className="text-sm font-medium group-hover:text-primary">
+                    <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
                       {label}
                     </span>
                   </label>
                 ))}
               </div>
             </fieldset>
-          </div>
+        </div>
 
-          <div className="bg-primary/10 p-5 rounded-xl border border-primary/20">
-            <p className="text-primary text-sm font-bold mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-lg">verified_user</span>
+        <div className="rounded-[1.5rem] border border-primary/20 bg-primary/10 p-5 dark:border-sky-400/20 dark:bg-sky-400/10">
+          <p className="mb-2 flex items-center gap-2 text-sm font-bold text-primary dark:text-sky-200">
+            <span className="material-symbols-outlined text-lg">verified_user</span>
               Campus Verified
             </p>
-            <p className="text-xs text-slate-600 leading-relaxed">
+          <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
               Shop with confidence. All sellers are verified university students.
             </p>
-          </div>
-        </aside>
+        </div>
+      </aside>
 
-        {/* Main area — sort bar + pagination */}
-        <div className="flex-1 space-y-6">
+      <div className="flex-1 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex flex-wrap gap-2">
               {(["newest", "price-asc", "price-desc"] as const).map((s) => (
@@ -224,8 +223,8 @@ export default function BrowseFilters({
                   onClick={() => push({ sort: s })}
                   className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
                     sortBy === s
-                      ? "bg-primary text-white"
-                      : "bg-white hover:bg-slate-100 text-slate-700 border border-slate-200"
+                      ? "bg-primary text-white dark:bg-sky-400 dark:text-slate-950"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
                   }`}
                 >
                   {s === "newest"
@@ -236,34 +235,34 @@ export default function BrowseFilters({
                 </button>
               ))}
             </div>
-            <p className="text-sm text-slate-500 font-medium whitespace-nowrap">
+            <p className="whitespace-nowrap text-sm font-medium text-slate-500 dark:text-slate-400">
               Showing {count} {count === 1 ? "result" : "results"}
             </p>
           </div>
 
-          {/* Pagination rendered server-side; these are just nav arrows */}
+          {children}
+
           {count > 12 && (
             <div className="flex justify-center gap-2 mt-6">
               <button
                 onClick={() => push({ page: String(Math.max(1, currentPage - 1)) })}
                 disabled={currentPage <= 1}
-                className="px-4 py-2 rounded-full border border-slate-200 text-sm font-medium disabled:opacity-40 hover:border-primary transition-colors"
+                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
               >
                 ← Prev
               </button>
-              <span className="px-4 py-2 text-sm text-slate-500">
+              <span className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">
                 Page {currentPage}
               </span>
               <button
                 onClick={() => push({ page: String(currentPage + 1) })}
                 disabled={currentPage * 12 >= count}
-                className="px-4 py-2 rounded-full border border-slate-200 text-sm font-medium disabled:opacity-40 hover:border-primary transition-colors"
+                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
               >
                 Next →
               </button>
             </div>
           )}
-        </div>
       </div>
     </div>
   );

@@ -42,35 +42,56 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
   const listings = rows.map(dbListingToUi);
 
   return (
-    <div className="bg-background-light min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 flex flex-col md:flex-row gap-8">
-        {/* Sidebar + sort/pagination controls (client island) */}
-        <Suspense fallback={null}>
-          <BrowseFilters categories={categories} count={count} />
-        </Suspense>
-
-        {/* Listings grid — server rendered */}
-        <div className="flex-1">
-          {listings.length === 0 ? (
-            <div className="bg-white rounded-xl border border-slate-200 p-16 text-center">
-              <span className="material-symbols-outlined text-5xl text-slate-300 block mb-4">
-                search_off
+    <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
+      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+        <div className="mb-8 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/80 dark:text-sky-300">
+                Marketplace Feed
               </span>
-              <p className="text-lg font-bold text-slate-700 mb-2">
-                No listings found
-              </p>
-              <p className="text-sm text-slate-500">
-                Try adjusting your filters or search query.
+              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                Browse campus listings with live filters
+              </h1>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+                Search verified student listings, refine by category or university,
+                and move between results without leaving the page context.
               </p>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {listings.map((listing) => (
-                <ProductCard key={listing.id} listing={listing} />
-              ))}
+            <div className="rounded-2xl border border-primary/15 bg-primary/5 px-5 py-4 dark:border-sky-400/20 dark:bg-sky-400/10">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-primary/80 dark:text-sky-200">
+                Active inventory
+              </p>
+              <p className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
+                {count}
+              </p>
             </div>
-          )}
+          </div>
         </div>
+
+        <Suspense fallback={null}>
+          <BrowseFilters categories={categories} count={count}>
+            {listings.length === 0 ? (
+              <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-16 text-center shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+                <span className="material-symbols-outlined mb-4 block text-5xl text-slate-300 dark:text-slate-500">
+                  search_off
+                </span>
+                <p className="mb-2 text-lg font-bold text-slate-700 dark:text-slate-100">
+                  No listings found
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Try adjusting your filters or search query.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {listings.map((listing) => (
+                  <ProductCard key={listing.id} listing={listing} />
+                ))}
+              </div>
+            )}
+          </BrowseFilters>
+        </Suspense>
       </div>
     </div>
   );
@@ -80,7 +101,7 @@ export default function BrowsePage(props: BrowsePageProps) {
   return (
     <Suspense
       fallback={
-        <div className="p-8 text-center text-slate-500">
+        <div className="p-8 text-center text-slate-500 dark:text-slate-400">
           Loading listings…
         </div>
       }
