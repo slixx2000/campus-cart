@@ -1,26 +1,25 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { SAMPLE_LISTINGS, formatPrice, CATEGORIES } from "@/lib/data";
+import { formatPrice, CATEGORIES } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
+import { getListingById, getRelatedListings } from "@/lib/repositories/listings";
+import { dbListingToUi } from "@/lib/mappers";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateStaticParams() {
-  return SAMPLE_LISTINGS.map((l) => ({ id: l.id }));
-}
-
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const listing = SAMPLE_LISTINGS.find((l) => l.id === id);
+  const row = await getListingById(id);
 
-  if (!listing) notFound();
+  if (!row) notFound();
 
-  const related = SAMPLE_LISTINGS.filter(
-    (l) => l.id !== listing.id && l.category === listing.category
-  ).slice(0, 4);
+  const listing = dbListingToUi(row);
+
+  const relatedRows = await getRelatedListings(row.id, row.category_id);
+  const related = relatedRows.map(dbListingToUi);
 
   const categoryMeta = CATEGORIES.find((c) => c.label === listing.category);
 

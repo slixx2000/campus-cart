@@ -1,11 +1,18 @@
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
 import CategoryCard from "@/components/CategoryCard";
-import { SAMPLE_LISTINGS, CATEGORIES, UNIVERSITIES } from "@/lib/data";
+import UniversityLinksGrid from "@/components/UniversityLinksGrid";
+import { CATEGORIES } from "@/lib/data";
+import { getFeaturedListings, getRecentListings } from "@/lib/repositories/listings";
+import { dbListingToUi } from "@/lib/mappers";
 
-export default function HomePage() {
-  const featuredListings = SAMPLE_LISTINGS.filter((l) => l.featured);
-  const recentListings = SAMPLE_LISTINGS.slice(0, 8);
+export default async function HomePage() {
+  const [featuredRows, recentRows] = await Promise.all([
+    getFeaturedListings(8),
+    getRecentListings(8),
+  ]);
+  const featuredListings = featuredRows.map(dbListingToUi);
+  const recentListings = recentRows.map(dbListingToUi);
 
   return (
     <div className="bg-background-light">
@@ -149,23 +156,7 @@ export default function HomePage() {
           </span>
           Partner Universities 🇿🇲
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {UNIVERSITIES.map((uni) => (
-            <Link
-              key={uni.id}
-              href={`/browse?university=${encodeURIComponent(uni.name)}`}
-              className="bg-white border border-slate-200 rounded-xl p-4 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all text-center group"
-            >
-              <p className="font-bold text-primary text-lg group-hover:scale-105 transition-transform inline-block">
-                {uni.shortName}
-              </p>
-              <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                {uni.name}
-              </p>
-              <p className="text-xs text-slate-400 mt-0.5">{uni.city}</p>
-            </Link>
-          ))}
-        </div>
+        <UniversityLinksGrid />
       </section>
 
       {/* CTA Banner */}

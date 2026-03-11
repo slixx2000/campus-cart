@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { UNIVERSITIES, CATEGORIES } from "@/lib/data";
+import UniversityCountStat from "@/components/UniversityCountStat";
+import UniversityLinksGrid from "@/components/UniversityLinksGrid";
+import { CATEGORIES } from "@/lib/data";
 
 export default function AboutPage() {
   return (
@@ -82,8 +84,13 @@ export default function AboutPage() {
       {/* Stats */}
       <section className="bg-white py-16 px-6 border-y border-slate-100">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div>
+            <p className="text-4xl font-extrabold text-primary mb-1">
+              <UniversityCountStat />
+            </p>
+            <p className="text-slate-500 text-sm font-medium">Universities</p>
+          </div>
           {[
-            { value: "8+", label: "Universities" },
             { value: "10", label: "Categories" },
             { value: "Free", label: "Listings" },
             { value: "🇿🇲", label: "Zambia" },
@@ -106,23 +113,7 @@ export default function AboutPage() {
           </span>
           Partner Universities 🇿🇲
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {UNIVERSITIES.map((uni) => (
-            <Link
-              key={uni.id}
-              href={`/browse?university=${encodeURIComponent(uni.name)}`}
-              className="bg-white border border-slate-200 rounded-xl p-4 hover:border-primary hover:shadow-lg hover:shadow-primary/5 transition-all text-center group"
-            >
-              <p className="font-bold text-primary text-lg group-hover:scale-105 transition-transform inline-block">
-                {uni.shortName}
-              </p>
-              <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                {uni.name}
-              </p>
-              <p className="text-xs text-slate-400 mt-0.5">{uni.city}</p>
-            </Link>
-          ))}
-        </div>
+        <UniversityLinksGrid />
       </section>
 
       {/* Categories */}
