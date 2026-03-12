@@ -15,5 +15,5 @@ export default async function SellPage() {
 
   const categories = await getAllCategories();
 
-  return <SellForm categories={categories} />;
+  return <SellForm categories={categories} userId={user.id} />;
 }

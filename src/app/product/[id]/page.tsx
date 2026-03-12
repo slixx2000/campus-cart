@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatPrice, CATEGORIES } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
+import AvatarImage from "@/components/AvatarImage";
 import { getListingById, getRelatedListings } from "@/lib/repositories/listings";
 import { dbListingToUi } from "@/lib/mappers";
 
@@ -184,10 +185,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </p>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex size-14 items-center justify-center rounded-full border-2 border-primary/20 bg-primary/10 dark:border-sky-400/20 dark:bg-sky-400/10">
-                    <span className="text-2xl font-extrabold text-primary dark:text-sky-300">
-                      {listing.sellerName.charAt(0)}
-                    </span>
+                  <div className="size-14 overflow-hidden rounded-full border-2 border-primary/20 bg-primary/10 dark:border-sky-400/20 dark:bg-sky-400/10">
+                    <AvatarImage
+                      alt={listing.sellerName}
+                      src={listing.sellerAvatarUrl}
+                      className="h-full w-full object-cover"
+                      fallbackClassName="flex h-full w-full items-center justify-center bg-primary/10 text-primary dark:bg-sky-400/10 dark:text-sky-300"
+                    />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900 dark:text-white">{listing.sellerName}</h4>
@@ -198,9 +202,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     </div>
                   </div>
                 </div>
-                <button className="rounded-full border border-primary/30 px-4 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary/5 dark:border-sky-400/30 dark:text-sky-300 dark:hover:bg-sky-400/10">
-                  View Profile
-                </button>
+                {listing.sellerId ? (
+                  <Link
+                    href={`/profile/${listing.sellerId}`}
+                    className="rounded-full border border-primary/30 px-4 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary/5 dark:border-sky-400/30 dark:text-sky-300 dark:hover:bg-sky-400/10"
+                  >
+                    View Profile
+                  </Link>
+                ) : null}
               </div>
               <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs dark:border-white/10">
                 <span className="text-slate-500 dark:text-slate-400">{listing.university}</span>

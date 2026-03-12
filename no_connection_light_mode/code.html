@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b9dee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-6 md:px-10 py-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">shopping_cart</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">CampusCart</h2>
+</div>
+<div class="flex gap-3">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-1 flex flex-col items-center justify-center px-6 py-12 md:py-24">
+<div class="max-w-md w-full flex flex-col items-center text-center space-y-8">
+<div class="relative w-full aspect-square max-w-[320px] bg-primary/5 rounded-xl flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="relative">
+<span class="material-symbols-outlined text-primary text-[120px] opacity-20">router</span>
+<span class="material-symbols-outlined text-primary text-[64px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">wifi_off</span>
+</div>
+<div class="mt-4 flex gap-2">
+<div class="h-2 w-8 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+<div class="h-2 w-2 rounded-full bg-primary/30"></div>
+</div>
+</div>
+<img alt="Student looking at a laptop in a cozy dorm room" class="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-40" data-alt="Cozy student dorm room with desk and laptop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBH21jE3pD7E_HTCRtOeMJ8up_nvuWdOadGD-FVSCgIRUMjiEC8rT_SWNHxaQ2Q-DesPhYim6T_CeLKQgkBzGpF17rmvbIG2WcQOaipBHe9T_ZKOZKiET3vI9iV0IXWwFIaoRxwnmwCYlqOCYdeibfFg8BzdxVfP8P3_Xtf8wQFDR69GlYjuMkHGLjOdVpjK6b0gtP33HB6bzBo9HjGhmIjhjSr9ZYp4pAGeOlXRAlUsrY_YbRkW5QAcMzwIYuPQR0d495QoiVG7Ec"/>
+</div>
+<div class="space-y-3">
+<h1 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                            No WiFi in the Dorm?
+                        </h1>
+<p class="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">
+                            It looks like your connection dropped. Check your internet settings or try refreshing.
+                        </p>
+</div>
+<div class="flex flex-col w-full gap-4">
+<button class="w-full h-14 bg-gradient-to-r from-primary to-[#5bb6f4] text-white font-bold rounded-full shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all flex items-center justify-center gap-2 group">
+<span class="material-symbols-outlined group-hover:rotate-180 transition-transform duration-500">refresh</span>
+                            Try Again
+                        </button>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+<button class="h-12 px-6 rounded-full bg-slate-200/50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">home</span>
+                                Home
+                            </button>
+<button class="h-12 px-6 rounded-full bg-slate-200/50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-lg">help</span>
+                                Support
+                            </button>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-200 dark:border-slate-800 w-full flex justify-center gap-8">
+<div class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined">storefront</span>
+<span class="text-xs font-medium uppercase tracking-wider">Market</span>
+</div>
+<div class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="text-xs font-medium uppercase tracking-wider">Cart</span>
+</div>
+<div class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="text-xs font-medium uppercase tracking-wider">Orders</span>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-background-dark py-8 px-6 md:px-10 mt-auto border-t border-primary/10">
+<div class="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-bold">CampusCart</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm">
+                        © 2024 University Marketplace Inc.
+                    </p>
+<div class="flex gap-6 text-slate-500 dark:text-slate-400 text-sm font-medium">
+<a class="hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms</a>
+<a class="hover:text-primary transition-colors" href="#">Help</a>
+</div>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

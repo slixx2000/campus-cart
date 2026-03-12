@@ -1,10 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 import { signUpAction } from "@/app/auth/actions";
+import AvatarPicker, { type AvatarSelection } from "@/components/AvatarPicker";
+import { compressProfileAvatarForSubmit } from "@/lib/avatarService";
 
 export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
   const [state, formAction, pending] = useActionState(signUpAction, {});
+  const [avatarSelection, setAvatarSelection] = useState<AvatarSelection>({ type: "none" });
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   if (state.message && !state.errors) {
     return (
@@ -18,8 +22,34 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
     );
   }
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    setAvatarError(null);
+
+    try {
+      if (avatarSelection.type === "default") {
+        formData.set("defaultAvatarUrl", avatarSelection.url);
+      }
+
+      if (avatarSelection.type === "upload") {
+        const compressedAvatar = await compressProfileAvatarForSubmit(avatarSelection.file);
+        formData.set("avatarFile", compressedAvatar, "avatar.jpg");
+      }
+
+      startTransition(() => {
+        formAction(formData);
+      });
+    } catch (error) {
+      setAvatarError(
+        error instanceof Error ? error.message : "We could not process the selected avatar."
+      );
+    }
+  };
+
   return (
-    <form action={formAction} className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
       {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
 
       {state.message && (
@@ -71,6 +101,13 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           placeholder="+260 97 1234567"
           className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
+      </div>
+
+      <div className="rounded-2xl border border-slate-200/70 bg-slate-50/80 p-5 dark:border-white/10 dark:bg-white/5">
+        <AvatarPicker onChange={setAvatarSelection} />
+        {avatarError && (
+          <p className="mt-3 text-xs text-red-500 dark:text-rose-300">{avatarError}</p>
+        )}
       </div>
 
       <div>

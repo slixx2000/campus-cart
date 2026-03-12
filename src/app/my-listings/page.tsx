@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getListingsByUser } from "@/lib/repositories/listings";
 import { dbListingToUi } from "@/lib/mappers";
 import { formatPrice } from "@/lib/data";
-import { deleteListingAction } from "./actions";
+import ArchiveListingButton from "./ArchiveListingButton";
 
 export const metadata = { title: "My Listings – CampusCart" };
 
@@ -103,19 +103,7 @@ export default async function MyListingsPage() {
                   >
                     Edit
                   </Link>
-                  <form action={deleteListingAction}>
-                    <input type="hidden" name="listingId" value={listing.id} />
-                    <button
-                      type="submit"
-                      className="w-full rounded-full border border-red-200 px-4 py-2 text-xs font-bold text-red-500 transition-colors hover:bg-red-50 dark:border-rose-300/20 dark:text-rose-300 dark:hover:bg-rose-300/10"
-                      onClick={(e) => {
-                        if (!confirm("Archive this listing? It will no longer be visible."))
-                          e.preventDefault();
-                      }}
-                    >
-                      Archive
-                    </button>
-                  </form>
+                  <ArchiveListingButton listingId={listing.id} />
                 </div>
               </div>
             ))}

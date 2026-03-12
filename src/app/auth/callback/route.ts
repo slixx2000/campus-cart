@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { ensureProfileForUser } from "@/lib/repositories/profiles";
 
 /**
  * Supabase Auth callback handler.
@@ -15,6 +16,14 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        await ensureProfileForUser(user, supabase);
+      }
+
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

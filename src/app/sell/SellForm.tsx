@@ -1,9 +1,17 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { createListingAction } from "./actions";
 import { useUniversities } from "@/hooks/useUniversities";
 import type { CategoryRow } from "@/types/database";
+import {
+  MAX_LISTING_IMAGE_COUNT,
+  MAX_LISTING_IMAGE_SIZE_BYTES,
+  type UploadedListingImage,
+  uploadListingImage,
+} from "@/lib/imageUpload";
+
+const RAW_IMAGE_LIMIT_LABEL = "15 MB";
 
 const CONDITIONS = [
   { value: "new", label: "New" },
@@ -14,18 +22,97 @@ const CONDITIONS = [
 
 interface SellFormProps {
   categories: CategoryRow[];
+  userId: string;
 }
 
-export default function SellForm({ categories }: SellFormProps) {
+export default function SellForm({ categories, userId }: SellFormProps) {
   const [state, formAction, pending] = useActionState(createListingAction, {});
   const [isService, setIsService] = useState(false);
   const [condition, setCondition] = useState("");
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const { universities, isLoading, error } = useUniversities();
 
+  useEffect(() => {
+    if (!pending) {
+      setIsUploading(false);
+    }
+  }, [pending, state]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []).slice(0, 5);
+    const files = Array.from(e.target.files ?? []).slice(0, MAX_LISTING_IMAGE_COUNT);
+
+    if (files.some((file) => file.size > MAX_LISTING_IMAGE_SIZE_BYTES)) {
+      setSelectedImages([]);
+      setImageError(`One or more files exceed the ${RAW_IMAGE_LIMIT_LABEL} limit.`);
+      e.currentTarget.value = "";
+      return;
+    }
+
+    setImageError(null);
+    setUploadStatus(null);
+    setUploadProgress(0);
     setSelectedImages(files);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (imageError) {
+      return;
+    }
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    formData.delete("images");
+    formData.set("listingId", crypto.randomUUID());
+
+    try {
+      setIsUploading(true);
+      setUploadStatus(selectedImages.length > 0 ? "Preparing images..." : "Submitting listing...");
+      setUploadProgress(selectedImages.length > 0 ? 5 : 100);
+
+      const uploadedImages: UploadedListingImage[] = [];
+
+      for (let index = 0; index < selectedImages.length; index += 1) {
+        const file = selectedImages[index];
+        const listingId = String(formData.get("listingId"));
+
+        const uploadedImage = await uploadListingImage(file, {
+          userId,
+          listingId,
+          onProgress: (fileProgress, stage) => {
+            const overallProgress = Math.round(
+              ((index + fileProgress / 100) / selectedImages.length) * 100
+            );
+            setUploadProgress(overallProgress);
+            setUploadStatus(`${stage} (${index + 1}/${selectedImages.length})`);
+          },
+        });
+
+        uploadedImages.push(uploadedImage);
+      }
+
+      formData.set("uploadedImages", JSON.stringify(uploadedImages));
+      setUploadStatus("Saving listing...");
+      setUploadProgress(100);
+
+      startTransition(() => {
+        formAction(formData);
+      });
+    } catch (submitError) {
+      setImageError(
+        submitError instanceof Error
+          ? submitError.message
+          : "We could not process your images. Please try again."
+      );
+      setUploadStatus(null);
+      setUploadProgress(0);
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -96,7 +183,7 @@ export default function SellForm({ categories }: SellFormProps) {
               </div>
             </div>
 
-            <form action={formAction} className="space-y-6 rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+            <form onSubmit={handleSubmit} className="space-y-6 rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
               {/* Hidden inputs */}
               <input type="hidden" name="isService" value={String(isService)} />
               <input type="hidden" name="condition" value={condition} />
@@ -282,7 +369,7 @@ export default function SellForm({ categories }: SellFormProps) {
               {/* Image Upload */}
               <div>
                 <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
-                  Photos (up to 5)
+                  Photos (up to 6)
                 </label>
                 <input
                   type="file"
@@ -292,10 +379,30 @@ export default function SellForm({ categories }: SellFormProps) {
                   onChange={handleImageChange}
                   className="w-full text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-2 file:text-sm file:font-bold file:text-primary hover:file:bg-primary/20 dark:text-slate-400 dark:file:bg-sky-300/10 dark:file:text-sky-300 dark:hover:file:bg-sky-300/20"
                 />
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  Images are compressed to JPEG before upload for faster posting.
+                </p>
+                {imageError && (
+                  <p className="mt-1 text-xs text-red-500 dark:text-rose-300">{imageError}</p>
+                )}
                 {selectedImages.length > 0 && (
                   <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                     {selectedImages.length} file{selectedImages.length > 1 ? "s" : ""} selected
                   </p>
+                )}
+                {uploadStatus && (
+                  <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-[#0d1a2b]">
+                    <div className="mb-2 flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-300">
+                      <span>{uploadStatus}</span>
+                      <span>{uploadProgress}%</span>
+                    </div>
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-primary to-blue-400 transition-[width] duration-300 dark:from-sky-400 dark:to-cyan-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
 
@@ -303,10 +410,10 @@ export default function SellForm({ categories }: SellFormProps) {
               <div className="flex items-center justify-end pt-4">
                 <button
                   type="submit"
-                  disabled={pending}
+                  disabled={pending || isUploading}
                   className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-400 px-10 py-3 font-bold text-white transition-all hover:shadow-lg hover:shadow-primary/30 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950 dark:hover:shadow-sky-400/20"
                 >
-                  {pending ? (
+                  {pending || isUploading ? (
                     <span className="material-symbols-outlined animate-spin text-lg leading-none">
                       progress_activity
                     </span>

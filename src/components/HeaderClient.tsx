@@ -74,10 +74,10 @@ export default function HeaderClient({ user }: HeaderClientProps) {
           {user ? (
             <>
               <Link
-                href="/my-listings"
+                href="/profile"
                 className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
               >
-                My Listings
+                My Profile
               </Link>
               <form action={signOutAction}>
                 <button
@@ -157,11 +157,11 @@ export default function HeaderClient({ user }: HeaderClientProps) {
             {user ? (
               <>
                 <Link
-                  href="/my-listings"
+                  href="/profile"
                   onClick={() => setMenuOpen(false)}
                   className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
                 >
-                  My Listings
+                  My Profile
                 </Link>
                 <form action={signOutAction}>
                   <button

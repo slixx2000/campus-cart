@@ -5,10 +5,13 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const uploadedImageSchema = z.object({
+  publicUrl: z.string().url(),
+  storagePath: z.string().min(1),
+});
 
 const listingSchema = z.object({
+  listingId: z.string().uuid("Invalid listing id"),
   title: z.string().min(3).max(100),
   description: z.string().min(10).max(2000),
   price: z.coerce.number().positive().max(999999),
@@ -16,6 +19,7 @@ const listingSchema = z.object({
   universityId: z.string().uuid("Invalid university"),
   condition: z.enum(["new", "like_new", "good", "fair"]).optional(),
   isService: z.coerce.boolean().default(false),
+  uploadedImages: z.array(uploadedImageSchema).max(6),
 });
 
 export type CreateListingState = {
@@ -37,6 +41,7 @@ export async function createListingAction(
   }
 
   const rawData = {
+    listingId: formData.get("listingId"),
     title: formData.get("title"),
     description: formData.get("description"),
     price: formData.get("price"),
@@ -44,19 +49,40 @@ export async function createListingAction(
     universityId: formData.get("universityId"),
     condition: formData.get("condition") || undefined,
     isService: formData.get("isService") === "true",
+    uploadedImages: (() => {
+      const rawValue = formData.get("uploadedImages");
+      if (typeof rawValue !== "string") return [];
+
+      try {
+        const parsedImages = JSON.parse(rawValue);
+        return Array.isArray(parsedImages) ? parsedImages : [];
+      } catch {
+        return [];
+      }
+    })(),
   };
 
   const parsed = listingSchema.safeParse(rawData);
   if (!parsed.success) {
     return { errors: parsed.error.flatten().fieldErrors };
   }
-  const { title, description, price, categoryId, universityId, condition, isService } =
-    parsed.data;
+  const {
+    listingId,
+    title,
+    description,
+    price,
+    categoryId,
+    universityId,
+    condition,
+    isService,
+    uploadedImages,
+  } = parsed.data;
 
   // Insert listing row
   const { data: listing, error: listingError } = await supabase
     .from("listings")
     .insert({
+      id: listingId,
       seller_id: user.id,
       title,
       description,
@@ -72,35 +98,27 @@ export async function createListingAction(
     .single();
 
   if (listingError) {
+    if (uploadedImages.length > 0) {
+      await supabase.storage
+        .from("listing-images")
+        .remove(uploadedImages.map((image) => image.storagePath));
+    }
+
     return { message: `Failed to create listing: ${listingError.message}` };
   }
 
-  // Handle image uploads
-  const imageFiles = formData.getAll("images") as File[];
-  const validImages = imageFiles.filter(
-    (f) => f.size > 0 && f.size <= MAX_FILE_SIZE && ACCEPTED_IMAGE_TYPES.includes(f.type)
-  );
-
-  for (let i = 0; i < validImages.length; i++) {
-    const file = validImages[i];
-    const ext = file.name.split(".").pop();
-    const storagePath = `${user.id}/${listing.id}/${Date.now()}-${i}.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("listing-images")
-      .upload(storagePath, file, { upsert: false });
-
-    if (!uploadError) {
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("listing-images").getPublicUrl(storagePath);
-
-      await supabase.from("listing_images").insert({
+  if (uploadedImages.length > 0) {
+    const { error: imageInsertError } = await supabase.from("listing_images").insert(
+      uploadedImages.map((image, index) => ({
         listing_id: listing.id,
-        storage_path: storagePath,
-        public_url: publicUrl,
-        sort_order: i,
-      });
+        storage_path: image.storagePath,
+        public_url: image.publicUrl,
+        sort_order: index,
+      }))
+    );
+
+    if (imageInsertError) {
+      return { message: `Listing created, but images could not be saved: ${imageInsertError.message}` };
     }
   }
 

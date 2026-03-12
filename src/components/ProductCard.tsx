@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Listing } from "@/types";
 import { formatPrice } from "@/lib/data";
+import AvatarImage from "@/components/AvatarImage";
 
 interface ProductCardProps {
   listing: Listing;
@@ -70,16 +71,31 @@ export default function ProductCard({ listing }: ProductCardProps) {
             </div>
           )}
 
-          <div className="mt-3 flex items-center justify-between border-t border-slate-100 pt-3 dark:border-white/10">
-            <div className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm leading-none text-slate-400 dark:text-slate-500">
-                school
-              </span>
-              <span className="max-w-[110px] truncate text-xs font-medium text-slate-500 dark:text-slate-300">
-                {listing.university}
+          <div className="mt-3 space-y-3 border-t border-slate-100 pt-3 dark:border-white/10">
+            <div className="flex items-center gap-2">
+              <div className="size-8 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
+                <AvatarImage
+                  alt={listing.sellerName}
+                  src={listing.sellerAvatarUrl}
+                  className="h-full w-full object-cover"
+                  fallbackClassName="flex h-full w-full items-center justify-center bg-primary/10 text-primary dark:bg-sky-400/10 dark:text-sky-300"
+                />
+              </div>
+              <span className="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
+                {listing.sellerName}
               </span>
             </div>
-            <span className="text-xs text-slate-400 dark:text-slate-500">{listing.category}</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm leading-none text-slate-400 dark:text-slate-500">
+                  school
+                </span>
+                <span className="max-w-[110px] truncate text-xs font-medium text-slate-500 dark:text-slate-300">
+                  {listing.university}
+                </span>
+              </div>
+              <span className="text-xs text-slate-400 dark:text-slate-500">{listing.category}</span>
+            </div>
           </div>
         </div>
       </article>

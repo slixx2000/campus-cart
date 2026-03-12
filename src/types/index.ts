@@ -28,8 +28,10 @@ export interface Listing {
   category: Category;
   condition?: Condition;
   university: string;
+  sellerId?: string;
   sellerName: string;
   sellerPhone: string;
+  sellerAvatarUrl?: string;
   images: string[];
   createdAt: string;
   featured?: boolean;
