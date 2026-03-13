@@ -11,6 +11,48 @@
 }
 
 @layer utilities {
+  .skeleton-base {
+    position: relative;
+    overflow: hidden;
+    background: rgba(226, 232, 240, 0.85);
+  }
+  .dark .skeleton-base {
+    background: rgba(71, 85, 105, 0.55);
+  }
+  .skeleton-base::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%);
+    background: linear-gradient(
+      100deg,
+      transparent 15%,
+      rgba(255, 255, 255, 0.45) 48%,
+      transparent 85%
+    );
+    animation-name: skeleton-shimmer;
+    animation-duration: 1.5s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+  .dark .skeleton-base::after {
+    background: linear-gradient(
+      100deg,
+      transparent 15%,
+      rgba(148, 163, 184, 0.22) 48%,
+      transparent 85%
+    );
+  }
+  .skeleton-grid::after {
+    animation-duration: 1.15s;
+  }
+  .skeleton-chat::after {
+    animation-duration: 1.85s;
+  }
+  .skeleton-form::after {
+    animation-duration: 2.25s;
+  }
+
   .glass-nav {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
@@ -54,5 +96,14 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
   }
 }

@@ -18,6 +18,7 @@ export type ListingsFilter = {
   sortBy?: "newest" | "price-asc" | "price-desc";
   page?: number;
   pageSize?: number;
+  disablePagination?: boolean;
 };
 
 export async function getListings(
@@ -33,6 +34,7 @@ export async function getListings(
     sortBy = "newest",
     page = 1,
     pageSize = 12,
+    disablePagination = false,
   } = filter;
 
   let q = supabase
@@ -77,8 +79,10 @@ export async function getListings(
       q = q.order("created_at", { ascending: false });
   }
 
-  const from = (page - 1) * pageSize;
-  q = q.range(from, from + pageSize - 1);
+  if (!disablePagination) {
+    const from = (page - 1) * pageSize;
+    q = q.range(from, from + pageSize - 1);
+  }
 
   const { data, error, count } = await q;
   if (error) throw new Error(error.message);

@@ -9,6 +9,11 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ listing }: ProductCardProps) {
+  const universityLabelBase = listing.universityShortName ?? listing.university;
+  const universityLabel = listing.isNearby
+    ? `Near you • ${universityLabelBase}`
+    : universityLabelBase;
+
   return (
     <Link href={`/product/${listing.id}`}>
       <article className="overflow-hidden rounded-xl border border-slate-200 bg-white group transition-all hover:shadow-xl hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-xl dark:hover:border-primary/40 dark:hover:shadow-2xl dark:hover:shadow-primary/10">
@@ -91,7 +96,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
                   school
                 </span>
                 <span className="max-w-[110px] truncate text-xs font-medium text-slate-500 dark:text-slate-300">
-                  {listing.university}
+                  {universityLabel}
                 </span>
               </div>
               <span className="text-xs text-slate-400 dark:text-slate-500">{listing.category}</span>

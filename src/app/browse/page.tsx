@@ -3,6 +3,8 @@ import ProductCard from "@/components/ProductCard";
 import { getListings } from "@/lib/repositories/listings";
 import { getAllCategories } from "@/lib/repositories/universities";
 import { dbListingToUi } from "@/lib/mappers";
+import { createClient } from "@/lib/supabase/server";
+import type { Listing } from "@/types";
 import BrowseFilters from "./BrowseFilters";
 
 type SortBy = "newest" | "price-asc" | "price-desc";
@@ -21,25 +23,72 @@ interface BrowsePageProps {
 
 async function BrowseResults({ searchParams }: BrowsePageProps) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(sp.page ?? 1));
 
   const isService =
     sp.type === "services" ? true : sp.type === "products" ? false : undefined;
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const userUniversityId = user
+    ? (
+        await supabase
+          .from("profiles")
+          .select("university_id")
+          .eq("id", user.id)
+          .maybeSingle()
+      ).data?.university_id ?? null
+    : null;
+
   const { data: rows, count } = await getListings({
     query: sp.q,
     category: sp.category,
-    university: sp.university,
     maxPrice: sp.maxPrice ? Number(sp.maxPrice) : undefined,
     isService,
     sortBy: (sp.sort as SortBy) || "newest",
-    page,
-    pageSize: 12,
+    disablePagination: true,
   });
 
   const categories = await getAllCategories();
 
-  const listings = rows.map(dbListingToUi);
+  // Ranking logic:
+  // 1) Fetch all active listings once (global feed, not restricted to one university).
+  // 2) Compute "nearby" client-side by comparing listing.university_id to user.university_id.
+  // 3) Render independent sections for Featured, Nearby, and All Listings.
+  const allListings = rows.map((row) => {
+    const listing = dbListingToUi(row);
+    const isNearby = Boolean(userUniversityId && row.university_id === userUniversityId);
+    return { ...listing, isNearby } as Listing;
+  });
+
+  const featuredListings = allListings.filter((listing) => listing.featured);
+  const nearbyListings = allListings.filter((listing) => listing.isNearby);
+
+  const renderSection = (title: string, items: Listing[]) => (
+    <section className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+          {title}
+        </h2>
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+          {items.length} items
+        </span>
+      </div>
+      {items.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-300/80 bg-white/60 px-5 py-7 text-sm text-slate-500 dark:border-white/15 dark:bg-white/5 dark:text-slate-400">
+          Nothing to show in this section yet.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((listing) => (
+            <ProductCard key={`${title}-${listing.id}`} listing={listing} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
 
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
@@ -70,8 +119,8 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
         </div>
 
         <Suspense fallback={null}>
-          <BrowseFilters categories={categories} count={count}>
-            {listings.length === 0 ? (
+          <BrowseFilters categories={categories} count={count} showPagination={false}>
+            {allListings.length === 0 ? (
               <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-16 text-center shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
                 <span className="material-symbols-outlined mb-4 block text-5xl text-slate-300 dark:text-slate-500">
                   search_off
@@ -84,10 +133,10 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {listings.map((listing) => (
-                  <ProductCard key={listing.id} listing={listing} />
-                ))}
+              <div className="space-y-10">
+                {renderSection("Featured Listings", featuredListings)}
+                {renderSection("Nearby Listings", nearbyListings)}
+                {renderSection("All Listings", allListings)}
               </div>
             )}
           </BrowseFilters>

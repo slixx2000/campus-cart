@@ -6,6 +6,8 @@ import ProductCard from "@/components/ProductCard";
 import AvatarImage from "@/components/AvatarImage";
 import { getListingById, getRelatedListings } from "@/lib/repositories/listings";
 import { dbListingToUi } from "@/lib/mappers";
+import { createClient } from "@/lib/supabase/server";
+import { startConversationAction } from "@/app/messages/actions";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -13,14 +15,24 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  const row = await getListingById(id);
+
+  const [row, supabase] = await Promise.all([
+    getListingById(id),
+    createClient(),
+  ]);
 
   if (!row) notFound();
 
   const listing = dbListingToUi(row);
 
-  const relatedRows = await getRelatedListings(row.id, row.category_id);
+  const [relatedRows, { data: { user } }] = await Promise.all([
+    getRelatedListings(row.id, row.category_id),
+    supabase.auth.getUser(),
+  ]);
   const related = relatedRows.map(dbListingToUi);
+
+  // Prevent sellers from messaging their own listing.
+  const isOwnListing = !!user && user.id === listing.sellerId;
 
   const categoryMeta = CATEGORIES.find((c) => c.label === listing.category);
 
@@ -153,15 +165,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
               {/* CTA buttons */}
               <div className="flex flex-col gap-3">
-                <a
-                  href={`https://wa.me/${listing.sellerPhone.replace(/[\s+]/g, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-600 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:shadow-primary/50 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950 dark:shadow-sky-400/20"
-                >
-                  <span className="material-symbols-outlined">forum</span>
-                  Chat with Seller
-                </a>
+                {/* Message Seller — hidden for own listings */}
+                {!isOwnListing && listing.sellerId ? (
+                  <form action={startConversationAction}>
+                    <input type="hidden" name="listingId" value={listing.id} />
+                    <input type="hidden" name="sellerId" value={listing.sellerId} />
+                    <button
+                      type="submit"
+                      className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-600 text-lg font-bold text-white shadow-lg shadow-primary/30 transition-all hover:shadow-primary/50 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950 dark:shadow-sky-400/20"
+                    >
+                      <span className="material-symbols-outlined">forum</span>
+                      Message Seller
+                    </button>
+                  </form>
+                ) : isOwnListing ? (
+                  <Link
+                    href="/my-listings"
+                    className="flex h-14 w-full items-center justify-center gap-2 rounded-full border border-primary text-lg font-bold text-primary transition-all hover:bg-primary/5 dark:border-sky-400 dark:text-sky-300"
+                  >
+                    <span className="material-symbols-outlined">edit</span>
+                    Manage Listing
+                  </Link>
+                ) : null}
                 <div className="grid grid-cols-2 gap-3">
                   <a
                     href={`tel:${listing.sellerPhone.replace(/\s/g, "")}`}

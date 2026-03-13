@@ -57,13 +57,27 @@ export async function upsertProfile(
   profile: Partial<ProfileRow> & { id: string }
 ): Promise<ProfileRow> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const payload = { ...profile, updated_at: new Date().toISOString() };
+  const { id, ...updatePayload } = payload;
+
+  const { data: updated, error: updateError } = await supabase
     .from("profiles")
-    .upsert({ ...profile, updated_at: new Date().toISOString() })
+    .update(updatePayload)
+    .eq("id", profile.id)
+    .select()
+    .maybeSingle();
+
+  if (updateError) throw new Error(updateError.message);
+  if (updated) return updated as ProfileRow;
+
+  const { data: inserted, error: insertError } = await supabase
+    .from("profiles")
+    .insert(payload)
     .select()
     .single();
-  if (error) throw new Error(error.message);
-  return data as ProfileRow;
+
+  if (insertError) throw new Error(insertError.message);
+  return inserted as ProfileRow;
 }
 
 export async function getCurrentProfile(): Promise<ProfileRow | null> {
@@ -90,7 +104,7 @@ export async function ensureProfileForUser(
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .maybeSingle();
+    .maybeSingle() as { data: ProfileRow | null };
 
   const fallbackAvatar =
     existingProfile?.avatar_url ??
@@ -104,24 +118,21 @@ export async function ensureProfileForUser(
     user.email?.split("@")[0] ??
     "CampusCart User";
 
-  const { data, error } = await supabase
-    .from("profiles")
-    .upsert({
-      id: user.id,
-      full_name: fullName,
-      phone: user.user_metadata?.phone ?? existingProfile?.phone ?? null,
-      university_id: existingProfile?.university_id ?? null,
-      avatar_url: fallbackAvatar,
-      is_verified_student: existingProfile?.is_verified_student ?? false,
-      created_at: existingProfile?.created_at,
-      updated_at: new Date().toISOString(),
-    })
-    .select()
-    .single();
+  const profilePayload: Partial<ProfileRow> & { id: string } = {
+    id: user.id,
+    full_name: fullName,
+    phone: user.user_metadata?.phone ?? existingProfile?.phone ?? null,
+    university_id: existingProfile?.university_id ?? null,
+    avatar_url: fallbackAvatar,
+    is_verified_student: existingProfile?.is_verified_student ?? false,
+    created_at: existingProfile?.created_at,
+    updated_at: new Date().toISOString(),
+  };
 
-  if (error) {
+  try {
+    const data = await upsertProfile(profilePayload);
+    return data;
+  } catch {
     return null;
   }
-
-  return data as ProfileRow;
 }

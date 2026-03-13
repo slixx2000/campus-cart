@@ -49,7 +49,8 @@ create table public.profiles (
 );
 alter table public.profiles enable row level security;
 create policy "profiles_public_read"    on public.profiles for select using (true);
-create policy "profiles_owner_update"   on public.profiles for update using (auth.uid() = id);
+create policy "profiles_owner_insert"   on public.profiles for insert with check (auth.uid() = id);
+create policy "profiles_owner_update"   on public.profiles for update using (auth.uid() = id) with check (auth.uid() = id);
 
 -- Auto-create a profile row when a new user signs up
 create or replace function public.handle_new_user()
@@ -146,16 +147,40 @@ create policy "favorites_owner_all" on public.favorites
 
 -- ─── Reports ─────────────────────────────────────────────────
 create table public.reports (
-  id          uuid primary key default gen_random_uuid(),
-  listing_id  uuid not null references public.listings(id) on delete cascade,
-  reporter_id uuid not null references public.profiles(id) on delete cascade,
-  reason      text not null,
-  details     text,
-  created_at  timestamptz not null default now()
+  id               uuid primary key default gen_random_uuid(),
+  reporter_id      uuid not null references public.profiles(id) on delete cascade,
+  reported_user_id uuid references public.profiles(id) on delete set null,
+  listing_id       uuid references public.listings(id) on delete set null,
+  conversation_id  uuid,
+  report_type      text not null check (report_type in ('user', 'listing', 'conversation')),
+  reason           text not null,
+  details          text,
+  created_at       timestamptz not null default now()
 );
 alter table public.reports enable row level security;
 create policy "reports_owner_insert" on public.reports
   for insert with check (auth.uid() = reporter_id);
+
+-- ─── Blocked Users ──────────────────────────────────────────
+-- A single directional edge: blocker_id -> blocked_id.
+-- If either direction exists between two users, messaging is disabled for both.
+create table public.blocked_users (
+  blocker_id  uuid not null references public.profiles(id) on delete cascade,
+  blocked_id  uuid not null references public.profiles(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  constraint blocked_users_no_self_block check (blocker_id <> blocked_id),
+  primary key (blocker_id, blocked_id)
+);
+
+create index idx_blocked_users_blocked on public.blocked_users(blocked_id);
+
+alter table public.blocked_users enable row level security;
+create policy "blocked_users_owner_read" on public.blocked_users
+  for select using (auth.uid() = blocker_id or auth.uid() = blocked_id);
+create policy "blocked_users_owner_insert" on public.blocked_users
+  for insert with check (auth.uid() = blocker_id);
+create policy "blocked_users_owner_delete" on public.blocked_users
+  for delete using (auth.uid() = blocker_id);
 
 -- ─── Reference Data Seed ─────────────────────────────────────
 insert into public.universities (code, name, short_name, city, province) values
@@ -179,6 +204,102 @@ insert into public.categories (slug, name, material_icon, color_class) values
   ('home-dorm',          'Home & Dorm',           'chair_alt',     'bg-indigo-100 text-indigo-600'),
   ('tutoring',           'Tutoring',              'school',        'bg-red-100 text-red-600'),
   ('other',              'Other',                 'inventory_2',   'bg-slate-100 text-slate-600');
+
+-- ─── Conversations ───────────────────────────────────────────
+-- One conversation per (listing, buyer) pair. A buyer can only start
+-- one thread per listing; the seller is denormalized for fast access.
+create table public.conversations (
+  id          uuid primary key default gen_random_uuid(),
+  listing_id  uuid not null references public.listings(id) on delete cascade,
+  buyer_id    uuid not null references public.profiles(id) on delete cascade,
+  seller_id   uuid not null references public.profiles(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  constraint conversations_listing_buyer_unique unique (listing_id, buyer_id)
+);
+
+create index idx_conversations_buyer  on public.conversations(buyer_id, updated_at desc);
+create index idx_conversations_seller on public.conversations(seller_id, updated_at desc);
+
+alter table public.conversations enable row level security;
+-- Only participants can view their conversations
+create policy "conversations_participant_select" on public.conversations
+  for select using (auth.uid() = buyer_id or auth.uid() = seller_id);
+-- Only the buyer can create a conversation (they are the initiator)
+create policy "conversations_buyer_insert" on public.conversations
+  for insert with check (
+    auth.uid() = buyer_id
+    and not exists (
+      select 1
+      from public.blocked_users b
+      where (b.blocker_id = buyer_id and b.blocked_id = seller_id)
+         or (b.blocker_id = seller_id and b.blocked_id = buyer_id)
+    )
+  );
+
+-- Auto-bump updated_at when a message is sent
+create or replace function public.touch_conversation()
+returns trigger language plpgsql as $$
+begin
+  update public.conversations set updated_at = now() where id = new.conversation_id;
+  return new;
+end;
+$$;
+
+-- ─── Messages ────────────────────────────────────────────────
+-- expires_at defaults to 24 hours after creation; the frontend must
+-- never render messages where expires_at < current time.
+create table public.messages (
+  id               uuid primary key default gen_random_uuid(),
+  conversation_id  uuid not null references public.conversations(id) on delete cascade,
+  sender_id        uuid not null references public.profiles(id) on delete cascade,
+  content          text not null check (char_length(content) between 1 and 4000),
+  expires_at       timestamptz not null default (now() + interval '24 hours'),
+  created_at       timestamptz not null default now()
+);
+
+create index idx_messages_conversation on public.messages(conversation_id, created_at desc);
+
+alter table public.messages enable row level security;
+
+-- Only participants of the parent conversation can see messages
+create policy "messages_participant_select" on public.messages
+  for select using (
+    exists (
+      select 1 from public.conversations c
+      where c.id = messages.conversation_id
+        and (c.buyer_id = auth.uid() or c.seller_id = auth.uid())
+    )
+  );
+
+-- Only a participant who is also the sender can insert
+create policy "messages_participant_insert" on public.messages
+  for insert with check (
+    auth.uid() = sender_id
+    and exists (
+      select 1 from public.conversations c
+      where c.id = messages.conversation_id
+        and (c.buyer_id = auth.uid() or c.seller_id = auth.uid())
+    )
+    and not exists (
+      select 1
+      from public.conversations c
+      join public.blocked_users b
+        on (
+          (b.blocker_id = c.buyer_id and b.blocked_id = c.seller_id)
+          or (b.blocker_id = c.seller_id and b.blocked_id = c.buyer_id)
+        )
+      where c.id = messages.conversation_id
+    )
+  );
+
+create trigger messages_touch_conversation
+  after insert on public.messages
+  for each row execute procedure public.touch_conversation();
+
+-- Enable Supabase Realtime for the messages table so clients can
+-- subscribe to live INSERTs via postgres_changes.
+alter publication supabase_realtime add table public.messages;
 
 -- ─── Storage Bucket ──────────────────────────────────────────
 -- Run in Supabase Dashboard > Storage, or via management API:

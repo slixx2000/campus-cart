@@ -74,6 +74,12 @@ export default function HeaderClient({ user }: HeaderClientProps) {
           {user ? (
             <>
               <Link
+                href="/messages"
+                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+              >
+                Messages
+              </Link>
+              <Link
                 href="/profile"
                 className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
               >
@@ -156,6 +162,13 @@ export default function HeaderClient({ user }: HeaderClientProps) {
             </Link>
             {user ? (
               <>
+                <Link
+                  href="/messages"
+                  onClick={() => setMenuOpen(false)}
+                  className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
+                >
+                  Messages
+                </Link>
                 <Link
                   href="/profile"
                   onClick={() => setMenuOpen(false)}

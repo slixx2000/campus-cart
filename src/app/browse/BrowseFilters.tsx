@@ -9,12 +9,14 @@ interface BrowseFiltersProps {
   categories: CategoryRow[];
   count: number;
   children: ReactNode;
+  showPagination?: boolean;
 }
 
 export default function BrowseFilters({
   categories,
   count,
   children,
+  showPagination = true,
 }: BrowseFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -242,7 +244,7 @@ export default function BrowseFilters({
 
           {children}
 
-          {count > 12 && (
+          {showPagination && count > 12 && (
             <div className="flex justify-center gap-2 mt-6">
               <button
                 onClick={() => push({ page: String(Math.max(1, currentPage - 1)) })}

@@ -34,16 +34,35 @@ export async function updateProfileAvatarAction(
     return { message: "You must be signed in to update your avatar." };
   }
 
-  const { error: profileError } = await supabase
+  const { data: updatedProfile, error: profileError } = await supabase
     .from("profiles")
-    .upsert({
+    .update({
+      avatar_url: parsed.data.avatarUrl,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", user.id)
+    .select("id")
+    .maybeSingle();
+
+  if (profileError) {
+    return { message: `Avatar update failed: ${profileError.message}` };
+  }
+
+  if (!updatedProfile) {
+    const { error: insertError } = await supabase.from("profiles").insert({
       id: user.id,
+      full_name: user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "CampusCart User",
+      phone: (user.user_metadata?.phone as string | undefined) ?? null,
       avatar_url: parsed.data.avatarUrl,
       updated_at: new Date().toISOString(),
     });
 
-  if (profileError) {
-    return { message: `Avatar update failed: ${profileError.message}` };
+    if (insertError) {
+      return {
+        message:
+          "Avatar update failed: Profile row missing and insert was blocked by RLS. Add an INSERT policy like with check (auth.uid() = id).",
+      };
+    }
   }
 
   const { error: authError } = await supabase.auth.updateUser({

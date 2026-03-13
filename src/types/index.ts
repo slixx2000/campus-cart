@@ -28,6 +28,8 @@ export interface Listing {
   category: Category;
   condition?: Condition;
   university: string;
+  universityShortName?: string;
+  isNearby?: boolean;
   sellerId?: string;
   sellerName: string;
   sellerPhone: string;

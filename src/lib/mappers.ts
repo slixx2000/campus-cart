@@ -20,6 +20,7 @@ export function dbListingToUi(row: ListingWithRelations): Listing {
     category: (row.categories?.name ?? "Other") as Category,
     condition: conditionToUi(row.condition),
     university: row.universities?.name ?? "",
+    universityShortName: row.universities?.short_name ?? undefined,
     sellerId: row.profiles?.id,
     sellerName: row.profiles?.full_name ?? "Unknown Seller",
     sellerPhone: row.profiles?.phone ?? "",
