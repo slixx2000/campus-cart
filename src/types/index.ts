@@ -35,6 +35,8 @@ export interface Listing {
   sellerPhone: string;
   sellerAvatarUrl?: string;
   images: string[];
+  viewCount?: number;
+  lastBumpedAt?: string;
   createdAt: string;
   featured?: boolean;
   isService?: boolean;

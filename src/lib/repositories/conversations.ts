@@ -107,7 +107,7 @@ export async function getConversationsForUser(
 
   if (error) throw new Error(error.message);
 
-  const rows = (data ?? []) as ConversationWithRelations[];
+  const rows = (data ?? []) as unknown as ConversationWithRelations[];
 
   if (rows.length === 0) return [];
 
@@ -216,7 +216,7 @@ export async function getConversationById(
 
   if (error || !data) return null;
 
-  const conv = data as ConversationWithRelations;
+  const conv = data as unknown as ConversationWithRelations;
 
   // Access check — participant guard (belt plus RLS suspenders).
   if (conv.buyer_id !== userId && conv.seller_id !== userId) return null;

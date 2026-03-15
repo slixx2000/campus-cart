@@ -24,6 +24,12 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@campuscart/shared": [
+        "./packages/shared/src/index.ts"
+      ],
+      "@campuscart/shared/*": [
+        "./packages/shared/src/*"
       ]
     },
     "target": "ES2017"
@@ -35,6 +41,8 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "mobile",
+    "packages"
   ]
 }

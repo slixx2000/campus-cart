@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "CampusCart",
+    "slug": "campus-cart-mobile",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
+    "android": {
+      "package": "com.campuscart.mobile"
+    },
+    "ios": {
+      "bundleIdentifier": "com.campuscart.mobile",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "CampusCart needs access to your photos so you can upload listing images.",
+        "NSPhotoLibraryAddUsageDescription": "CampusCart may save listing photos when you choose to export edited images."
+      }
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

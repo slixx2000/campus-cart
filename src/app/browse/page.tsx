@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import ProductCard from "@/components/ProductCard";
+import BrowseScrollRestorer from "@/components/BrowseScrollRestorer";
+import ProgressiveListingGrid from "@/components/ProgressiveListingGrid";
 import { getListings } from "@/lib/repositories/listings";
 import { getAllCategories } from "@/lib/repositories/universities";
 import { dbListingToUi } from "@/lib/mappers";
@@ -65,6 +66,14 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
 
   const featuredListings = allListings.filter((listing) => listing.featured);
   const nearbyListings = allListings.filter((listing) => listing.isNearby);
+  const browseStateKey = JSON.stringify({
+    q: sp.q ?? "",
+    category: sp.category ?? "",
+    university: sp.university ?? "",
+    maxPrice: sp.maxPrice ?? "",
+    type: sp.type ?? "",
+    sort: sp.sort ?? "",
+  });
 
   const renderSection = (title: string, items: Listing[]) => (
     <section className="space-y-4">
@@ -81,11 +90,7 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
           Nothing to show in this section yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((listing) => (
-            <ProductCard key={`${title}-${listing.id}`} listing={listing} />
-          ))}
-        </div>
+        <ProgressiveListingGrid items={items} storageKey={`${browseStateKey}:${title}`} />
       )}
     </section>
   );
@@ -93,6 +98,7 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+        <BrowseScrollRestorer storageKey={browseStateKey} />
         <div className="mb-8 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>

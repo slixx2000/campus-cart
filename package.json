@@ -2,20 +2,33 @@
   "name": "campus-cart",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "mobile",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "mobile:start": "npm run -w mobile start",
+    "mobile:android": "npm run -w mobile android",
+    "mobile:ios": "npm run -w mobile ios",
+    "mobile:web": "npm run -w mobile web",
+    "shared:typecheck": "npm run -w @campuscart/shared typecheck"
   },
   "dependencies": {
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.1",
     "browser-image-compression": "^2.0.2",
     "next": "15.5.12",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "zod": "^4.3.6"
+  },
+  "overrides": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20",

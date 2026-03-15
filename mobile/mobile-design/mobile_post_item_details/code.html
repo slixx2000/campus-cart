@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b9dee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>CampusCart - Post Listing</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-md mx-auto bg-white dark:bg-slate-900 min-h-screen flex flex-col shadow-xl">
+<!-- Top Navigation -->
+<div class="flex items-center p-4 justify-between border-b border-slate-100 dark:border-slate-800">
+<button class="text-slate-900 dark:text-slate-100 flex size-10 items-center justify-center rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-lg font-bold flex-1 text-center">Post Listing</h2>
+<div class="size-10"></div> <!-- Spacer for centering -->
+</div>
+<!-- Progress Indicator -->
+<div class="flex flex-col items-center gap-3 py-6">
+<div class="flex flex-row items-center gap-3">
+<div class="h-2.5 w-2.5 rounded-full bg-primary/30"></div>
+<div class="h-2.5 w-10 rounded-full bg-primary"></div>
+<div class="h-2.5 w-2.5 rounded-full bg-primary/30"></div>
+</div>
+<p class="text-sm font-semibold text-primary">Step 2 of 3: Item Details</p>
+</div>
+<!-- Form Content -->
+<div class="flex-1 px-6 space-y-6">
+<div>
+<h3 class="text-2xl font-bold tracking-tight">Tell us about your item</h3>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Provide clear details to help students find your listing.</p>
+</div>
+<!-- Title Input -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Listing Title
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary p-4 text-base shadow-sm" placeholder="e.g., MacBook Pro 2021 M1" type="text"/>
+</label></div>
+<!-- Category Dropdown -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Category
+<div class="relative">
+<select class="w-full appearance-none rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary p-4 text-base shadow-sm">
+<option disabled="" selected="" value="">Select category</option>
+<option value="electronics">Electronics</option>
+<option value="textbooks">Textbooks</option>
+<option value="furniture">Furniture</option>
+<option value="clothing">Clothing</option>
+<option value="other">Other</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</label></div>
+<!-- Price Input -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Price
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-500">ZMW</div>
+<input class="w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 focus:ring-primary focus:border-primary p-4 pl-16 text-base shadow-sm" placeholder="0.00" type="number"/>
+</div>
+</label></div>
+<!-- Condition Segmented Picker -->
+<div class="flex flex-col gap-2">
+<label class="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">Condition
+<div class="grid grid-cols-3 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+<button class="py-2.5 px-2 text-sm font-medium rounded-lg bg-white dark:bg-slate-700 shadow-sm text-primary ring-1 ring-slate-200 dark:ring-slate-600">New</button>
+<button class="py-2.5 px-2 text-sm font-medium rounded-lg text-slate-500 hover:bg-white/50 dark:hover:bg-slate-700/50 transition-all">Used - Like New</button>
+<button class="py-2.5 px-2 text-sm font-medium rounded-lg text-slate-500 hover:bg-white/50 dark:hover:bg-slate-700/50 transition-all">Used - Fair</button>
+</div>
+</label></div>
+</div>
+<!-- Bottom Actions -->
+<div class="p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-4">
+<button class="flex-1 py-4 px-6 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                Back
+            </button>
+<button class="flex-[2] py-4 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                Next Step
+                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

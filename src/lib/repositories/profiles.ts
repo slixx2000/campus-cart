@@ -58,7 +58,7 @@ export async function upsertProfile(
 ): Promise<ProfileRow> {
   const supabase = await createClient();
   const payload = { ...profile, updated_at: new Date().toISOString() };
-  const { id, ...updatePayload } = payload;
+  const { ...updatePayload } = payload;
 
   const { data: updated, error: updateError } = await supabase
     .from("profiles")

@@ -48,7 +48,7 @@ export default function ConversationList({
               No conversations yet
             </p>
             <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
-              Browse listings and click "Message Seller" to start one.
+              Browse listings and click &quot;Message Seller&quot; to start one.
             </p>
           </div>
         ) : (

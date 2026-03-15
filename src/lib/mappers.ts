@@ -26,6 +26,8 @@ export function dbListingToUi(row: ListingWithRelations): Listing {
     sellerPhone: row.profiles?.phone ?? "",
     sellerAvatarUrl: row.profiles?.avatar_url ?? undefined,
     images,
+    viewCount: Number(row.view_count ?? 0),
+    lastBumpedAt: row.last_bumped_at,
     createdAt: row.created_at,
     featured: row.featured,
     isService: row.is_service,

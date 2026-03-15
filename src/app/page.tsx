@@ -1,18 +1,65 @@
 import Link from "next/link";
-import ProductCard from "@/components/ProductCard";
 import CategoryCard from "@/components/CategoryCard";
 import UniversityLinksGrid from "@/components/UniversityLinksGrid";
+import HomeFeedSections from "@/components/HomeFeedSections";
 import { CATEGORIES } from "@/lib/data";
-import { getFeaturedListings, getRecentListings } from "@/lib/repositories/listings";
+import {
+  getNewListingsPage,
+  getNearbyListingsPage,
+  getRecentlyActiveListingsPage,
+} from "@/lib/repositories/listings";
+import { TimeoutError, withTimeout } from "@/lib/asyncTimeout";
 import { dbListingToUi } from "@/lib/mappers";
+import { createClient } from "@/lib/supabase/server";
+
+const HOME_PAGE_FEED_TIMEOUT_MS = 4_500;
 
 export default async function HomePage() {
-  const [featuredRows, recentRows] = await Promise.all([
-    getFeaturedListings(8),
-    getRecentListings(8),
-  ]);
-  const featuredListings = featuredRows.map(dbListingToUi);
-  const recentListings = recentRows.map(dbListingToUi);
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const userUniversityId = user
+    ? (
+        await supabase
+          .from("profiles")
+          .select("university_id")
+          .eq("id", user.id)
+          .maybeSingle()
+      ).data?.university_id ?? null
+    : null;
+
+  // Liquidity feed slices are all loaded server-side so the first payload
+  // already reflects freshness, proximity, and recent interaction activity.
+  let newRows: Awaited<ReturnType<typeof getNewListingsPage>> = [];
+  let nearbyRows: Awaited<ReturnType<typeof getNearbyListingsPage>> | [] = [];
+  let recentlyActiveRows: Awaited<ReturnType<typeof getRecentlyActiveListingsPage>> = [];
+
+  try {
+    [newRows, nearbyRows, recentlyActiveRows] = await withTimeout(
+      Promise.all([
+        getNewListingsPage(0, 20),
+        userUniversityId ? getNearbyListingsPage(userUniversityId, 0, 20) : Promise.resolve([]),
+        getRecentlyActiveListingsPage(0, 20),
+      ]),
+      HOME_PAGE_FEED_TIMEOUT_MS,
+      "Timed out while loading homepage feed"
+    );
+  } catch (error) {
+    if (!(error instanceof TimeoutError)) {
+      throw error;
+    }
+
+    console.warn("home-page-feed", {
+      event: "timeout-fallback-empty",
+      userId: user?.id ?? null,
+    });
+  }
+
+  const newListings = newRows.map(dbListingToUi);
+  const nearbyListings = nearbyRows.map(dbListingToUi);
+  const recentlyActiveListings = recentlyActiveRows.map(dbListingToUi);
 
   return (
     <div className="bg-background-light transition-colors dark:bg-background-dark">
@@ -97,59 +144,12 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Trending Listings */}
-      <section className="max-w-[1200px] mx-auto px-6 mt-20 pb-6">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
-            <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
-              trending_up
-            </span>
-            Trending Listings
-          </h2>
-          <Link
-            href="/browse"
-            className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
-          >
-            View all{" "}
-            <span className="material-symbols-outlined text-sm">
-              arrow_forward
-            </span>
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredListings.map((listing) => (
-            <ProductCard key={listing.id} listing={listing} />
-          ))}
-        </div>
-      </section>
-
-      {/* Recent Listings */}
-      <section className="bg-white py-16 dark:bg-primary/5 dark:border-y dark:border-primary/10">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
-              <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
-                schedule
-              </span>
-              Recent Listings
-            </h2>
-            <Link
-              href="/browse"
-              className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
-            >
-              View all{" "}
-              <span className="material-symbols-outlined text-sm">
-                arrow_forward
-              </span>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {recentListings.map((listing) => (
-              <ProductCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <HomeFeedSections
+        initialNewListings={newListings}
+        initialNearbyListings={nearbyListings}
+        initialRecentlyActiveListings={recentlyActiveListings}
+        hasNearbyUniversity={Boolean(userUniversityId)}
+      />
 
       {/* Partner Universities */}
       <section className="max-w-[1200px] mx-auto px-6 py-16">

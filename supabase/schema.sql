@@ -82,6 +82,8 @@ create table public.listings (
   is_service    boolean not null default false,
   featured      boolean not null default false,
   status        public.listing_status not null default 'active',
+  last_bumped_at timestamptz not null default now(),
+  view_count     bigint not null default 0 check (view_count >= 0),
   created_at    timestamptz not null default now(),
   updated_at    timestamptz not null default now(),
   deleted_at    timestamptz
@@ -93,12 +95,23 @@ create index idx_listings_category         on public.listings(category_id) where
 create index idx_listings_university       on public.listings(university_id) where deleted_at is null;
 create index idx_listings_seller           on public.listings(seller_id);
 create index idx_listings_featured         on public.listings(featured) where status = 'active' and deleted_at is null;
+create index idx_listings_recent_activity  on public.listings(last_bumped_at desc) where status = 'active' and deleted_at is null;
+create index idx_listings_feed_status_bump on public.listings(status, last_bumped_at desc) where status = 'active' and deleted_at is null;
+create index idx_listings_feed_university_bump on public.listings(university_id, last_bumped_at desc) where status = 'active' and deleted_at is null;
 
 alter table public.listings enable row level security;
 create policy "listings_public_read" on public.listings
   for select using (status = 'active' and deleted_at is null);
 create policy "listings_owner_insert" on public.listings
-  for insert with check (auth.uid() = seller_id);
+  for insert with check (
+    auth.uid() = seller_id
+    and (
+      select count(*)
+      from public.listings l
+      where l.seller_id = auth.uid()
+        and l.created_at >= (now() - interval '1 hour')
+    ) < 10
+  );
 create policy "listings_owner_update" on public.listings
   for update using (auth.uid() = seller_id);
 create policy "listings_owner_delete" on public.listings
@@ -112,6 +125,88 @@ $$;
 create trigger listings_updated_at
   before update on public.listings
   for each row execute procedure public.set_updated_at();
+
+-- Atomic view counter used by the product detail page.
+create or replace function public.increment_listing_view(p_listing_id uuid)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  update public.listings
+  set view_count = view_count + 1
+  where id = p_listing_id
+    and deleted_at is null;
+end;
+$$;
+
+create table public.listing_bump_events (
+  id uuid primary key default gen_random_uuid(),
+  listing_id uuid not null references public.listings(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  request_id text not null,
+  bumped_at timestamptz not null default now(),
+  constraint listing_bump_events_request_unique unique (listing_id, user_id, request_id)
+);
+
+create index idx_listing_bump_events_listing_bumped on public.listing_bump_events(listing_id, bumped_at desc);
+alter table public.listing_bump_events enable row level security;
+create policy "listing_bump_events_owner_read" on public.listing_bump_events
+  for select using (auth.uid() = user_id);
+create policy "listing_bump_events_owner_insert" on public.listing_bump_events
+  for insert with check (auth.uid() = user_id);
+
+create or replace function public.bump_listing(p_listing_id uuid, p_request_id text default null)
+returns void language plpgsql security definer set search_path = public as $$
+declare
+  v_listing public.listings%rowtype;
+begin
+  if auth.uid() is null then
+    raise exception 'You must sign in to bump listings.';
+  end if;
+
+  select *
+  into v_listing
+  from public.listings
+  where id = p_listing_id
+  for update;
+
+  if not found then
+    raise exception 'Listing not found.';
+  end if;
+
+  if p_request_id is not null and exists (
+    select 1
+    from public.listing_bump_events e
+    where e.listing_id = p_listing_id
+      and e.user_id = auth.uid()
+      and e.request_id = p_request_id
+  ) then
+    return;
+  end if;
+
+  if v_listing.seller_id <> auth.uid() then
+    raise exception 'Only the listing owner can bump this listing.';
+  end if;
+
+  if v_listing.status <> 'active' or v_listing.deleted_at is not null then
+    raise exception 'Only active listings can be bumped.';
+  end if;
+
+  if v_listing.last_bumped_at > now() - interval '24 hours' then
+    raise exception 'You can only bump this listing once every 24 hours.';
+  end if;
+
+  update public.listings
+  set last_bumped_at = now()
+  where id = p_listing_id;
+
+  if p_request_id is not null then
+    insert into public.listing_bump_events(listing_id, user_id, request_id)
+    values (p_listing_id, auth.uid(), p_request_id)
+    on conflict do nothing;
+  end if;
+end;
+$$;
+
+grant execute on function public.bump_listing(uuid, text) to authenticated;
 
 -- ─── Listing Images ──────────────────────────────────────────
 create table public.listing_images (
@@ -160,6 +255,14 @@ create table public.reports (
 alter table public.reports enable row level security;
 create policy "reports_owner_insert" on public.reports
   for insert with check (auth.uid() = reporter_id);
+
+create unique index reports_unique_listing_report
+  on public.reports(reporter_id, listing_id)
+  where report_type = 'listing' and listing_id is not null;
+
+create unique index reports_unique_user_report
+  on public.reports(reporter_id, reported_user_id)
+  where report_type = 'user' and reported_user_id is not null;
 
 -- ─── Blocked Users ──────────────────────────────────────────
 -- A single directional edge: blocker_id -> blocked_id.
@@ -239,9 +342,20 @@ create policy "conversations_buyer_insert" on public.conversations
 
 -- Auto-bump updated_at when a message is sent
 create or replace function public.touch_conversation()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql security definer set search_path = public as $$
 begin
   update public.conversations set updated_at = now() where id = new.conversation_id;
+
+  -- Liquidity loop: every message bumps listing activity so recently active
+  -- feeds can surface listings that are actively being discussed.
+  update public.listings
+  set last_bumped_at = now()
+  where id = (
+    select c.listing_id
+    from public.conversations c
+    where c.id = new.conversation_id
+  );
+
   return new;
 end;
 $$;

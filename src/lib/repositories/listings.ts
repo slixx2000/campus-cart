@@ -21,6 +21,12 @@ export type ListingsFilter = {
   disablePagination?: boolean;
 };
 
+export type ScoredListing = ListingWithRelations & {
+  feed_score: number;
+};
+
+const HOME_FEED_PAGE_SIZE = 20;
+
 export async function getListings(
   filter: ListingsFilter = {}
 ): Promise<{ data: ListingWithRelations[]; count: number }> {
@@ -86,7 +92,7 @@ export async function getListings(
 
   const { data, error, count } = await q;
   if (error) throw new Error(error.message);
-  return { data: (data as ListingWithRelations[]) ?? [], count: count ?? 0 };
+  return { data: (data as unknown as ListingWithRelations[]) ?? [], count: count ?? 0 };
 }
 
 export async function getFeaturedListings(
@@ -102,7 +108,7 @@ export async function getFeaturedListings(
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw new Error(error.message);
-  return (data as ListingWithRelations[]) ?? [];
+  return (data as unknown as ListingWithRelations[]) ?? [];
 }
 
 export async function getRecentListings(
@@ -117,7 +123,156 @@ export async function getRecentListings(
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw new Error(error.message);
-  return (data as ListingWithRelations[]) ?? [];
+  return (data as unknown as ListingWithRelations[]) ?? [];
+}
+
+export async function getNewListings(
+  limit = 8
+): Promise<ListingWithRelations[]> {
+  if (limit !== HOME_FEED_PAGE_SIZE) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("listings")
+      .select(LISTING_SELECT)
+      .eq("status", "active")
+      .is("deleted_at", null)
+      .order("last_bumped_at", { ascending: false })
+      .limit(limit);
+    if (error) throw new Error(error.message);
+    return (data as unknown as ListingWithRelations[]) ?? [];
+  }
+
+  return getNewListingsPage(0, HOME_FEED_PAGE_SIZE);
+}
+
+export async function getNewListingsPage(
+  page: number,
+  pageSize = HOME_FEED_PAGE_SIZE
+): Promise<ListingWithRelations[]> {
+  const supabase = await createClient();
+  const from = Math.max(0, page) * pageSize;
+  const to = from + pageSize - 1;
+  const { data, error } = await supabase
+    .from("listings")
+    .select(LISTING_SELECT)
+    .eq("status", "active")
+    .is("deleted_at", null)
+    .order("last_bumped_at", { ascending: false })
+    .range(from, to);
+  if (error) throw new Error(error.message);
+  return (data as unknown as ListingWithRelations[]) ?? [];
+}
+
+export async function getNearbyListings(
+  universityId: string,
+  limit = 8
+): Promise<ListingWithRelations[]> {
+  if (limit !== HOME_FEED_PAGE_SIZE) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("listings")
+      .select(LISTING_SELECT)
+      .eq("status", "active")
+      .is("deleted_at", null)
+      .eq("university_id", universityId)
+      .order("last_bumped_at", { ascending: false })
+      .limit(limit);
+    if (error) throw new Error(error.message);
+    return (data as unknown as ListingWithRelations[]) ?? [];
+  }
+
+  return getNearbyListingsPage(universityId, 0, HOME_FEED_PAGE_SIZE);
+}
+
+export async function getNearbyListingsPage(
+  universityId: string,
+  page: number,
+  pageSize = HOME_FEED_PAGE_SIZE
+): Promise<ListingWithRelations[]> {
+  const supabase = await createClient();
+  const from = Math.max(0, page) * pageSize;
+  const to = from + pageSize - 1;
+  const { data, error } = await supabase
+    .from("listings")
+    .select(LISTING_SELECT)
+    .eq("status", "active")
+    .is("deleted_at", null)
+    .eq("university_id", universityId)
+    .order("last_bumped_at", { ascending: false })
+    .range(from, to);
+  if (error) throw new Error(error.message);
+  return (data as unknown as ListingWithRelations[]) ?? [];
+}
+
+export async function getRecentlyActiveListings(
+  limit = 8
+): Promise<ListingWithRelations[]> {
+  if (limit !== HOME_FEED_PAGE_SIZE) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("listings")
+      .select(LISTING_SELECT)
+      .eq("status", "active")
+      .is("deleted_at", null)
+      .order("last_bumped_at", { ascending: false })
+      .limit(limit);
+    if (error) throw new Error(error.message);
+    return (data as unknown as ListingWithRelations[]) ?? [];
+  }
+
+  return getRecentlyActiveListingsPage(0, HOME_FEED_PAGE_SIZE);
+}
+
+export async function getRecentlyActiveListingsPage(
+  page: number,
+  pageSize = HOME_FEED_PAGE_SIZE
+): Promise<ListingWithRelations[]> {
+  const supabase = await createClient();
+  const from = Math.max(0, page) * pageSize;
+  const to = from + pageSize - 1;
+  const { data, error } = await supabase
+    .from("listings")
+    .select(LISTING_SELECT)
+    .eq("status", "active")
+    .is("deleted_at", null)
+    .order("last_bumped_at", { ascending: false })
+    .range(from, to);
+  if (error) throw new Error(error.message);
+  return (data as unknown as ListingWithRelations[]) ?? [];
+}
+
+export function scoreListingsForFeed(rows: ListingWithRelations[]): ScoredListing[] {
+  const now = Date.now();
+
+  return [...rows]
+    .map((row) => {
+      const hoursSinceBump = Math.max(
+        0,
+        (now - new Date(row.last_bumped_at).getTime()) / (1000 * 60 * 60)
+      );
+
+      // Score blends recent activity (decays over time) with popularity.
+      const recencyScore = Math.max(0, 120 - hoursSinceBump * 4);
+      const popularityScore = Math.log10(Number(row.view_count ?? 0) + 1) * 18;
+      const feedScore = recencyScore + popularityScore;
+
+      return {
+        ...row,
+        feed_score: feedScore,
+      };
+    })
+    .sort((a, b) => b.feed_score - a.feed_score);
+}
+
+export async function incrementListingViewCount(listingId: string): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("increment_listing_view", {
+    p_listing_id: listingId,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }
 
 export async function getListingById(
@@ -132,7 +287,7 @@ export async function getListingById(
     .is("deleted_at", null)
     .single();
   if (error) return null;
-  return data as ListingWithRelations;
+  return data as unknown as ListingWithRelations;
 }
 
 export async function getRelatedListings(
@@ -151,7 +306,7 @@ export async function getRelatedListings(
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw new Error(error.message);
-  return (data as ListingWithRelations[]) ?? [];
+  return (data as unknown as ListingWithRelations[]) ?? [];
 }
 
 export async function getListingsByUser(
@@ -165,5 +320,5 @@ export async function getListingsByUser(
     .is("deleted_at", null)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return (data as ListingWithRelations[]) ?? [];
+  return (data as unknown as ListingWithRelations[]) ?? [];
 }

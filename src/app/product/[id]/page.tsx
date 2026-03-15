@@ -4,7 +4,11 @@ import Link from "next/link";
 import { formatPrice, CATEGORIES } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 import AvatarImage from "@/components/AvatarImage";
-import { getListingById, getRelatedListings } from "@/lib/repositories/listings";
+import {
+  getListingById,
+  getRelatedListings,
+  incrementListingViewCount,
+} from "@/lib/repositories/listings";
 import { dbListingToUi } from "@/lib/mappers";
 import { createClient } from "@/lib/supabase/server";
 import { startConversationAction } from "@/app/messages/actions";
@@ -28,6 +32,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const [relatedRows, { data: { user } }] = await Promise.all([
     getRelatedListings(row.id, row.category_id),
     supabase.auth.getUser(),
+    // Keep this non-blocking for UX; feed analytics should never break page load.
+    incrementListingViewCount(row.id).catch(() => undefined),
   ]);
   const related = relatedRows.map(dbListingToUi);
 

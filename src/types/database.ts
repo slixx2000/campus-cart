@@ -59,6 +59,8 @@ export type ListingRow = {
   is_service: boolean;
   featured: boolean;
   status: ListingStatus;
+  last_bumped_at: string;
+  view_count: number;
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
@@ -153,11 +155,13 @@ export type Database = {
       };
       listings: {
         Row: ListingRow;
-        Insert: Omit<ListingRow, "id" | "created_at" | "updated_at" | "deleted_at"> & {
+        Insert: Omit<ListingRow, "id" | "created_at" | "updated_at" | "deleted_at" | "last_bumped_at" | "view_count"> & {
           id?: string;
           created_at?: string;
           updated_at?: string;
           deleted_at?: string | null;
+          last_bumped_at?: string;
+          view_count?: number;
           status?: ListingStatus;
           featured?: boolean;
         };
@@ -220,7 +224,12 @@ export type Database = {
       listing_status: ListingStatus;
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      increment_listing_view: {
+        Args: { p_listing_id: string };
+        Returns: undefined;
+      };
+    };
   };
 };
 

@@ -5,6 +5,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
+const MAX_LISTINGS_PER_HOUR = 10;
+const RATE_LIMIT_ERROR_MESSAGE = "You can post up to 10 listings per hour. Please wait before posting again.";
+
 const uploadedImageSchema = z.object({
   publicUrl: z.string().url(),
   storagePath: z.string().min(1),
@@ -78,6 +81,21 @@ export async function createListingAction(
     uploadedImages,
   } = parsed.data;
 
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const { count: recentCount, error: rateLimitError } = await supabase
+    .from("listings")
+    .select("id", { count: "exact", head: true })
+    .eq("seller_id", user.id)
+    .gte("created_at", oneHourAgo);
+
+  if (rateLimitError) {
+    return { message: rateLimitError.message };
+  }
+
+  if ((recentCount ?? 0) >= MAX_LISTINGS_PER_HOUR) {
+    return { message: RATE_LIMIT_ERROR_MESSAGE };
+  }
+
   // Insert listing row
   const { data: listing, error: listingError } = await supabase
     .from("listings")
@@ -102,6 +120,10 @@ export async function createListingAction(
       await supabase.storage
         .from("listing-images")
         .remove(uploadedImages.map((image) => image.storagePath));
+    }
+
+    if (listingError.message.toLowerCase().includes("row-level security")) {
+      return { message: RATE_LIMIT_ERROR_MESSAGE };
     }
 
     return { message: `Failed to create listing: ${listingError.message}` };

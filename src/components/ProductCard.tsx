@@ -15,8 +15,8 @@ export default function ProductCard({ listing }: ProductCardProps) {
     : universityLabelBase;
 
   return (
-    <Link href={`/product/${listing.id}`}>
-      <article className="overflow-hidden rounded-xl border border-slate-200 bg-white group transition-all hover:shadow-xl hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-xl dark:hover:border-primary/40 dark:hover:shadow-2xl dark:hover:shadow-primary/10">
+    <Link href={`/product/${listing.id}`} className="block h-full">
+      <article className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white group transition-all hover:shadow-xl hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-xl dark:hover:border-primary/40 dark:hover:shadow-2xl dark:hover:shadow-primary/10">
         {/* Image */}
         <div className="relative aspect-square overflow-hidden">
           <Image
@@ -47,7 +47,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
         </div>
 
         {/* Body */}
-        <div className="p-4">
+        <div className="flex flex-1 flex-col p-4">
           <div className="flex justify-between items-start mb-2">
             <h3 className="truncate pr-3 text-sm font-bold text-slate-900 dark:text-white">
               {listing.title}
@@ -76,7 +76,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
             </div>
           )}
 
-          <div className="mt-3 space-y-3 border-t border-slate-100 pt-3 dark:border-white/10">
+          <div className="mt-auto space-y-3 border-t border-slate-100 pt-3 dark:border-white/10">
             <div className="flex items-center gap-2">
               <div className="size-8 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
                 <AvatarImage
