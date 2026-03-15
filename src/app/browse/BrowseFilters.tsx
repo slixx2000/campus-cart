@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, type ReactNode } from "react";
+import MarketplaceSearchBar from "@/components/MarketplaceSearchBar";
 import { useUniversities } from "@/hooks/useUniversities";
 import type { CategoryRow } from "@/types/database";
 
@@ -64,22 +65,12 @@ export default function BrowseFilters({
 
             {/* Search */}
             <div className="mb-6">
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-xl">
-                  search
-                </span>
-                <input
-                  type="text"
-                  defaultValue={get("q")}
-                  placeholder="Search listings..."
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter")
-                      push({ q: (e.target as HTMLInputElement).value });
-                  }}
-                  onBlur={(e) => push({ q: e.target.value })}
-                  className="w-full rounded-full border border-slate-200 bg-slate-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
-                />
-              </div>
+              <MarketplaceSearchBar
+                initialValue={get("q")}
+                placeholder="Search listings..."
+                onSubmitQuery={(nextQuery) => push({ q: nextQuery })}
+                inputClassName="w-full rounded-full border border-slate-200 bg-slate-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+              />
             </div>
 
             {/* Category */}

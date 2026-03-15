@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { signOutAction } from "@/app/auth/actions";
+import MarketplaceSearchBar from "@/components/MarketplaceSearchBar";
 import ThemeToggle from "@/components/ThemeToggle";
 
 interface HeaderClientProps {
@@ -12,15 +12,6 @@ interface HeaderClientProps {
 
 export default function HeaderClient({ user }: HeaderClientProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/browse?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 md:px-8 py-3 border-b border-primary/10 bg-background-light/80 backdrop-blur-md dark:border-primary/20 dark:bg-background-dark/80">
@@ -37,23 +28,11 @@ export default function HeaderClient({ user }: HeaderClientProps) {
           </Link>
 
           {/* Desktop search */}
-          <form
-            onSubmit={handleSearch}
+          <MarketplaceSearchBar
             className="hidden md:flex flex-1 min-w-[280px] xl:min-w-[380px]"
-          >
-            <div className="relative w-full group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-                <span className="material-symbols-outlined">search</span>
-              </div>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search textbooks, electronics, services..."
-                className="block w-full pl-10 pr-3 py-2 border-none bg-slate-200/60 rounded-full text-sm placeholder-slate-500 focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none dark:bg-primary/10 dark:text-white dark:placeholder:text-slate-400 dark:focus:bg-white/10"
-              />
-            </div>
-          </form>
+            placeholder="Search textbooks, electronics, services..."
+            inputClassName="block w-full rounded-full border-none bg-slate-200/60 py-2 pl-10 pr-3 text-sm text-slate-900 placeholder-slate-500 outline-none transition-all focus:bg-white focus:ring-2 focus:ring-primary dark:bg-primary/10 dark:text-white dark:placeholder:text-slate-400 dark:focus:bg-white/10"
+          />
         </div>
 
         {/* Desktop nav */}
@@ -128,20 +107,11 @@ export default function HeaderClient({ user }: HeaderClientProps) {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 px-4 pb-4 mt-3 dark:bg-background-dark dark:border-primary/10">
-          <form onSubmit={handleSearch} className="flex mt-3 mb-4">
-            <div className="relative w-full">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-xl">
-                search
-              </span>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="w-full pl-10 pr-4 py-2 bg-slate-100 rounded-full text-sm border-none outline-none focus:ring-2 focus:ring-primary dark:bg-primary/10 dark:text-white dark:placeholder:text-slate-400"
-              />
-            </div>
-          </form>
+          <MarketplaceSearchBar
+            className="mt-3 mb-4 flex"
+            placeholder="Search..."
+            inputClassName="w-full rounded-full border-none bg-slate-100 py-2 pl-10 pr-4 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:bg-primary/10 dark:text-white dark:placeholder:text-slate-400"
+          />
           <div className="mb-3 flex justify-end">
             <ThemeToggle />
           </div>

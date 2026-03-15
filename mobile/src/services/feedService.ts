@@ -48,6 +48,12 @@ type ListingRowWithRelations = {
   listing_images: Array<{ public_url: string | null; sort_order: number }>;
 };
 
+type RankedSearchRow = {
+  listing_id: string;
+  combined_score: number;
+  total_count: number;
+};
+
 function toFeedThumbnailUrl(publicUrl: string): string {
   const marker = "/storage/v1/object/public/";
   const markerIndex = publicUrl.indexOf(marker);
@@ -394,6 +400,66 @@ export async function getSimilarListings(categoryName?: string): Promise<Listing
     .limit(12);
 
   return ((data ?? []) as unknown as ListingRowWithRelations[]).map(toFeedListing);
+}
+
+export async function searchListingsRanked(
+  query: string,
+  page = 0,
+  pageSize = 20
+): Promise<{ data: ListingSummary[]; count: number }> {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) {
+    return { data: [], count: 0 };
+  }
+
+  const supabase = getSupabaseClient();
+  const safePage = Math.max(0, page);
+  const safePageSize = Math.max(1, pageSize);
+
+  const { data: rankedRows, error: rankedError } = await supabase.rpc("search_listings_ranked", {
+    p_query: trimmedQuery,
+    p_page: safePage,
+    p_page_size: safePageSize,
+    p_category_id: null,
+    p_university_id: null,
+    p_max_price: null,
+    p_is_service: null,
+  });
+
+  if (rankedError) {
+    throw new Error(rankedError.message);
+  }
+
+  const ranked = (rankedRows ?? []) as unknown as RankedSearchRow[];
+  const orderedIds = ranked.map((row) => row.listing_id);
+  const totalCount = ranked[0]?.total_count ?? 0;
+
+  if (orderedIds.length === 0) {
+    return { data: [], count: 0 };
+  }
+
+  const { data: listingRows, error: listingError } = await supabase
+    .from("listings")
+    .select(LISTING_SELECT)
+    .in("id", orderedIds);
+
+  if (listingError) {
+    throw new Error(listingError.message);
+  }
+
+  const byId = new Map(
+    (((listingRows ?? []) as unknown as ListingRowWithRelations[]) ?? []).map((row) => [row.id, row])
+  );
+
+  const orderedResults = orderedIds
+    .map((id) => byId.get(id))
+    .filter((row): row is ListingRowWithRelations => Boolean(row))
+    .map(toFeedListing);
+
+  return {
+    data: orderedResults,
+    count: totalCount,
+  };
 }
 
 export async function addListingToFavorites(listingId: string): Promise<void> {

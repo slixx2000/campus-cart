@@ -52,6 +52,7 @@ export type ListingRow = {
   seller_id: string;
   title: string;
   description: string;
+  search_vector: string;
   price: number;
   category_id: string;
   university_id: string;
@@ -96,6 +97,12 @@ export type ReportRow = {
 export type BlockedUserRow = {
   blocker_id: string;
   blocked_id: string;
+  created_at: string;
+};
+
+export type SearchSynonymRow = {
+  word: string;
+  synonym: string;
   created_at: string;
 };
 
@@ -155,7 +162,7 @@ export type Database = {
       };
       listings: {
         Row: ListingRow;
-        Insert: Omit<ListingRow, "id" | "created_at" | "updated_at" | "deleted_at" | "last_bumped_at" | "view_count"> & {
+        Insert: Omit<ListingRow, "id" | "created_at" | "updated_at" | "deleted_at" | "last_bumped_at" | "view_count" | "search_vector"> & {
           id?: string;
           created_at?: string;
           updated_at?: string;
@@ -198,6 +205,12 @@ export type Database = {
         Update: Partial<BlockedUserRow>;
         Relationships: [];
       };
+      search_synonyms: {
+        Row: SearchSynonymRow;
+        Insert: Omit<SearchSynonymRow, "created_at"> & { created_at?: string };
+        Update: Partial<SearchSynonymRow>;
+        Relationships: [];
+      };
       conversations: {
         Row: ConversationRow;
         Insert: Omit<ConversationRow, "id" | "created_at" | "updated_at"> & {
@@ -228,6 +241,30 @@ export type Database = {
       increment_listing_view: {
         Args: { p_listing_id: string };
         Returns: undefined;
+      };
+      search_listings_ranked: {
+        Args: {
+          p_query: string;
+          p_page?: number;
+          p_page_size?: number;
+          p_category_id?: string | null;
+          p_university_id?: string | null;
+          p_max_price?: number | null;
+          p_is_service?: boolean | null;
+        };
+        Returns: Array<{
+          listing_id: string;
+          combined_score: number;
+          total_count: number;
+        }>;
+      };
+      search_listings: {
+        Args: { query_text: string };
+        Returns: Array<{
+          listing_id: string;
+          combined_score: number;
+          total_count: number;
+        }>;
       };
     };
   };

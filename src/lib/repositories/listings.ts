@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { ListingWithRelations } from "@/types/database";
 
-const LISTING_SELECT = `
+export const LISTING_SELECT = `
   *,
   categories ( id, name, slug, material_icon, color_class ),
   universities ( id, name, short_name, city ),
@@ -19,6 +19,18 @@ export type ListingsFilter = {
   page?: number;
   pageSize?: number;
   disablePagination?: boolean;
+};
+
+type RankedSearchRow = {
+  listing_id: string;
+  combined_score: number;
+  total_count: number;
+};
+
+type AdvancedSearchRow = {
+  listing_id: string;
+  combined_score: number;
+  total_count: number;
 };
 
 export type ScoredListing = ListingWithRelations & {
@@ -39,9 +51,128 @@ export async function getListings(
     isService,
     sortBy = "newest",
     page = 1,
-    pageSize = 12,
+    pageSize = 20,
     disablePagination = false,
   } = filter;
+
+  let categoryId: string | null = null;
+  let universityId: string | null = null;
+
+  if (category) {
+    const { data: cat } = await supabase
+      .from("categories")
+      .select("id")
+      .or(`slug.eq.${category},name.eq.${category}`)
+      .single();
+    categoryId = cat?.id ?? null;
+  }
+
+  if (university) {
+    const { data: uni } = await supabase
+      .from("universities")
+      .select("id")
+      .or(`code.eq.${university},name.ilike.%${university}%`)
+      .single();
+    universityId = uni?.id ?? null;
+  }
+
+  const trimmedQuery = query?.trim();
+  if (trimmedQuery) {
+    const hasAdvancedSearchFilters = Boolean(
+      categoryId || universityId || maxPrice !== undefined || isService !== undefined
+    );
+
+    if (!hasAdvancedSearchFilters) {
+      const { data: advancedRows, error: advancedError } = await supabase.rpc(
+        "search_listings",
+        {
+          query_text: trimmedQuery,
+        }
+      );
+
+      if (advancedError) {
+        throw new Error(advancedError.message);
+      }
+
+      const rows = (advancedRows ?? []) as unknown as AdvancedSearchRow[];
+      const orderedIds = rows.map((row) => row.listing_id);
+      const totalCount = rows[0]?.total_count ?? 0;
+
+      if (orderedIds.length === 0) {
+        return { data: [], count: 0 };
+      }
+
+      const { data: listingRows, error: listingError } = await supabase
+        .from("listings")
+        .select(LISTING_SELECT)
+        .in("id", orderedIds);
+
+      if (listingError) {
+        throw new Error(listingError.message);
+      }
+
+      const byId = new Map(
+        (((listingRows ?? []) as unknown as ListingWithRelations[]) ?? []).map((row) => [row.id, row])
+      );
+      const orderedRows = orderedIds
+        .map((id) => byId.get(id))
+        .filter((row): row is ListingWithRelations => Boolean(row));
+
+      return {
+        data: orderedRows,
+        count: totalCount,
+      };
+    }
+
+    const rankedPageSize = disablePagination ? 20 : pageSize;
+    const rankedPage = disablePagination ? 0 : Math.max(0, page - 1);
+
+    const { data: rankedRows, error: rankedError } = await supabase.rpc(
+      "search_listings_ranked",
+      {
+        p_query: trimmedQuery,
+        p_page: rankedPage,
+        p_page_size: rankedPageSize,
+        p_category_id: categoryId,
+        p_university_id: universityId,
+        p_max_price: maxPrice ?? null,
+        p_is_service: isService ?? null,
+      }
+    );
+
+    if (rankedError) {
+      throw new Error(rankedError.message);
+    }
+
+    const rankRows = (rankedRows ?? []) as unknown as RankedSearchRow[];
+    const orderedIds = rankRows.map((row) => row.listing_id);
+    const totalCount = rankRows[0]?.total_count ?? 0;
+
+    if (orderedIds.length === 0) {
+      return { data: [], count: 0 };
+    }
+
+    const { data: listingRows, error: listingError } = await supabase
+      .from("listings")
+      .select(LISTING_SELECT)
+      .in("id", orderedIds);
+
+    if (listingError) {
+      throw new Error(listingError.message);
+    }
+
+    const byId = new Map(
+      (((listingRows ?? []) as unknown as ListingWithRelations[]) ?? []).map((row) => [row.id, row])
+    );
+    const orderedRows = orderedIds
+      .map((id) => byId.get(id))
+      .filter((row): row is ListingWithRelations => Boolean(row));
+
+    return {
+      data: orderedRows,
+      count: totalCount,
+    };
+  }
 
   let q = supabase
     .from("listings")
@@ -49,28 +180,8 @@ export async function getListings(
     .eq("status", "active")
     .is("deleted_at", null);
 
-  if (query?.trim()) {
-    q = q.or(
-      `title.ilike.%${query.trim()}%,description.ilike.%${query.trim()}%`
-    );
-  }
-  if (category) {
-    // category can be a slug or a name; join via subquery via filter
-    const { data: cat } = await supabase
-      .from("categories")
-      .select("id")
-      .or(`slug.eq.${category},name.eq.${category}`)
-      .single();
-    if (cat) q = q.eq("category_id", cat.id);
-  }
-  if (university) {
-    const { data: uni } = await supabase
-      .from("universities")
-      .select("id")
-      .or(`code.eq.${university},name.ilike.%${university}%`)
-      .single();
-    if (uni) q = q.eq("university_id", uni.id);
-  }
+  if (categoryId) q = q.eq("category_id", categoryId);
+  if (universityId) q = q.eq("university_id", universityId);
   if (maxPrice !== undefined) q = q.lte("price", maxPrice);
   if (isService !== undefined) q = q.eq("is_service", isService);
 
