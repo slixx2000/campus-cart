@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
-import { getCurrentUserId, getMessages, sendMessage, subscribeToMessages } from "@/services/chatService";
+import { getCurrentUserId, getMessages, markConversationRead, sendMessage, subscribeToMessages } from "@/services/chatService";
 import { colors } from "@/theme";
 import type { ChatMessage, ChatStackParamList } from "@/types";
 
@@ -33,18 +33,26 @@ export function ChatThreadScreen({ route, navigation }: Props) {
     let mounted = true;
 
     getMessages(conversationId).then((rows) => {
-      if (mounted) setMessages(rows);
+      if (mounted) {
+        setMessages(rows);
+        // Mark as read after initial load.
+        void markConversationRead(conversationId);
+      }
     });
 
     const unsubscribe = subscribeToMessages(conversationId, (message) => {
       setMessages((prev) => (prev.some((item) => item.id === message.id) ? prev : [...prev, message]));
+      // Mark as read whenever a new incoming message arrives.
+      if (message.senderId !== currentUserId) {
+        void markConversationRead(conversationId);
+      }
     });
 
     return () => {
       mounted = false;
       unsubscribe();
     };
-  }, [conversationId]);
+  }, [conversationId, currentUserId]);
 
   const onSend = useCallback(async () => {
     if (!input.trim() || sending) return;

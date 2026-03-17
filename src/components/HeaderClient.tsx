@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signOutAction } from "@/app/auth/actions";
+import { fetchUnreadCountAction } from "@/app/messages/actions";
+import { createClient } from "@/lib/supabase/client";
 import MarketplaceSearchBar from "@/components/MarketplaceSearchBar";
 import ThemeToggle from "@/components/ThemeToggle";
 import SlideTabs from "@/components/slide-tabs";
@@ -17,6 +19,48 @@ export default function HeaderClient({
   unreadMessages = 0,
 }: HeaderClientProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [liveUnread, setLiveUnread] = useState(unreadMessages);
+
+  // Sync server-fetched initial value when it changes (e.g., full navigation).
+  useEffect(() => {
+    setLiveUnread(unreadMessages);
+  }, [unreadMessages]);
+
+  // Subscribe to conversation changes via Realtime to keep the badge live.
+  useEffect(() => {
+    if (!user) return;
+
+    const supabase = createClient();
+    const refresh = () => {
+      void fetchUnreadCountAction().then(setLiveUnread);
+    };
+
+    // Two channels so we catch events where this user is buyer or seller.
+    const buyerChannel = supabase
+      .channel(`header:conv:buyer:${user.id}`)
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: "conversations",
+        filter: `buyer_id=eq.${user.id}`,
+      }, refresh)
+      .subscribe();
+
+    const sellerChannel = supabase
+      .channel(`header:conv:seller:${user.id}`)
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: "conversations",
+        filter: `seller_id=eq.${user.id}`,
+      }, refresh)
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(buyerChannel);
+      supabase.removeChannel(sellerChannel);
+    };
+  }, [user]);
 
   return (
     <header className="sticky top-0 z-50 w-full px-4 md:px-8 py-3 border-b border-primary/10 bg-background-light/80 backdrop-blur-md dark:border-primary/20 dark:bg-background-dark/80">
@@ -44,7 +88,7 @@ export default function HeaderClient({
         <div className="hidden md:flex items-center gap-3 md:gap-5">
           <ThemeToggle />
           {user ? (
-            <SlideTabs unreadMessages={unreadMessages} />
+            <SlideTabs unreadMessages={liveUnread} />
           ) : (
             <>
               <Link

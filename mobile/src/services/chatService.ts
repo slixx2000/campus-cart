@@ -239,3 +239,9 @@ export async function startConversationForListing(
 
   return data.id;
 }
+
+/** Marks the conversation as read for the current user. */
+export async function markConversationRead(conversationId: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  await supabase.rpc("mark_conversation_read", { p_conversation_id: conversationId });
+}

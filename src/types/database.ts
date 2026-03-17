@@ -215,7 +215,7 @@ export type Database = {
       };
       conversations: {
         Row: ConversationRow;
-        Insert: Omit<ConversationRow, "id" | "created_at" | "updated_at"> & {
+        Insert: Omit<ConversationRow, "id" | "created_at" | "updated_at" | "buyer_last_read_at" | "seller_last_read_at"> & {
           id?: string;
           buyer_last_read_at?: string | null;
           seller_last_read_at?: string | null;

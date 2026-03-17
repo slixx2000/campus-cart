@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/HeaderServer";
 import Footer from "@/components/Footer";
+import NotificationServer from "@/components/NotificationServer";
 
 export const metadata: Metadata = {
   title: "CampusCart – The Marketplace for Your Campus",
@@ -43,6 +44,7 @@ export default function RootLayout({
         <Header />
         <main className="min-h-screen">{children}</main>
         <Footer />
+        <NotificationServer />
       </body>
     </html>
   );

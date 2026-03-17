@@ -2,7 +2,10 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { findOrCreateConversation } from "@/lib/repositories/conversations";
+import {
+  findOrCreateConversation,
+  getUnreadConversationsCount,
+} from "@/lib/repositories/conversations";
 
 /**
  * Server Action: "Message Seller"
@@ -60,4 +63,14 @@ export async function startConversationAction(formData: FormData) {
     // Fallback — return to product page on unexpected error.
     redirect(`/product/${listingId}`);
   }
+}
+
+/** Returns the current user's unread conversation count for client polling. */
+export async function fetchUnreadCountAction(): Promise<number> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return 0;
+  return getUnreadConversationsCount(user.id).catch(() => 0);
 }
