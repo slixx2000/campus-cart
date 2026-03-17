@@ -11,7 +11,7 @@ import { findOrCreateConversation } from "@/lib/repositories/conversations";
  * - Validates the caller is authenticated.
  * - Prevents a seller from messaging their own listing.
  * - Finds or creates the conversation row.
- * - Redirects to /messages/[conversationId].
+ * - Redirects to /chat/[conversationId].
  */
 export async function startConversationAction(formData: FormData) {
   const listingId = (formData.get("listingId") as string | null) ?? "";
@@ -55,7 +55,7 @@ export async function startConversationAction(formData: FormData) {
       user.id,
       sellerId
     );
-    redirect(`/messages/${conversationId}`);
+    redirect(`/chat/${conversationId}`);
   } catch {
     // Fallback — return to product page on unexpected error.
     redirect(`/product/${listingId}`);

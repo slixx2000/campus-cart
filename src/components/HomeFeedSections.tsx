@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import ProductCard from "@/components/ProductCard";
+import NewListingsCarousel from "@/components/NewListingsCarousel";
 import type { Listing } from "@/types";
 
 type FeedResponse = {
@@ -161,11 +162,7 @@ export default function HomeFeedSections({
             <span className="material-symbols-outlined text-sm">arrow_forward</span>
           </Link>
         </div>
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {newListings.map((listing) => (
-            <ProductCard key={listing.id} listing={listing} />
-          ))}
-        </div>
+        <NewListingsCarousel listings={newListings} />
         {page > 0 && !hasMore.newListings ? (
           <p className="mt-5 text-center text-xs font-semibold text-slate-400 dark:text-slate-500">
             No more new listings right now.

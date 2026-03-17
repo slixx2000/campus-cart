@@ -5,15 +5,15 @@ import {
   getConversationsForUser,
 } from "@/lib/repositories/conversations";
 import ConversationList from "@/app/messages/ConversationList";
-import ChatWindow from "./ChatWindow";
+import ChatWindow from "@/app/messages/[conversationId]/ChatWindow";
 
-interface ConversationPageProps {
+interface ChatConversationPageProps {
   params: Promise<{ conversationId: string }>;
 }
 
-export default async function ConversationPage({
+export default async function ChatConversationPage({
   params,
-}: ConversationPageProps) {
+}: ChatConversationPageProps) {
   const { conversationId } = await params;
 
   const supabase = await createClient();
@@ -22,10 +22,9 @@ export default async function ConversationPage({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect(`/auth/sign-in?next=/messages/${conversationId}`);
+    redirect(`/auth/sign-in?next=/chat/${conversationId}`);
   }
 
-  // Load the target conversation and the sidebar list in parallel.
   const [conversation, conversations] = await Promise.all([
     getConversationById(conversationId, user.id),
     getConversationsForUser(user.id).catch(() => []),
@@ -33,7 +32,6 @@ export default async function ConversationPage({
 
   if (!conversation) notFound();
 
-  // Fetch the current user's profile avatar for outgoing message bubbles.
   const { data: selfProfile } = await supabase
     .from("profiles")
     .select("avatar_url")
@@ -48,15 +46,14 @@ export default async function ConversationPage({
         </h1>
 
         <div className="flex gap-4 h-[calc(100vh-180px)]">
-          {/* Sidebar — hidden on mobile, full-width list on /messages */}
           <div className="hidden md:flex">
             <ConversationList
               conversations={conversations}
               activeId={conversationId}
+              basePath="/chat"
             />
           </div>
 
-          {/* Chat pane */}
           <ChatWindow
             conversationId={conversationId}
             currentUserId={user.id}

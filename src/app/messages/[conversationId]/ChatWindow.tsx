@@ -29,6 +29,7 @@ interface Participant {
 interface ChatWindowProps {
   conversationId: string;
   currentUserId: string;
+  currentUserRole: "buyer" | "seller";
   currentUserAvatar: string | null;
   otherParticipant: Participant;
   listingId: string;
@@ -147,11 +148,18 @@ function MessageBubble({
 
 // ─── Quick replies ─────────────────────────────────────────────────────────
 
-const QUICK_REPLIES = [
+const BUYER_QUICK_REPLIES = [
   "Is this still available?",
-  "Where can we meet?",
-  "Can you lower the price?",
-  "Is it in good condition?",
+  "Can we meet on campus today?",
+  "Can you share the exact condition?",
+  "Is the price negotiable?",
+];
+
+const SELLER_QUICK_REPLIES = [
+  "Yes, it's still available.",
+  "I'm available to meet near campus.",
+  "The condition is exactly as listed.",
+  "Price is slightly negotiable.",
 ];
 
 // ─── Main component ────────────────────────────────────────────────────────
@@ -159,6 +167,7 @@ const QUICK_REPLIES = [
 export default function ChatWindow({
   conversationId,
   currentUserId,
+  currentUserRole,
   currentUserAvatar,
   otherParticipant,
   listingId,
@@ -180,8 +189,11 @@ export default function ChatWindow({
   const [locallyBlockedByCurrentUser, setLocallyBlockedByCurrentUser] = useState(
     blockedByCurrentUser
   );
+  const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const nearBottomRef = useRef(true);
 
   const isBlockedByCurrentUser = locallyBlockedByCurrentUser;
   const isBlockedByOtherUser = blockedByOtherUser;
@@ -199,21 +211,68 @@ export default function ChatWindow({
     });
   }, []);
 
+  const isNearBottom = useCallback(() => {
+    const el = messagesContainerRef.current;
+    if (!el) return true;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    return distanceFromBottom <= 120;
+  }, []);
+
+  const maybeScrollToBottomOnNewMessage = useCallback(() => {
+    if (!hasLoadedInitialMessages) return;
+    if (!isNearBottom()) return;
+
+    requestAnimationFrame(() => {
+      scrollToBottom();
+    });
+  }, [hasLoadedInitialMessages, isNearBottom, scrollToBottom]);
+
+  const quickReplies = useMemo(() => {
+    if (currentUserRole === "seller") {
+      return [
+        ...SELLER_QUICK_REPLIES,
+        `Thanks for asking about \"${listingTitle}\".`,
+      ];
+    }
+
+    return [
+      ...BUYER_QUICK_REPLIES,
+      `Hi ${otherParticipant.name}, I am interested in \"${listingTitle}\".`,
+    ];
+  }, [currentUserRole, listingTitle, otherParticipant.name]);
+
   // ── Load initial messages ──
   useEffect(() => {
     setIsLoading(true);
     fetchMessages(conversationId)
       .then((msgs) => {
         setMessages(msgs);
+        setHasLoadedInitialMessages(true);
         setIsLoading(false);
       })
-      .catch(() => setIsLoading(false));
+      .catch(() => {
+        setHasLoadedInitialMessages(true);
+        setIsLoading(false);
+      });
   }, [conversationId]);
 
   // Scroll to bottom on first load (instant, no animation).
   useEffect(() => {
     if (!isLoading) scrollToBottom(false);
   }, [isLoading, scrollToBottom]);
+
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    nearBottomRef.current = isNearBottom();
+    const onScroll = () => {
+      nearBottomRef.current = isNearBottom();
+    };
+
+    container.addEventListener("scroll", onScroll, { passive: true });
+    return () => container.removeEventListener("scroll", onScroll);
+  }, [isNearBottom]);
 
   // ── Realtime subscription ──
   useEffect(() => {
@@ -223,15 +282,18 @@ export default function ChatWindow({
      * optimistically-added messages aren't shown twice.
      */
     const unsubscribe = subscribeToMessages(conversationId, (newMessage) => {
+      const shouldAutoScroll = nearBottomRef.current;
       setMessages((prev) => {
         if (prev.some((m) => m.id === newMessage.id)) return prev;
         return [...prev, newMessage];
       });
-      scrollToBottom();
+      if (shouldAutoScroll) {
+        maybeScrollToBottomOnNewMessage();
+      }
     });
 
     return unsubscribe; // cleans up the Supabase channel on unmount
-  }, [conversationId, scrollToBottom]);
+  }, [conversationId, maybeScrollToBottomOnNewMessage]);
 
   // ── Auto-remove expired messages every 30 s ──
   useEffect(() => {
@@ -257,12 +319,15 @@ export default function ChatWindow({
 
     try {
       const msg = await sendMessage(conversationId, content);
+      const shouldAutoScroll = nearBottomRef.current;
       // Optimistically add the message; the realtime callback deduplicates.
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
         return [...prev, msg];
       });
-      scrollToBottom();
+      if (shouldAutoScroll) {
+        maybeScrollToBottomOnNewMessage();
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
       if (/row-level security|blocked/i.test(message)) {
@@ -275,7 +340,13 @@ export default function ChatWindow({
       setIsSending(false);
       textareaRef.current?.focus();
     }
-  }, [conversationId, inputValue, isMessagingDisabled, isSending, scrollToBottom]);
+  }, [
+    conversationId,
+    inputValue,
+    isMessagingDisabled,
+    isSending,
+    maybeScrollToBottomOnNewMessage,
+  ]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -451,7 +522,7 @@ export default function ChatWindow({
       </header>
 
       {/* ── Messages area ── */}
-      <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 bg-slate-50/30 dark:bg-slate-900/10 min-h-0">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 bg-slate-50/30 dark:bg-slate-900/10 min-h-0">
         {isLoading ? (
           <div className="flex-1 flex items-center justify-center">
             <span className="material-symbols-outlined animate-spin text-primary text-3xl">
@@ -527,7 +598,7 @@ export default function ChatWindow({
 
         {/* Quick replies */}
         <div className="flex gap-2 mb-3 overflow-x-auto pb-1 no-scrollbar">
-          {QUICK_REPLIES.map((reply) => (
+          {quickReplies.map((reply) => (
             <button
               key={reply}
               onClick={() => handleQuickReply(reply)}

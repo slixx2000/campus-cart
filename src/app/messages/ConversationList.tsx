@@ -21,12 +21,14 @@ function timeAgoLabel(iso: string): string {
 interface ConversationListProps {
   conversations: ConversationPreview[];
   activeId?: string;
+  basePath?: string;
 }
 
 /** Renders the sidebar conversation list used on both /messages and /messages/[id]. */
 export default function ConversationList({
   conversations,
   activeId,
+  basePath = "/messages",
 }: ConversationListProps) {
   return (
     <aside className="w-80 flex-shrink-0 flex flex-col bg-white/70 dark:bg-slate-900/70 backdrop-blur rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
@@ -59,7 +61,7 @@ export default function ConversationList({
             return (
               <Link
                 key={conv.id}
-                href={`/messages/${conv.id}`}
+                href={`${basePath}/${conv.id}`}
                 className={`flex gap-3 p-4 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-800 ${
                   isActive
                     ? "bg-primary/5 border-l-4 border-l-primary"

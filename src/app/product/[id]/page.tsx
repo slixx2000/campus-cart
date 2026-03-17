@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { formatPrice, CATEGORIES } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 import AvatarImage from "@/components/AvatarImage";
+import ListingImageCarousel from "@/components/ListingImageCarousel";
 import {
   getListingById,
   getRelatedListings,
@@ -69,20 +69,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left: Product Image */}
           <div className="lg:col-span-7 space-y-4">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
-              <Image
-                src={listing.images[0]}
-                alt={listing.title}
-                fill
-                className="object-cover"
-                unoptimized
-              />
-              {listing.featured && (
-                <div className="absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-900 backdrop-blur dark:bg-slate-950/70 dark:text-white">
-                  Featured
-                </div>
-              )}
-            </div>
+            <ListingImageCarousel
+              images={listing.images}
+              alt={listing.title}
+              featured={listing.featured}
+            />
             <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
               <p className="text-xs font-bold uppercase tracking-[0.28em] text-slate-400 dark:text-slate-500">
                 Listing overview
