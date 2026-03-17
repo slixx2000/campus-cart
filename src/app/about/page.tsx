@@ -5,7 +5,7 @@ import { CATEGORIES } from "@/lib/data";
 
 export default function AboutPage() {
   return (
-    <div className="bg-background-light min-h-screen">
+    <div className="min-h-screen bg-background-light transition-colors dark:bg-background-dark">
       {/* Hero */}
       <section className="bg-slate-900 py-24 px-6">
         <div className="max-w-3xl mx-auto text-center">
@@ -29,7 +29,7 @@ export default function AboutPage() {
 
       {/* How it works */}
       <section className="max-w-7xl mx-auto px-6 py-20">
-        <h2 className="text-2xl font-extrabold text-slate-900 mb-12 flex items-center gap-2">
+        <h2 className="mb-12 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
           <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
             help_outline
           </span>
@@ -58,7 +58,7 @@ export default function AboutPage() {
           ].map((item) => (
             <div
               key={item.step}
-              className="bg-white rounded-xl border border-slate-200 p-8 hover:shadow-xl hover:shadow-primary/5 hover:border-primary transition-all group"
+              className="group rounded-xl border border-slate-200 bg-white p-8 transition-all hover:border-primary hover:shadow-xl hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
@@ -66,14 +66,14 @@ export default function AboutPage() {
                     {item.icon}
                   </span>
                 </div>
-                <span className="text-4xl font-extrabold text-slate-100">
+                <span className="text-4xl font-extrabold text-slate-100 dark:text-slate-700/60">
                   0{item.step}
                 </span>
               </div>
-              <h3 className="font-bold text-xl text-slate-900 mb-2">
+              <h3 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">
                 {item.title}
               </h3>
-              <p className="text-slate-500 text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-300">
                 {item.desc}
               </p>
             </div>
@@ -82,13 +82,13 @@ export default function AboutPage() {
       </section>
 
       {/* Stats */}
-      <section className="bg-white py-16 px-6 border-y border-slate-100">
+      <section className="border-y border-slate-100 bg-white px-6 py-16 dark:border-white/10 dark:bg-white/5">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
             <p className="text-4xl font-extrabold text-primary mb-1">
               <UniversityCountStat />
             </p>
-            <p className="text-slate-500 text-sm font-medium">Universities</p>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-300">Universities</p>
           </div>
           {[
             { value: "10", label: "Categories" },
@@ -99,7 +99,7 @@ export default function AboutPage() {
               <p className="text-4xl font-extrabold text-primary mb-1">
                 {s.value}
               </p>
-              <p className="text-slate-500 text-sm font-medium">{s.label}</p>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-300">{s.label}</p>
             </div>
           ))}
         </div>
@@ -107,7 +107,7 @@ export default function AboutPage() {
 
       {/* Partner Universities */}
       <section className="max-w-7xl mx-auto px-6 py-16">
-        <h2 className="text-2xl font-extrabold text-slate-900 mb-8 flex items-center gap-2">
+        <h2 className="mb-8 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
           <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
             apartment
           </span>
@@ -117,9 +117,9 @@ export default function AboutPage() {
       </section>
 
       {/* Categories */}
-      <section className="bg-white py-16 px-6 border-t border-slate-100">
+      <section className="border-t border-slate-100 bg-white px-6 py-16 dark:border-white/10 dark:bg-white/5">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-8 flex items-center gap-2">
+          <h2 className="mb-8 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
             <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
               category
             </span>
@@ -130,7 +130,7 @@ export default function AboutPage() {
               <Link
                 key={cat.label}
                 href={`/browse?category=${encodeURIComponent(cat.label)}`}
-                className={`p-4 rounded-xl border border-slate-200 hover:border-primary hover:shadow-md hover:shadow-primary/5 transition-all flex flex-col items-center text-center gap-2 group`}
+                className={`group flex flex-col items-center gap-2 rounded-xl border border-slate-200 p-4 text-center transition-all hover:border-primary hover:shadow-md hover:shadow-primary/5 dark:border-white/10 dark:hover:border-sky-300/50`}
               >
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform ${cat.color}`}
@@ -139,7 +139,7 @@ export default function AboutPage() {
                     {cat.materialIcon}
                   </span>
                 </div>
-                <span className="text-xs font-bold text-slate-700">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">
                   {cat.label}
                 </span>
               </Link>

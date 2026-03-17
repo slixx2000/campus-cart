@@ -7,6 +7,7 @@ import { dbListingToUi } from "@/lib/mappers";
 import { createClient } from "@/lib/supabase/server";
 import type { Listing } from "@/types";
 import BrowseFilters from "./BrowseFilters";
+import BrowseLoading from "./loading";
 
 type SortBy = "newest" | "price-asc" | "price-desc";
 
@@ -154,13 +155,7 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
 
 export default function BrowsePage(props: BrowsePageProps) {
   return (
-    <Suspense
-      fallback={
-        <div className="p-8 text-center text-slate-500 dark:text-slate-400">
-          Loading listings…
-        </div>
-      }
-    >
+    <Suspense fallback={<BrowseLoading />}>
       <BrowseResults {...props} />
     </Suspense>
   );

@@ -111,6 +111,8 @@ export type ConversationRow = {
   listing_id: string;
   buyer_id: string;
   seller_id: string;
+  buyer_last_read_at: string | null;
+  seller_last_read_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -215,6 +217,8 @@ export type Database = {
         Row: ConversationRow;
         Insert: Omit<ConversationRow, "id" | "created_at" | "updated_at"> & {
           id?: string;
+          buyer_last_read_at?: string | null;
+          seller_last_read_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -240,6 +244,10 @@ export type Database = {
     Functions: {
       increment_listing_view: {
         Args: { p_listing_id: string };
+        Returns: undefined;
+      };
+      mark_conversation_read: {
+        Args: { p_conversation_id: string };
         Returns: undefined;
       };
       search_listings_ranked: {

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { signOutAction } from "@/app/auth/actions";
 import AvatarImage from "@/components/AvatarImage";
 import { getProfileById } from "@/lib/repositories/profiles";
 import { getListingsByUser } from "@/lib/repositories/listings";
@@ -158,6 +159,27 @@ export default async function ProfilePage({ params }: Props) {
 
         {/* ── Tabs + content ── */}
         <ProfileTabs activeListings={activeListings} isOwnProfile={isOwnProfile} />
+
+        {isOwnProfile ? (
+          <section className="mt-10 rounded-[1.5rem] border border-slate-200/70 bg-white/80 p-5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-bold text-slate-900 dark:text-white">Account Session</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Sign out from this account when you are done using CampusCart.
+                </p>
+              </div>
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-full border border-rose-200 px-5 py-2 text-sm font-bold text-rose-700 transition-colors hover:bg-rose-50 dark:border-rose-300/30 dark:text-rose-300 dark:hover:bg-rose-500/10"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </div>
+          </section>
+        ) : null}
       </div>
     </div>
   );

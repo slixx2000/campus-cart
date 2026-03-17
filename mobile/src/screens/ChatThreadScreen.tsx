@@ -92,6 +92,12 @@ export function ChatThreadScreen({ route, navigation }: Props) {
         data={data}
         keyExtractor={(item) => item.id}
         inverted
+        // Keep the visible window stable when new realtime items are inserted,
+        // so manual reading position is not unexpectedly disturbed.
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+          autoscrollToTopThreshold: 32,
+        }}
         contentContainerStyle={styles.messageList}
         renderItem={({ item }) => {
           const own = item.senderId === currentUserId;

@@ -5,12 +5,17 @@ import { useState } from "react";
 import { signOutAction } from "@/app/auth/actions";
 import MarketplaceSearchBar from "@/components/MarketplaceSearchBar";
 import ThemeToggle from "@/components/ThemeToggle";
+import SlideTabs from "@/components/slide-tabs";
 
 interface HeaderClientProps {
   user: { id: string; email: string } | null;
+  unreadMessages?: number;
 }
 
-export default function HeaderClient({ user }: HeaderClientProps) {
+export default function HeaderClient({
+  user,
+  unreadMessages = 0,
+}: HeaderClientProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -38,48 +43,29 @@ export default function HeaderClient({ user }: HeaderClientProps) {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-3 md:gap-5">
           <ThemeToggle />
-          <Link
-            href="/browse"
-            className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
-          >
-            Browse
-          </Link>
-          <Link
-            href="/about"
-            className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
-          >
-            About
-          </Link>
           {user ? (
+            <SlideTabs unreadMessages={unreadMessages} />
+          ) : (
             <>
               <Link
-                href="/messages"
+                href="/browse"
                 className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
               >
-                Messages
+                Browse
               </Link>
               <Link
-                href="/profile"
+                href="/about"
                 className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
               >
-                My Profile
+                About
               </Link>
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
-                >
-                  Sign Out
-                </button>
-              </form>
+              <Link
+                href="/auth/sign-in"
+                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+              >
+                Sign In
+              </Link>
             </>
-          ) : (
-            <Link
-              href="/auth/sign-in"
-              className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
-            >
-              Sign In
-            </Link>
           )}
           <Link
             href="/sell"

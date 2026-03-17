@@ -129,3 +129,13 @@ export function subscribeToMessages(
     supabase.removeChannel(channel);
   };
 }
+
+/** Marks the active conversation as read for the current participant role. */
+export async function markConversationRead(conversationId: string): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase.rpc("mark_conversation_read", {
+    p_conversation_id: conversationId,
+  });
+
+  if (error) throw new Error(error.message);
+}

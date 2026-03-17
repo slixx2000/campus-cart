@@ -199,6 +199,69 @@ export async function getConversationsForUser(
 }
 
 /**
+ * Counts conversations where the latest non-expired incoming message is newer
+ * than the participant-specific read timestamp.
+ */
+export async function getUnreadConversationsCount(
+  userId: string
+): Promise<number> {
+  const supabase = await createClient();
+
+  const { data: conversations, error: convError } = await supabase
+    .from("conversations")
+    .select("id, buyer_id, seller_id, buyer_last_read_at, seller_last_read_at")
+    .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`);
+
+  if (convError) throw new Error(convError.message);
+
+  const convIds = (conversations ?? []).map((row) => row.id);
+  if (convIds.length === 0) return 0;
+
+  const { data: messages, error: msgError } = await supabase
+    .from("messages")
+    .select("conversation_id, sender_id, created_at")
+    .in("conversation_id", convIds)
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false });
+
+  if (msgError) throw new Error(msgError.message);
+
+  const latestByConversation = new Map<
+    string,
+    { sender_id: string; created_at: string }
+  >();
+
+  for (const message of messages ?? []) {
+    if (!latestByConversation.has(message.conversation_id)) {
+      latestByConversation.set(message.conversation_id, {
+        sender_id: message.sender_id,
+        created_at: message.created_at,
+      });
+    }
+  }
+
+  let count = 0;
+  for (const conversation of conversations ?? []) {
+    const latest = latestByConversation.get(conversation.id);
+    if (!latest) continue;
+
+    // Ignore own last message; unread only tracks incoming messages.
+    if (latest.sender_id === userId) continue;
+
+    const readAt =
+      conversation.buyer_id === userId
+        ? conversation.buyer_last_read_at
+        : conversation.seller_last_read_at;
+
+    if (!readAt || new Date(latest.created_at) > new Date(readAt)) {
+      count += 1;
+    }
+  }
+
+  return count;
+}
+
+/**
  * Loads a single conversation by ID, verifying the requesting user is
  * a participant. Returns null if not found or unauthorised.
  */

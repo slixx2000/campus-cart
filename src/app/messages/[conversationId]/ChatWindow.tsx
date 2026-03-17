@@ -10,6 +10,7 @@ import {
 import AvatarImage from "@/components/AvatarImage";
 import {
   fetchMessages,
+  markConversationRead,
   sendMessage,
   subscribeToMessages,
   MESSAGE_EXPIRY_HOURS,
@@ -191,9 +192,9 @@ export default function ChatWindow({
   );
   const [hasLoadedInitialMessages, setHasLoadedInitialMessages] = useState(false);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const nearBottomRef = useRef(true);
+  const lastMarkedReadAtRef = useRef(0);
 
   const isBlockedByCurrentUser = locallyBlockedByCurrentUser;
   const isBlockedByOtherUser = blockedByOtherUser;
@@ -206,9 +207,15 @@ export default function ChatWindow({
     : null;
 
   const scrollToBottom = useCallback((smooth = true) => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: smooth ? "smooth" : "instant",
-    });
+    const el = messagesContainerRef.current;
+    if (!el) return;
+
+    if (smooth) {
+      el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      return;
+    }
+
+    el.scrollTop = el.scrollHeight;
   }, []);
 
   const isNearBottom = useCallback(() => {
@@ -226,6 +233,15 @@ export default function ChatWindow({
       scrollToBottom();
     });
   }, [hasLoadedInitialMessages, isNearBottom, scrollToBottom]);
+
+  const markReadIfNeeded = useCallback(() => {
+    const now = Date.now();
+    // Prevent excessive RPC calls while still keeping badge state fresh.
+    if (now - lastMarkedReadAtRef.current < 1500) return;
+    lastMarkedReadAtRef.current = now;
+
+    void markConversationRead(conversationId).catch(() => undefined);
+  }, [conversationId]);
 
   const quickReplies = useMemo(() => {
     if (currentUserRole === "seller") {
@@ -262,17 +278,25 @@ export default function ChatWindow({
   }, [isLoading, scrollToBottom]);
 
   useEffect(() => {
+    if (!hasLoadedInitialMessages || isLoading) return;
+    markReadIfNeeded();
+  }, [hasLoadedInitialMessages, isLoading, markReadIfNeeded]);
+
+  useEffect(() => {
     const container = messagesContainerRef.current;
     if (!container) return;
 
     nearBottomRef.current = isNearBottom();
     const onScroll = () => {
       nearBottomRef.current = isNearBottom();
+      if (nearBottomRef.current) {
+        markReadIfNeeded();
+      }
     };
 
     container.addEventListener("scroll", onScroll, { passive: true });
     return () => container.removeEventListener("scroll", onScroll);
-  }, [isNearBottom]);
+  }, [isNearBottom, markReadIfNeeded]);
 
   // ── Realtime subscription ──
   useEffect(() => {
@@ -289,11 +313,14 @@ export default function ChatWindow({
       });
       if (shouldAutoScroll) {
         maybeScrollToBottomOnNewMessage();
+        if (newMessage.sender_id !== currentUserId) {
+          markReadIfNeeded();
+        }
       }
     });
 
     return unsubscribe; // cleans up the Supabase channel on unmount
-  }, [conversationId, maybeScrollToBottomOnNewMessage]);
+  }, [conversationId, currentUserId, markReadIfNeeded, maybeScrollToBottomOnNewMessage]);
 
   // ── Auto-remove expired messages every 30 s ──
   useEffect(() => {
@@ -578,8 +605,6 @@ export default function ChatWindow({
             ))}
           </>
         )}
-        {/* Scroll anchor */}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* ── Input area ── */}
