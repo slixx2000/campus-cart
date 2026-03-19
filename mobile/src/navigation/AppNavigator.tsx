@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/native-stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HomeFeedScreen } from "@/screens/HomeFeedScreen";
 import { ItemDetailsScreen } from "@/screens/ItemDetailsScreen";
@@ -11,7 +12,11 @@ import { ProfileSettingsScreen } from "@/screens/ProfileSettingsScreen";
 import { ProfileEditListingScreen } from "@/screens/ProfileEditListingScreen";
 import { PostUploadPhotosScreen } from "@/screens/PostUploadPhotosScreen";
 import { PostItemDetailsScreen } from "@/screens/PostItemDetailsScreen";
+import { LoginScreen } from "@/screens/LoginScreen";
+import { SignUpScreen } from "@/screens/SignUpScreen";
+import { getSupabaseClient } from "@/lib/supabase";
 import type {
+  AuthStackParamList,
   ChatStackParamList,
   HomeStackParamList,
   ProfileStackParamList,
@@ -25,6 +30,7 @@ const HomeStack = createStackNavigator<HomeStackParamList>();
 const ChatStack = createStackNavigator<ChatStackParamList>();
 const SellStack = createStackNavigator<SellStackParamList>();
 const ProfileStack = createStackNavigator<ProfileStackParamList>();
+const AuthStack = createStackNavigator<AuthStackParamList>();
 
 function HomeStackNavigator() {
   return (
@@ -63,43 +69,93 @@ function ProfileStackNavigator() {
   );
 }
 
+function AuthStackNavigator() {
+  return (
+    <AuthStack.Navigator
+      screenOptions={{
+        headerShown: false,
+        animationEnabled: true,
+      }}
+    >
+      <AuthStack.Screen name="Login" component={LoginScreen} />
+      <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+    </AuthStack.Navigator>
+  );
+}
+
 export function AppNavigator() {
+  const [isSignedIn, setIsSignedIn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+
+    // Check current session
+    const checkAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setIsSignedIn(!!session);
+    };
+
+    checkAuth();
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsSignedIn(!!session);
+    });
+
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  // Show nothing while checking authentication
+  if (isSignedIn === null) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: "#94a3b8",
-          tabBarStyle: {
-            height: 72,
-            paddingBottom: 10,
-            paddingTop: 8,
-            borderTopColor: "#e2e8f0",
-          },
-          tabBarLabelStyle: {
-            fontSize: 11,
-            fontWeight: "700",
-          },
-          tabBarIcon: ({ color, size, focused }) => {
-            if (route.name === "HomeStack") {
-              return <MaterialIcons name={focused ? "home" : "home-filled"} size={size} color={color} />;
-            }
-            if (route.name === "SellStack") {
-              return <MaterialIcons name={focused ? "add-box" : "add-box"} size={size} color={color} />;
-            }
-            if (route.name === "ChatStack") {
-              return <MaterialIcons name={focused ? "chat" : "chat-bubble-outline"} size={size} color={color} />;
-            }
-            return <MaterialIcons name={focused ? "person" : "person-outline"} size={size} color={color} />;
-          },
-        })}
-      >
-        <Tab.Screen name="HomeStack" component={HomeStackNavigator} options={{ title: "Home" }} />
-        <Tab.Screen name="SellStack" component={SellStackNavigator} options={{ title: "Sell" }} />
-        <Tab.Screen name="ChatStack" component={ChatStackNavigator} options={{ title: "Chats" }} />
-        <Tab.Screen name="ProfileStack" component={ProfileStackNavigator} options={{ title: "Profile" }} />
-      </Tab.Navigator>
+      {isSignedIn ? (
+        <Tab.Navigator
+          screenOptions={({ route }) => ({
+            headerShown: false,
+            tabBarActiveTintColor: colors.primary,
+            tabBarInactiveTintColor: "#94a3b8",
+            tabBarStyle: {
+              height: 72,
+              paddingBottom: 10,
+              paddingTop: 8,
+              borderTopColor: "#e2e8f0",
+            },
+            tabBarLabelStyle: {
+              fontSize: 11,
+              fontWeight: "700",
+            },
+            tabBarIcon: ({ color, size, focused }) => {
+              if (route.name === "HomeStack") {
+                return <MaterialIcons name={focused ? "home" : "home-filled"} size={size} color={color} />;
+              }
+              if (route.name === "SellStack") {
+                return <MaterialIcons name={focused ? "add-box" : "add-box"} size={size} color={color} />;
+              }
+              if (route.name === "ChatStack") {
+                return <MaterialIcons name={focused ? "chat" : "chat-bubble-outline"} size={size} color={color} />;
+              }
+              return <MaterialIcons name={focused ? "person" : "person-outline"} size={size} color={color} />;
+            },
+          })}
+        >
+          <Tab.Screen name="HomeStack" component={HomeStackNavigator} options={{ title: "Home" }} />
+          <Tab.Screen name="SellStack" component={SellStackNavigator} options={{ title: "Sell" }} />
+          <Tab.Screen name="ChatStack" component={ChatStackNavigator} options={{ title: "Chats" }} />
+          <Tab.Screen name="ProfileStack" component={ProfileStackNavigator} options={{ title: "Profile" }} />
+        </Tab.Navigator>
+      ) : (
+        <AuthStackNavigator />
+      )}
     </NavigationContainer>
   );
 }

@@ -180,20 +180,30 @@ function takeUniqueRows(
 }
 
 export async function getCurrentUserUniversityId(): Promise<string | null> {
-  const supabase = getSupabaseClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = getSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) return null;
+    if (!user) return null;
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("university_id")
-    .eq("id", user.id)
-    .maybeSingle();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("university_id")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  return data?.university_id ?? null;
+    if (error) {
+      console.warn("Error fetching user university ID:", error);
+      return null;
+    }
+
+    return data?.university_id ?? null;
+  } catch (error) {
+    console.warn("Exception fetching user university ID:", error);
+    return null;
+  }
 }
 
 async function getCurrentUserId(): Promise<string | null> {
@@ -223,120 +233,137 @@ export async function getHomeFeedPage(
   page: number,
   pageSize = HOME_FEED_SECTION_LIMIT
 ): Promise<HomeFeedPage> {
-  const supabase = getSupabaseClient();
-  const effectivePageSize = HOME_FEED_SECTION_LIMIT;
-  const safePage = Math.max(0, page);
-  const candidateWindowSize = Math.max(effectivePageSize * LIQUIDITY_CANDIDATE_MULTIPLIER, pageSize);
-  const from = safePage * candidateWindowSize;
-  const to = from + candidateWindowSize - 1;
-  const userUniversityIdPromise = getCurrentUserUniversityId();
+  try {
+    const supabase = getSupabaseClient();
+    const effectivePageSize = HOME_FEED_SECTION_LIMIT;
+    const safePage = Math.max(0, page);
+    const candidateWindowSize = Math.max(effectivePageSize * LIQUIDITY_CANDIDATE_MULTIPLIER, pageSize);
+    const from = safePage * candidateWindowSize;
+    const to = from + candidateWindowSize - 1;
+    const userUniversityIdPromise = getCurrentUserUniversityId();
 
-  const [newRowsResponse, recentlyActiveResponse, randomRowsResponse, userUniversityId] = await Promise.all([
-    supabase
-      .from("listings")
-      .select(LISTING_SELECT)
-      .eq("status", "active")
-      .is("deleted_at", null)
-      .order("last_bumped_at", { ascending: false })
-      .range(from, to),
-    supabase
-      .from("listings")
-      .select(LISTING_SELECT)
-      .eq("status", "active")
-      .is("deleted_at", null)
-      .order("last_bumped_at", { ascending: false })
-      .range(from, to),
-    supabase
-      .from("listings")
-      .select(LISTING_SELECT)
-      .eq("status", "active")
-      .is("deleted_at", null)
-      .order("created_at", { ascending: true })
-      .range(from, to),
-    userUniversityIdPromise,
-  ]);
-
-  const nearbyRowsResponse = userUniversityId
-    ? await supabase
+    const [newRowsResponse, recentlyActiveResponse, randomRowsResponse, userUniversityId] = await Promise.all([
+      supabase
         .from("listings")
         .select(LISTING_SELECT)
         .eq("status", "active")
         .is("deleted_at", null)
-        .eq("university_id", userUniversityId)
         .order("last_bumped_at", { ascending: false })
-        .range(from, to)
-    : { data: [] as unknown[] };
+        .range(from, to),
+      supabase
+        .from("listings")
+        .select(LISTING_SELECT)
+        .eq("status", "active")
+        .is("deleted_at", null)
+        .order("last_bumped_at", { ascending: false })
+        .range(from, to),
+      supabase
+        .from("listings")
+        .select(LISTING_SELECT)
+        .eq("status", "active")
+        .is("deleted_at", null)
+        .order("created_at", { ascending: true })
+        .range(from, to),
+      userUniversityIdPromise,
+    ]);
 
-  const newestRows = (newRowsResponse.data ?? []) as unknown as ListingRowWithRelations[];
-  const activeRows = (recentlyActiveResponse.data ?? []) as unknown as ListingRowWithRelations[];
-  const nearbyRows = (nearbyRowsResponse.data ?? []) as unknown as ListingRowWithRelations[];
-  const randomRows = shuffleRows(
-    (randomRowsResponse.data ?? []) as unknown as ListingRowWithRelations[],
-    safePage + 137
-  );
+    const nearbyRowsResponse = userUniversityId
+      ? await supabase
+          .from("listings")
+          .select(LISTING_SELECT)
+          .eq("status", "active")
+          .is("deleted_at", null)
+          .eq("university_id", userUniversityId)
+          .order("last_bumped_at", { ascending: false })
+          .range(from, to)
+      : { data: [] as unknown[] };
 
-  const hasNearbyContext = Boolean(userUniversityId);
-  const targets = calculateTargets(effectivePageSize, hasNearbyContext);
-  const selectedIds = new Set<string>();
+    const newestRows = (newRowsResponse.data ?? []) as unknown as ListingRowWithRelations[];
+    const activeRows = (recentlyActiveResponse.data ?? []) as unknown as ListingRowWithRelations[];
+    const nearbyRows = (nearbyRowsResponse.data ?? []) as unknown as ListingRowWithRelations[];
+    const randomRows = shuffleRows(
+      (randomRowsResponse.data ?? []) as unknown as ListingRowWithRelations[],
+      safePage + 137
+    );
 
-  const feed: HomeFeed = {
-    newListings: [],
-    nearbyListings: [],
-    recentlyActiveListings: [],
-  };
+    const hasNearbyContext = Boolean(userUniversityId);
+    const targets = calculateTargets(effectivePageSize, hasNearbyContext);
+    const selectedIds = new Set<string>();
 
-  takeUniqueRows(newestRows, targets.newest, selectedIds, (row) => {
-    feed.newListings.push(toFeedListing(row));
-  });
+    const feed: HomeFeed = {
+      newListings: [],
+      nearbyListings: [],
+      recentlyActiveListings: [],
+    };
 
-  takeUniqueRows(activeRows, targets.recentlyActive, selectedIds, (row) => {
-    feed.recentlyActiveListings.push(toFeedListing(row));
-  });
+    takeUniqueRows(newestRows, targets.newest, selectedIds, (row) => {
+      feed.newListings.push(toFeedListing(row));
+    });
 
-  takeUniqueRows(nearbyRows, targets.nearby, selectedIds, (row) => {
-    feed.nearbyListings.push(toFeedListing(row));
-  });
+    takeUniqueRows(activeRows, targets.recentlyActive, selectedIds, (row) => {
+      feed.recentlyActiveListings.push(toFeedListing(row));
+    });
 
-  let randomBudget = targets.random;
-  for (const row of randomRows) {
-    if (randomBudget <= 0) break;
-    if (selectedIds.has(row.id)) continue;
+    takeUniqueRows(nearbyRows, targets.nearby, selectedIds, (row) => {
+      feed.nearbyListings.push(toFeedListing(row));
+    });
 
-    selectedIds.add(row.id);
-    randomBudget -= 1;
-    const section = pickSectionForRandom(feed, targets, hasNearbyContext);
-    feed[section].push(toFeedListing(row));
-  }
+    let randomBudget = targets.random;
+    for (const row of randomRows) {
+      if (randomBudget <= 0) break;
+      if (selectedIds.has(row.id)) continue;
 
-  const fallbackRows = [newestRows, activeRows, nearbyRows, randomRows].flat();
-  const fillSection = (section: FeedSectionKey, targetCount: number) => {
-    while (feed[section].length < targetCount) {
-      const next = fallbackRows.find((row) => !selectedIds.has(row.id));
-      if (!next) break;
-
-      selectedIds.add(next.id);
-      feed[section].push(toFeedListing(next));
+      selectedIds.add(row.id);
+      randomBudget -= 1;
+      const section = pickSectionForRandom(feed, targets, hasNearbyContext);
+      feed[section].push(toFeedListing(row));
     }
-  };
 
-  fillSection("newListings", targets.newest);
-  fillSection("recentlyActiveListings", targets.recentlyActive);
-  fillSection("nearbyListings", targets.nearby);
+    const fallbackRows = [newestRows, activeRows, nearbyRows, randomRows].flat();
+    const fillSection = (section: FeedSectionKey, targetCount: number) => {
+      while (feed[section].length < targetCount) {
+        const next = fallbackRows.find((row) => !selectedIds.has(row.id));
+        if (!next) break;
 
-  const hasMoreAny =
-    newestRows.length === candidateWindowSize ||
-    activeRows.length === candidateWindowSize ||
-    randomRows.length === candidateWindowSize ||
-    (hasNearbyContext && nearbyRows.length === candidateWindowSize);
+        selectedIds.add(next.id);
+        feed[section].push(toFeedListing(next));
+      }
+    };
 
-  return {
-    feed,
-    hasMore: {
-      newListings: hasMoreAny,
-      nearbyListings: hasNearbyContext ? hasMoreAny : false,
-      recentlyActiveListings: hasMoreAny,
-    },
-  };
+    fillSection("newListings", targets.newest);
+    fillSection("recentlyActiveListings", targets.recentlyActive);
+    fillSection("nearbyListings", targets.nearby);
+
+    const hasMoreAny =
+      newestRows.length === candidateWindowSize ||
+      activeRows.length === candidateWindowSize ||
+      randomRows.length === candidateWindowSize ||
+      (hasNearbyContext && nearbyRows.length === candidateWindowSize);
+
+    return {
+      feed,
+      hasMore: {
+        newListings: hasMoreAny,
+        nearbyListings: hasNearbyContext ? hasMoreAny : false,
+        recentlyActiveListings: hasMoreAny,
+      },
+    };
+  } catch (error) {
+    console.error("Error loading home feed page:", error);
+    // Return empty feed on error instead of throwing
+    return {
+      feed: {
+        newListings: [],
+        nearbyListings: [],
+        recentlyActiveListings: [],
+      },
+      hasMore: {
+        newListings: false,
+        nearbyListings: false,
+        recentlyActiveListings: false,
+      },
+    };
+  }
 }
 
 export async function getListingDetail(listingId: string): Promise<ListingDetail | null> {

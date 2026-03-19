@@ -17,6 +17,7 @@ import {
   updateMyProfile,
   uploadMyAvatarFromUri,
 } from "@/services/profileService";
+import { getSupabaseClient } from "@/lib/supabase";
 import { colors } from "@/theme";
 import type { ProfileStackParamList } from "@/types";
 
@@ -25,6 +26,7 @@ type Props = NativeStackScreenProps<ProfileStackParamList, "ProfileSettings">;
 export function ProfileSettingsScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -104,6 +106,26 @@ export function ProfileSettingsScreen({ navigation }: Props) {
     }
   };
 
+  const handleLogout = () => {
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Sign Out",
+        style: "destructive",
+        onPress: async () => {
+          setSigningOut(true);
+          try {
+            const supabase = getSupabaseClient();
+            await supabase.auth.signOut();
+          } catch (error) {
+            Alert.alert("Error", error instanceof Error ? error.message : "Could not sign out");
+            setSigningOut(false);
+          }
+        },
+      },
+    ]);
+  };
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -169,6 +191,15 @@ export function ProfileSettingsScreen({ navigation }: Props) {
         <Pressable style={[styles.saveBtn, saving && styles.saveBtnDisabled]} disabled={saving} onPress={onSave}>
           <MaterialIcons name="check" size={18} color="#fff" />
           <Text style={styles.saveBtnText}>{saving ? "Saving..." : "Save Changes"}</Text>
+        </Pressable>
+
+        <Pressable
+          style={[styles.logoutBtn, signingOut && styles.logoutBtnDisabled]}
+          disabled={signingOut}
+          onPress={handleLogout}
+        >
+          <MaterialIcons name="logout" size={18} color="#b91c1c" />
+          <Text style={styles.logoutBtnText}>{signingOut ? "Signing out..." : "Sign Out"}</Text>
         </Pressable>
       </View>
     </View>
@@ -298,6 +329,26 @@ const styles = StyleSheet.create({
   },
   saveBtnText: {
     color: "#fff",
+    fontWeight: "800",
+    fontSize: 15,
+  },
+  logoutBtn: {
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "#fee2e2",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: "#fecaca",
+  },
+  logoutBtnDisabled: {
+    opacity: 0.65,
+  },
+  logoutBtnText: {
+    color: "#b91c1c",
     fontWeight: "800",
     fontSize: 15,
   },

@@ -60,3 +60,8 @@ export type ProfileStackParamList = {
   ProfileSettings: undefined;
   EditListing: { listingId: string };
 };
+
+export type AuthStackParamList = {
+  Login: undefined;
+  SignUp: undefined;
+};
