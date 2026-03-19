@@ -19,6 +19,7 @@ export type UserProfileSummary = {
   fullName: string;
   avatarUrl?: string | null;
   universityId?: string | null;
+  isPioneerSeller?: boolean;
 };
 
 export type ConversationSummary = {

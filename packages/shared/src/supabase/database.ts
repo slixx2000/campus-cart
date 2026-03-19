@@ -9,6 +9,8 @@ export type MobileDatabase = {
           university_id: string | null;
           avatar_url: string | null;
           is_verified_student: boolean;
+          is_pioneer_seller: boolean;
+          pioneer_awarded_at: string | null;
           created_at: string;
           updated_at: string;
         };

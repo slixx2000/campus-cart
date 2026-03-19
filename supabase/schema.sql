@@ -45,6 +45,8 @@ create table public.profiles (
   university_id       uuid references public.universities(id),
   avatar_url          text,
   is_verified_student boolean not null default false,
+  is_pioneer_seller   boolean not null default false,
+  pioneer_awarded_at  timestamptz,
   created_at          timestamptz not null default now(),
   updated_at          timestamptz not null default now()
 );
@@ -130,6 +132,59 @@ $$;
 create trigger listings_updated_at
   before update on public.listings
   for each row execute procedure public.set_updated_at();
+
+create or replace function public.award_pioneer_badge_for_seller(p_seller_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_badged_count int;
+begin
+  perform pg_advisory_xact_lock(hashtext('public.pioneer_seller_badge'));
+
+  if exists (
+    select 1
+    from public.profiles
+    where id = p_seller_id
+      and is_pioneer_seller = true
+  ) then
+    return;
+  end if;
+
+  select count(*)
+  into v_badged_count
+  from public.profiles
+  where is_pioneer_seller = true;
+
+  if v_badged_count >= 30 then
+    return;
+  end if;
+
+  update public.profiles
+  set is_pioneer_seller = true,
+      pioneer_awarded_at = coalesce(pioneer_awarded_at, now())
+  where id = p_seller_id;
+end;
+$$;
+
+create or replace function public.handle_listing_pioneer_badge()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  perform public.award_pioneer_badge_for_seller(new.seller_id);
+  return new;
+end;
+$$;
+
+create trigger listing_award_pioneer_badge
+  after insert on public.listings
+  for each row
+  execute procedure public.handle_listing_pioneer_badge();
 
 -- Atomic view counter used by the product detail page.
 create or replace function public.increment_listing_view(p_listing_id uuid)

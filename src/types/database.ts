@@ -43,6 +43,8 @@ export type ProfileRow = {
   university_id: string | null;
   avatar_url: string | null;
   is_verified_student: boolean;
+  is_pioneer_seller: boolean;
+  pioneer_awarded_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -150,12 +152,14 @@ export type Database = {
       };
       profiles: {
         Row: ProfileRow;
-        Insert: Omit<ProfileRow, "created_at" | "updated_at" | "full_name" | "is_verified_student" | "phone" | "university_id" | "avatar_url"> & {
+        Insert: Omit<ProfileRow, "created_at" | "updated_at" | "full_name" | "is_verified_student" | "is_pioneer_seller" | "pioneer_awarded_at" | "phone" | "university_id" | "avatar_url"> & {
           full_name?: string;
           phone?: string | null;
           university_id?: string | null;
           avatar_url?: string | null;
           is_verified_student?: boolean;
+          is_pioneer_seller?: boolean;
+          pioneer_awarded_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };

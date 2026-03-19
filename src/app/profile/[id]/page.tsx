@@ -80,6 +80,12 @@ export default async function ProfilePage({ params }: Props) {
                 <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
                   {profile.full_name}
                 </h1>
+                {profile.is_pioneer_seller && (
+                  <span className="inline-flex items-center gap-1 self-center rounded-full border border-amber-300/60 bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700 dark:border-amber-300/30 dark:bg-amber-400/15 dark:text-amber-300">
+                    <span className="material-symbols-outlined text-xs">verified</span>
+                    Pioneer Seller
+                  </span>
+                )}
                 {profile.is_verified_student && (
                   <span className="inline-flex items-center gap-1 self-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold text-primary dark:border-sky-300/30 dark:bg-sky-300/10 dark:text-sky-300">
                     <span className="material-symbols-outlined text-xs">verified</span>

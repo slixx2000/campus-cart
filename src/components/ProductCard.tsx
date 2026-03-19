@@ -86,9 +86,17 @@ export default function ProductCard({ listing }: ProductCardProps) {
                   fallbackClassName="flex h-full w-full items-center justify-center bg-primary/10 text-primary dark:bg-sky-400/10 dark:text-sky-300"
                 />
               </div>
-              <span className="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
-                {listing.sellerName}
-              </span>
+              <div className="min-w-0 flex items-center gap-1.5">
+                <span className="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  {listing.sellerName}
+                </span>
+                {listing.sellerIsPioneer ? (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/60 bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold text-amber-700 dark:border-amber-300/30 dark:bg-amber-400/15 dark:text-amber-300">
+                    <span className="material-symbols-outlined text-[11px] leading-none">verified</span>
+                    Pioneer
+                  </span>
+                ) : null}
+              </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">

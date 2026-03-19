@@ -10,11 +10,40 @@ import { ensureProfileForUser } from "@/lib/repositories/profiles";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const tokenHash = searchParams.get("token_hash");
+  const type = searchParams.get("type") as
+    | "signup"
+    | "invite"
+    | "magiclink"
+    | "recovery"
+    | "email_change"
+    | "email" 
+    | null;
   const next = searchParams.get("next") ?? "/";
 
+  const supabase = await createClient();
+
   if (code) {
-    const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        await ensureProfileForUser(user, supabase);
+      }
+
+      return NextResponse.redirect(`${origin}${next}`);
+    }
+  }
+
+  if (tokenHash && type) {
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type,
+    });
+
     if (!error) {
       const {
         data: { user },

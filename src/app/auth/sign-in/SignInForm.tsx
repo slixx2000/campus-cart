@@ -48,6 +48,14 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
         {state.errors?.password && (
           <p className="text-xs text-red-500 mt-1">{state.errors.password[0]}</p>
         )}
+        <div className="mt-2 text-right">
+          <a
+            href="/auth/forgot-password"
+            className="text-xs font-semibold text-primary hover:underline dark:text-sky-300"
+          >
+            Forgot password?
+          </a>
+        </div>
       </div>
 
       <button

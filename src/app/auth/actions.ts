@@ -20,10 +20,37 @@ const signUpSchema = z.object({
   redirectTo: z.string().optional(),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email(),
+});
+
+const resetPasswordSchema = z
+  .object({
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match",
+  });
+
 export type AuthState = {
   errors?: Partial<Record<string, string[]>>;
   message?: string;
 };
+
+function getSiteUrl(): string {
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (explicit) return explicit.replace(/\/+$/, "");
+
+  const vercel = process.env.VERCEL_URL?.trim();
+  if (vercel) {
+    const normalized = vercel.startsWith("http") ? vercel : `https://${vercel}`;
+    return normalized.replace(/\/+$/, "");
+  }
+
+  return "http://localhost:3000";
+}
 
 export async function signInAction(
   _prev: AuthState,
@@ -116,4 +143,66 @@ export async function signOutAction(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
+}
+
+export async function forgotPasswordAction(
+  _prev: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const parsed = forgotPasswordSchema.safeParse({
+    email: formData.get("email"),
+  });
+
+  if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
+
+  const supabase = await createClient();
+  const siteUrl = getSiteUrl();
+  const redirectTo = `${siteUrl}/auth/callback?next=/auth/reset-password`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo,
+  });
+
+  if (error) {
+    return { message: error.message };
+  }
+
+  return {
+    message: "Password reset link sent. Check your email inbox.",
+  };
+}
+
+export async function resetPasswordAction(
+  _prev: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const parsed = resetPasswordSchema.safeParse({
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+  });
+
+  if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      message: "Your reset session expired. Request a new password reset link.",
+    };
+  }
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+
+  if (error) {
+    return { message: error.message };
+  }
+
+  return {
+    message: "Password updated successfully. You can now sign in.",
+  };
 }

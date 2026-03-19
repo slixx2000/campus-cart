@@ -9,6 +9,7 @@ import {
   getRelatedListings,
   incrementListingViewCount,
 } from "@/lib/repositories/listings";
+import { getProfileById } from "@/lib/repositories/profiles";
 import { dbListingToUi } from "@/lib/mappers";
 import { createClient } from "@/lib/supabase/server";
 import { startConversationAction } from "@/app/messages/actions";
@@ -35,6 +36,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
     // Keep this non-blocking for UX; feed analytics should never break page load.
     incrementListingViewCount(row.id).catch(() => undefined),
   ]);
+
+  const sellerProfile = listing.sellerId
+    ? await getProfileById(listing.sellerId)
+    : null;
+  const sellerIsPioneer = sellerProfile?.is_pioneer_seller === true;
   const related = relatedRows.map(dbListingToUi);
 
   // Prevent sellers from messaging their own listing.
@@ -216,7 +222,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     />
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white">{listing.sellerName}</h4>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-bold text-slate-900 dark:text-white">{listing.sellerName}</h4>
+                      {sellerIsPioneer ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/60 bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700 dark:border-amber-300/30 dark:bg-amber-400/15 dark:text-amber-300">
+                          <span className="material-symbols-outlined text-[11px] leading-none">verified</span>
+                          Pioneer
+                        </span>
+                      ) : null}
+                    </div>
                     <div className="flex items-center gap-1 mt-0.5">
                       <span className="material-symbols-outlined text-amber-400 text-sm">star</span>
                       <span className="text-sm font-bold text-slate-900 dark:text-white">4.8</span>
