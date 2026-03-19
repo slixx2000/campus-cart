@@ -63,7 +63,7 @@ export default function HeaderClient({
   }, [user]);
 
   return (
-    <header className="sticky top-0 z-50 w-full px-4 md:px-8 py-3 border-b border-primary/10 bg-background-light/80 backdrop-blur-md dark:border-primary/20 dark:bg-background-dark/80">
+    <header className="sticky top-0 z-50 w-full px-4 py-3 md:px-8 backdrop-blur-md bg-white/70 dark:bg-neutral-900/70 border border-white/20 shadow-lg">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Logo + search */}
         <div className="flex items-center gap-6">
@@ -113,7 +113,7 @@ export default function HeaderClient({
           )}
           <Link
             href="/sell"
-            className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-full font-bold text-sm hover:opacity-90 transition-opacity"
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-blue-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-lg leading-none">
               add_circle

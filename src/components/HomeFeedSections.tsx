@@ -170,6 +170,8 @@ export default function HomeFeedSections({
         ) : null}
       </section>
 
+      <div className="mx-auto h-px w-[1200px] max-w-[calc(100%-3rem)] bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/10" />
+
       <section className="bg-white py-16 dark:bg-primary/5 dark:border-y dark:border-primary/10">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
@@ -208,6 +210,8 @@ export default function HomeFeedSections({
         </div>
       </section>
 
+      <div className="mx-auto h-px w-[1200px] max-w-[calc(100%-3rem)] bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/10" />
+
       <section className="bg-white py-16 dark:bg-primary/5 dark:border-y dark:border-primary/10">
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
@@ -240,9 +244,14 @@ export default function HomeFeedSections({
 
       <div ref={sentinelRef} className="mx-auto max-w-[1200px] px-6 py-8">
         {isLoadingMore ? (
-          <div className="flex items-center justify-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-300">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
-            Loading more listings...
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="animate-pulse space-y-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
+                <div className="h-40 rounded-lg bg-gray-200 dark:bg-slate-700" />
+                <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-slate-700" />
+                <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-slate-700" />
+              </div>
+            ))}
           </div>
         ) : loadMoreError ? (
           <div className="flex flex-col items-center justify-center gap-2 text-sm font-semibold">

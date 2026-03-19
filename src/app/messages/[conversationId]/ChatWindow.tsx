@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { motion } from "framer-motion";
 import AvatarImage from "@/components/AvatarImage";
 import {
   fetchMessages,
@@ -103,7 +104,12 @@ function MessageBubble({
 
   if (isOwn) {
     return (
-      <div className="flex flex-col items-end gap-1 ml-auto max-w-[80%]">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+        className="flex max-w-[80%] flex-col items-end gap-1 ml-auto"
+      >
         <div className="bg-primary text-white p-4 rounded-xl rounded-br-none shadow-lg shadow-primary/20">
           <p className="text-sm font-medium leading-relaxed">{message.content}</p>
         </div>
@@ -118,12 +124,17 @@ function MessageBubble({
             done_all
           </span>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className="flex items-end gap-3 max-w-[80%]">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className="flex max-w-[80%] items-end gap-3"
+    >
       <AvatarImage
         src={senderAvatarUrl}
         alt={senderName}
@@ -143,7 +154,7 @@ function MessageBubble({
           </span>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -628,7 +639,7 @@ export default function ChatWindow({
               key={reply}
               onClick={() => handleQuickReply(reply)}
               disabled={isMessagingDisabled}
-              className="shrink-0 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-primary/10 hover:border-primary/30 transition-colors"
+              className="shrink-0 rounded-full border border-slate-200 px-4 py-1.5 text-[11px] font-semibold text-slate-600 transition-colors hover:border-primary/30 hover:bg-primary/10 active:scale-[0.98] dark:border-slate-700 dark:text-slate-300"
             >
               {reply}
             </button>
@@ -655,7 +666,7 @@ export default function ChatWindow({
           <button
             onClick={handleSend}
             disabled={!inputValue.trim() || isSending || isMessagingDisabled}
-            className="size-11 flex items-center justify-center rounded-full bg-gradient-to-tr from-primary to-blue-400 text-white shadow-lg shadow-primary/30 hover:scale-105 transition-transform disabled:opacity-50 disabled:scale-100 shrink-0"
+            className="size-11 flex items-center justify-center rounded-full bg-gradient-to-tr from-primary to-blue-400 text-white shadow-lg shadow-primary/30 transition-transform hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-50 shrink-0"
             aria-label="Send message"
           >
             <span className="material-symbols-outlined text-lg leading-none">

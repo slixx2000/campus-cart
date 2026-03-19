@@ -152,7 +152,7 @@ export default function SlideTabs({
           <motion.li
             animate={position}
             transition={{ type: "spring", stiffness: 420, damping: 38, mass: 0.7 }}
-            className="absolute inset-y-1 z-0 rounded-full bg-slate-900 dark:bg-sky-300"
+            className="absolute inset-y-1 z-0 rounded-full bg-gradient-to-r from-primary to-blue-500 dark:from-sky-300 dark:to-cyan-300"
           />
         </ul>
       </div>
@@ -188,7 +188,7 @@ const TabButton = forwardRef(function TabButton(
       type="button"
       onMouseEnter={onMouseEnter}
       onClick={onClick}
-      className={`relative z-10 flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+      className={`relative z-10 flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors active:scale-[0.98] ${
         isActiveVisual
           ? "text-white dark:text-slate-950"
           : "text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"

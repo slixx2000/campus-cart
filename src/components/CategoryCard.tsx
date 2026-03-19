@@ -14,8 +14,8 @@ export default function CategoryCard({
   color,
 }: CategoryCardProps) {
   return (
-    <Link href={`/browse?category=${encodeURIComponent(label)}`}>
-      <div className="group cursor-pointer rounded-xl border border-slate-200 bg-white p-6 transition-all hover:border-primary hover:shadow-xl hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-xl dark:hover:border-primary/40 dark:hover:shadow-primary/10">
+    <Link href={`/browse?category=${encodeURIComponent(label)}`} className="group block h-full">
+      <div className="cursor-pointer rounded-xl border border-slate-200 bg-white p-6 transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-xl hover:-translate-y-1 hover:ring-1 hover:ring-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:border-primary/40 dark:hover:ring-white/10">
         <div
           className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${color}`}
         >

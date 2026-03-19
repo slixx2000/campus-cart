@@ -164,13 +164,13 @@ export default async function HomePage() {
 
       {/* CTA Banner */}
       <section className="bg-slate-900 px-6 py-16 dark:bg-background-dark">
-        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-xl bg-slate-900 px-8 py-14 text-center dark:glass-card-dark dark:bg-background-dark">
+        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-xl bg-slate-900 px-8 py-14 text-center dark:bg-white/5 dark:border dark:border-white/15 dark:shadow-2xl dark:shadow-black/35 dark:backdrop-blur-md">
           <div className="pointer-events-none absolute inset-0 opacity-40 fluid-gradient dark:hidden" />
-          <div className="pointer-events-none absolute inset-0 hidden fluid-gradient-dark dark:block" />
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4">
+          <div className="pointer-events-none absolute inset-0 hidden opacity-30 fluid-gradient-dark dark:block" />
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4 dark:text-sky-100">
             Got something to sell?
           </h2>
-          <p className="text-white/70 mb-8 text-lg">
+          <p className="text-white/70 mb-8 text-lg dark:text-slate-200">
             List your items for free and reach thousands of verified students on
             campus.
           </p>

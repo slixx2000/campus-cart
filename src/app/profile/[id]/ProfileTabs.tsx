@@ -82,14 +82,14 @@ export default function ProfileTabs({ activeListings, isOwnProfile }: ProfileTab
               {activeListings.map((listing) => (
                 <div
                   key={listing.id}
-                  className="flex items-start gap-4 rounded-[1.5rem] border border-slate-200/70 bg-white/85 p-4 shadow-sm backdrop-blur dark:border-white/10 dark:bg-white/5"
+                  className="flex items-start gap-4 rounded-[1.5rem] border border-slate-200/70 bg-white/85 p-4 shadow-sm backdrop-blur transition-all duration-300 ease-out hover:scale-[1.01] hover:-translate-y-1 hover:shadow-xl hover:ring-1 hover:ring-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:ring-white/10"
                 >
-                  <div className="relative size-20 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-white/10">
+                  <div className="relative size-20 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-white/10">
                     <Image
                       src={listing.images[0]}
                       alt={listing.title}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-300 hover:scale-110"
                       unoptimized
                     />
                   </div>
