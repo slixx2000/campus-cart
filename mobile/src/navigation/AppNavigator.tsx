@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import { MaterialIcons } from "@expo/vector-icons";
 import { HomeFeedScreen } from "@/screens/HomeFeedScreen";
 import { ItemDetailsScreen } from "@/screens/ItemDetailsScreen";
