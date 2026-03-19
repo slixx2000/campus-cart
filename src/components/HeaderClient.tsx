@@ -9,6 +9,11 @@ import MarketplaceSearchBar from "@/components/MarketplaceSearchBar";
 import ThemeToggle from "@/components/ThemeToggle";
 import SlideTabs from "@/components/slide-tabs";
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+}
+
 interface HeaderClientProps {
   user: { id: string; email: string } | null;
   unreadMessages?: number;
@@ -20,11 +25,50 @@ export default function HeaderClient({
 }: HeaderClientProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [liveUnread, setLiveUnread] = useState(unreadMessages);
+  const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isAndroid, setIsAndroid] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   // Sync server-fetched initial value when it changes (e.g., full navigation).
   useEffect(() => {
     setLiveUnread(unreadMessages);
   }, [unreadMessages]);
+
+  useEffect(() => {
+    const ua = navigator.userAgent.toLowerCase();
+    setIsAndroid(/android/.test(ua));
+
+    const standalone = window.matchMedia("(display-mode: standalone)").matches;
+    setIsInstalled(standalone);
+
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallEvent(event as BeforeInstallPromptEvent);
+    };
+
+    const handleInstalled = () => {
+      setIsInstalled(true);
+      setInstallEvent(null);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!installEvent) return;
+    await installEvent.prompt();
+    const choice = await installEvent.userChoice;
+    if (choice.outcome === "accepted") {
+      setInstallEvent(null);
+      setMenuOpen(false);
+    }
+  };
 
   // Subscribe to conversation changes via Realtime to keep the badge live.
   useEffect(() => {
@@ -86,6 +130,17 @@ export default function HeaderClient({
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-3 md:gap-5">
+          {isAndroid && !isInstalled && installEvent ? (
+            <button
+              type="button"
+              onClick={() => {
+                void handleInstallClick();
+              }}
+              className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-900/40"
+            >
+              Install
+            </button>
+          ) : null}
           <ThemeToggle />
           {user ? (
             <SlideTabs unreadMessages={liveUnread} />
@@ -96,6 +151,12 @@ export default function HeaderClient({
                 className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
               >
                 Browse
+              </Link>
+              <Link
+                href="/downloads"
+                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+              >
+                Mobile App
               </Link>
               <Link
                 href="/about"
@@ -146,12 +207,30 @@ export default function HeaderClient({
             <ThemeToggle />
           </div>
           <nav className="flex flex-col gap-1">
+            {isAndroid && !isInstalled && installEvent ? (
+              <button
+                type="button"
+                onClick={() => {
+                  void handleInstallClick();
+                }}
+                className="px-4 py-2.5 text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-full transition-colors hover:bg-blue-100 dark:text-blue-300 dark:bg-blue-950/40 dark:border-blue-900 dark:hover:bg-blue-900/40"
+              >
+                Install App
+              </button>
+            ) : null}
             <Link
               href="/browse"
               onClick={() => setMenuOpen(false)}
               className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
             >
               Browse
+            </Link>
+            <Link
+              href="/downloads"
+              onClick={() => setMenuOpen(false)}
+              className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
+            >
+              Mobile App
             </Link>
             <Link
               href="/about"

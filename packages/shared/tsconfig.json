@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
+     "module": "commonjs",
     "moduleResolution": "Bundler",
     "strict": true,
     "declaration": true,
-    "emitDeclarationOnly": false,
+     "emitDeclarationOnly": true,
     "skipLibCheck": true,
     "isolatedModules": true,
     "lib": ["ES2020", "DOM"],

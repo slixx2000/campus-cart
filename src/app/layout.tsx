@@ -3,11 +3,20 @@ import "./globals.css";
 import Header from "@/components/HeaderServer";
 import Footer from "@/components/Footer";
 import NotificationServer from "@/components/NotificationServer";
+import PWARegister from "@/components/PWARegister";
+import PWAInstallPopup from "@/components/PWAInstallPopup";
 
 export const metadata: Metadata = {
   title: "CampusCart – The Marketplace for Your Campus",
   description:
     "Buy, sell, and trade with students on your campus instantly. Secure, verified, and student-only.",
+  manifest: "/manifest.webmanifest",
+  applicationName: "CampusCart",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "CampusCart",
+  },
 };
 
 export default function RootLayout({
@@ -41,6 +50,8 @@ export default function RootLayout({
         />
       </head>
       <body className="font-display antialiased bg-background-light text-slate-900 min-h-screen transition-colors dark:bg-background-dark dark:text-slate-100">
+        <PWARegister />
+        <PWAInstallPopup />
         <Header />
         <main className="min-h-screen">{children}</main>
         <Footer />
