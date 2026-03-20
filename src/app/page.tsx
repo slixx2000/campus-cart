@@ -78,8 +78,7 @@ export default async function HomePage() {
               <span className="text-primary italic">Campus</span>
             </h1>
             <p className="text-white/80 text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto">
-              Buy, sell, and trade with students on your campus instantly.
-              Secure, verified, and student-only.
+              Browse campus deals with ease. Only verified students can create listings and sell.
             </p>
 
             {/* Hero search */}
@@ -186,3 +185,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

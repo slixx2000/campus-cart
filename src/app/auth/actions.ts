@@ -135,7 +135,7 @@ export async function signUpAction(
 
   return {
     message:
-      "Account created! Check your email to confirm your address before signing in.",
+      "Account created! Check your email to confirm your address before signing in. You can browse with this account right away after confirmation, and selling unlocks once your student status is verified.",
   };
 }
 

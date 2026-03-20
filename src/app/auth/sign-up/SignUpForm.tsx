@@ -83,9 +83,12 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           name="email"
           required
           autoComplete="email"
-          placeholder="you@university.ac.zm"
+          placeholder="you@gmail.com or you@university.ac.zm"
           className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+          You can browse with any email. Selling is unlocked after student verification.
+        </p>
         {state.errors?.email && (
           <p className="text-xs text-red-500 mt-1">{state.errors.email[0]}</p>
         )}

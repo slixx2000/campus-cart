@@ -43,6 +43,23 @@ export async function createListingAction(
     return { message: "You must be signed in to post a listing." };
   }
 
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("is_verified_student")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    return { message: `We could not confirm your seller permissions: ${profileError.message}` };
+  }
+
+  if (!profile?.is_verified_student) {
+    return {
+      message:
+        "Only verified students can create listings on CampusCart. Verify or link your student account before selling.",
+    };
+  }
+
   const rawData = {
     listingId: formData.get("listingId"),
     title: formData.get("title"),

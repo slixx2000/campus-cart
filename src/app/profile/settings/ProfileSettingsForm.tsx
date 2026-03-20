@@ -8,9 +8,13 @@ import { updateProfileAvatarAction } from "./actions";
 
 interface ProfileSettingsFormProps {
   initialAvatarUrl?: string | null;
+  isVerifiedStudent?: boolean;
 }
 
-export default function ProfileSettingsForm({ initialAvatarUrl }: ProfileSettingsFormProps) {
+export default function ProfileSettingsForm({
+  initialAvatarUrl,
+  isVerifiedStudent = false,
+}: ProfileSettingsFormProps) {
   const [state, formAction, pending] = useActionState(updateProfileAvatarAction, {});
   const [avatarSelection, setAvatarSelection] = useState<AvatarSelection>(
     initialAvatarUrl ? { type: "default", url: initialAvatarUrl } : { type: "none" }
@@ -53,7 +57,10 @@ export default function ProfileSettingsForm({ initialAvatarUrl }: ProfileSetting
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:border-white/10 dark:bg-white/5">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:border-white/10 dark:bg-white/5"
+    >
       <div>
         <span className="text-sm font-bold uppercase tracking-[0.28em] text-primary dark:text-sky-300">
           Profile Settings
@@ -67,10 +74,42 @@ export default function ProfileSettingsForm({ initialAvatarUrl }: ProfileSetting
         </p>
       </div>
 
+      <div
+        className={`rounded-2xl border p-5 text-sm ${
+          isVerifiedStudent
+            ? "border-green-200 bg-green-50 text-green-700 dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-200"
+            : "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-300/20 dark:bg-amber-300/10 dark:text-amber-100"
+        }`}
+      >
+        <div className="flex items-start gap-3">
+          <span className="material-symbols-outlined mt-0.5">
+            {isVerifiedStudent ? "verified" : "school"}
+          </span>
+          <div>
+            <p className="font-bold">
+              {isVerifiedStudent
+                ? "Your student seller access is active."
+                : "Your account can browse, but selling requires student verification."}
+            </p>
+            <p className="mt-1 leading-6">
+              {isVerifiedStudent
+                ? "You can create listings and offer services on CampusCart."
+                : "If your backend verification flow is already connected, complete or link your student email through that flow. Once approved, selling will unlock automatically."}
+            </p>
+          </div>
+        </div>
+      </div>
+
       <AvatarPicker initialAvatarUrl={initialAvatarUrl} onChange={setAvatarSelection} />
 
       {(localError || state.message) && (
-        <div className={`rounded-xl border p-4 text-sm ${state.errors || localError ? "border-red-200 bg-red-50 text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200" : "border-green-200 bg-green-50 text-green-700 dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-200"}`}>
+        <div
+          className={`rounded-xl border p-4 text-sm ${
+            state.errors || localError
+              ? "border-red-200 bg-red-50 text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200"
+              : "border-green-200 bg-green-50 text-green-700 dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-200"
+          }`}
+        >
           {localError ?? state.message}
         </div>
       )}

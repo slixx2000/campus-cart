@@ -29,7 +29,7 @@ export default async function SignUpPage({
             Join CampusCart
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
-            Create a free account and start buying or selling today
+            Browse with any email. Sell only with a verified student account.
           </p>
         </div>
         <SignUpForm redirectTo={redirectTo} />

@@ -20,7 +20,10 @@ export default async function ProfileSettingsPage() {
   return (
     <div className="min-h-screen bg-background-light px-4 py-12 text-slate-900 dark:bg-background-dark dark:text-slate-100">
       <div className="mx-auto max-w-3xl">
-        <ProfileSettingsForm initialAvatarUrl={profile?.avatar_url ?? null} />
+        <ProfileSettingsForm
+          initialAvatarUrl={profile?.avatar_url ?? null}
+          isVerifiedStudent={profile?.is_verified_student ?? false}
+        />
       </div>
     </div>
   );

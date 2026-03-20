@@ -58,6 +58,10 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
         </div>
       </div>
 
+      <p className="text-center text-xs text-slate-400 dark:text-slate-500">
+        Browse with any email. Only verified students can create listings.
+      </p>
+
       <button
         type="submit"
         disabled={pending}

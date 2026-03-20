@@ -29,7 +29,7 @@ export default async function SignInPage({
             Welcome back
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
-            Sign in to your CampusCart account
+            Sign in to browse, chat, or manage your verified student seller account.
           </p>
         </div>
         <SignInForm redirectTo={redirectTo} />
