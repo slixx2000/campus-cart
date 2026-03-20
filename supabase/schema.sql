@@ -427,7 +427,7 @@ begin
       and not exists (select 1 from fts f where f.listing_id = l.id)
   ),
   blended as (
-    select listing_id, text_score, typo_score from fts
+    select f.listing_id, f.text_score, f.typo_score from fts f
     union all
     select t.listing_id, t.text_score, t.typo_score
     from typo_matches t
