@@ -82,25 +82,24 @@ export default async function HomePage() {
             </p>
 
             {/* Hero search */}
-            <div className="relative w-full max-w-2xl mx-auto mb-8">
+            <form action="/browse" method="get" className="relative w-full max-w-2xl mx-auto mb-8">
               <div className="flex items-center rounded-full border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur-md dark:border-primary/20 dark:bg-primary/5">
-                <span className="material-symbols-outlined ml-4 text-white/60">
-                  search
-                </span>
+                <span className="material-symbols-outlined ml-4 text-white/60">search</span>
                 <input
                   className="w-full bg-transparent border-none focus:ring-0 text-white placeholder:text-white/50 px-4 py-3 text-lg outline-none"
                   placeholder="Search for textbooks, electronics, or services..."
                   type="text"
-                  readOnly
+                  name="q"
+                  aria-label="Search listings"
                 />
-                <Link
-                  href="/browse"
+                <button
+                  type="submit"
                   className="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg hover:opacity-90 transition-all shrink-0"
                 >
                   Search
-                </Link>
+                </button>
               </div>
-            </div>
+            </form>
 
             <div className="flex flex-wrap justify-center gap-4">
               <Link
