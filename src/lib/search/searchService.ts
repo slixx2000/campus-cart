@@ -36,12 +36,27 @@ export async function searchListings(query: string): Promise<SearchResponse> {
 
   const supabase = await createClient();
 
-  const { data: rankedRows, error: rankedError } = await supabase.rpc("search_listings", {
+  let { data: rankedRows, error: rankedError } = await supabase.rpc("search_listings", {
     query_text: normalizedQuery,
   });
 
   if (rankedError) {
-    throw new Error(rankedError.message);
+    const fallback = await supabase.rpc("search_listings_ranked", {
+      p_query: normalizedQuery,
+      p_page: 0,
+      p_page_size: 20,
+      p_category_id: null,
+      p_university_id: null,
+      p_max_price: null,
+      p_is_service: null,
+    });
+
+    rankedRows = fallback.data;
+    rankedError = fallback.error;
+
+    if (rankedError) {
+      throw new Error(rankedError.message);
+    }
   }
 
   const rows = (rankedRows ?? []) as unknown as RankedSearchRow[];

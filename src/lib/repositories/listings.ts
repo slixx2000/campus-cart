@@ -82,6 +82,38 @@ export async function getListings(
       categoryId || universityId || maxPrice !== undefined || isService !== undefined
     );
 
+    const mapRankedResults = async (
+      rankedRowsInput: RankedSearchRow[]
+    ): Promise<{ data: ListingWithRelations[]; count: number }> => {
+      const orderedIds = rankedRowsInput.map((row) => row.listing_id);
+      const totalCount = rankedRowsInput[0]?.total_count ?? 0;
+
+      if (orderedIds.length === 0) {
+        return { data: [], count: 0 };
+      }
+
+      const { data: listingRows, error: listingError } = await supabase
+        .from("listings")
+        .select(LISTING_SELECT)
+        .in("id", orderedIds);
+
+      if (listingError) {
+        throw new Error(listingError.message);
+      }
+
+      const byId = new Map(
+        (((listingRows ?? []) as unknown as ListingWithRelations[]) ?? []).map((row) => [row.id, row])
+      );
+      const orderedRows = orderedIds
+        .map((id) => byId.get(id))
+        .filter((row): row is ListingWithRelations => Boolean(row));
+
+      return {
+        data: orderedRows,
+        count: totalCount,
+      };
+    };
+
     if (!hasAdvancedSearchFilters) {
       const { data: advancedRows, error: advancedError } = await supabase.rpc(
         "search_listings",
@@ -91,7 +123,26 @@ export async function getListings(
       );
 
       if (advancedError) {
-        throw new Error(advancedError.message);
+        // Legacy search function can fail if DB function is out-of-date.
+        // Fall back to ranked search so browse/search never hard-fails.
+        const { data: rankedRows, error: rankedError } = await supabase.rpc(
+          "search_listings_ranked",
+          {
+            p_query: trimmedQuery,
+            p_page: 0,
+            p_page_size: 20,
+            p_category_id: null,
+            p_university_id: null,
+            p_max_price: null,
+            p_is_service: null,
+          }
+        );
+
+        if (rankedError) {
+          throw new Error(advancedError.message);
+        }
+
+        return mapRankedResults((rankedRows ?? []) as unknown as RankedSearchRow[]);
       }
 
       const rows = (advancedRows ?? []) as unknown as AdvancedSearchRow[];
@@ -144,34 +195,7 @@ export async function getListings(
       throw new Error(rankedError.message);
     }
 
-    const rankRows = (rankedRows ?? []) as unknown as RankedSearchRow[];
-    const orderedIds = rankRows.map((row) => row.listing_id);
-    const totalCount = rankRows[0]?.total_count ?? 0;
-
-    if (orderedIds.length === 0) {
-      return { data: [], count: 0 };
-    }
-
-    const { data: listingRows, error: listingError } = await supabase
-      .from("listings")
-      .select(LISTING_SELECT)
-      .in("id", orderedIds);
-
-    if (listingError) {
-      throw new Error(listingError.message);
-    }
-
-    const byId = new Map(
-      (((listingRows ?? []) as unknown as ListingWithRelations[]) ?? []).map((row) => [row.id, row])
-    );
-    const orderedRows = orderedIds
-      .map((id) => byId.get(id))
-      .filter((row): row is ListingWithRelations => Boolean(row));
-
-    return {
-      data: orderedRows,
-      count: totalCount,
-    };
+    return mapRankedResults((rankedRows ?? []) as unknown as RankedSearchRow[]);
   }
 
   let q = supabase
