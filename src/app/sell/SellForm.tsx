@@ -199,6 +199,9 @@ export default function SellForm({ categories, userId }: SellFormProps) {
                 <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   Listing Title <span className="text-red-500">*</span>
                 </label>
+                <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
+                  {isService ? "What service are you offering?" : "What are you selling? Include brand/model if possible."}
+                </p>
                 <input
                   type="text"
                   name="title"
@@ -278,6 +281,9 @@ export default function SellForm({ categories, userId }: SellFormProps) {
                   <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                     Price (ZMW) <span className="text-red-500">*</span>
                   </label>
+                  <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
+                    Set your price. Check similar listings to stay competitive.
+                  </p>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 dark:text-slate-500">
                       ZMW
@@ -349,6 +355,9 @@ export default function SellForm({ categories, userId }: SellFormProps) {
                 <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   Description <span className="text-red-500">*</span>
                 </label>
+                <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
+                  {isService ? "What's included? How long does it typically take?" : "Describe condition, any defects, why you're selling, and how to contact you."}
+                </p>
                 <textarea
                   name="description"
                   required

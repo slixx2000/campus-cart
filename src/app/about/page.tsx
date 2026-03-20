@@ -81,6 +81,53 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Trust & Safety */}
+      <section className="max-w-7xl mx-auto px-6 py-20 border-y border-slate-100 dark:border-white/10">
+        <h2 className="mb-12 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+          <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
+            shield
+          </span>
+          Trust & Safety
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+              Who Can Browse?
+            </h3>
+            <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Anyone can browse listings with any email. No verification required to explore what's available on campus.
+            </p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+              Who Can Sell?
+            </h3>
+            <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Only verified students can create listings and sell. Link your university email, and we'll verify you're a student at your institution.
+            </p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+              Verification Badges
+            </h3>
+            <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Look for the <span className="inline-flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-300">
+                <span className="material-symbols-outlined text-sm">verified</span>
+                Verified
+              </span> badge on seller profiles. It means they've confirmed their student status.
+            </p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+            <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
+              Safe Transactions
+            </h3>
+            <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Always meet in public, well-lit places on campus. Use CampusCart messaging to communicate with sellers. Never share payment details through chat.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Stats */}
       <section className="border-y border-slate-100 bg-white px-6 py-16 dark:border-white/10 dark:bg-white/5">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">

@@ -98,8 +98,7 @@ export default function ProfileSettingsForm({
           Link your student email to this account
         </h1>
         <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-          Keep your personal login if you want. Add your university student email here so
-          this account can be approved for selling.
+          Link a student email from your university. We verify this to ensure only students can create listings. You can keep your personal email for browsing.
         </p>
 
         <div
@@ -118,17 +117,17 @@ export default function ProfileSettingsForm({
             <div>
               <p className="font-bold">
                 {isVerifiedStudent
-                  ? "Your student seller access is active."
+                  ? "You're verified! Ready to sell."
                   : studentEmail
-                  ? "Your student email is linked and waiting for verification."
-                  : "Your account can browse, but selling requires student verification."}
+                  ? "Email linked. Awaiting verification."
+                  : "Browsing as a guest. Selling requires verification."}
               </p>
               <p className="mt-1 leading-6">
                 {isVerifiedStudent
-                  ? "You can create listings and offer services on CampusCart with this account."
+                  ? "You can now create listings and sell on CampusCart. Your verified badge will appear on all your listings."
                   : studentEmail
-                  ? "Once your backend/admin verification flow marks this student email as approved, selling will unlock automatically."
-                  : "Add your university student email below so this personal account can be linked for seller approval."}
+                  ? "Your student email is verified if your school is recognized. Approval typically takes 24 hours. You'll receive a notification when ready."
+                  : "Link your university student email below to get verified for selling. We only approve verified students to keep CampusCart trustworthy."}
               </p>
             </div>
           </div>

@@ -232,9 +232,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
                       ) : null}
                     </div>
                     <div className="flex items-center gap-1 mt-0.5">
-                      <span className="material-symbols-outlined text-amber-400 text-sm">star</span>
-                      <span className="text-sm font-bold text-slate-900 dark:text-white">4.8</span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400">(12 sales)</span>
+                      {sellerProfile?.is_verified_student && (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-emerald-300/50 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700 dark:border-emerald-300/30 dark:bg-emerald-400/15 dark:text-emerald-300">
+                          <span className="material-symbols-outlined text-[11px] leading-none">verified</span>
+                          Verified
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -247,12 +250,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   </Link>
                 ) : null}
               </div>
-              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs dark:border-white/10">
-                <span className="text-slate-500 dark:text-slate-400">{listing.university}</span>
-                <span className="flex items-center gap-1 font-bold text-green-500 dark:text-emerald-300">
-                  <span className="material-symbols-outlined text-sm">bolt</span>
-                  Quick Responder
-                </span>
+              <div className="mt-4 border-t border-slate-100 pt-4 space-y-2 text-xs dark:border-white/10">
+                <div className="text-slate-500 dark:text-slate-400">{listing.university}</div>
+                <div className="text-slate-500 dark:text-slate-400">Listed {dateFormatted}</div>
               </div>
             </div>
 

@@ -16,11 +16,15 @@ interface BeforeInstallPromptEvent extends Event {
 
 interface HeaderClientProps {
   user: { id: string; email: string } | null;
+  isVerifiedStudent?: boolean;
+  isAdmin?: boolean;
   unreadMessages?: number;
 }
 
 export default function HeaderClient({
   user,
+  isVerifiedStudent = false,
+  isAdmin = false,
   unreadMessages = 0,
 }: HeaderClientProps) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -184,12 +188,22 @@ export default function HeaderClient({
           )}
           <Link
             href="/sell"
-            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-blue-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98]"
+            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-blue-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98] relative"
           >
             <span className="material-symbols-outlined text-lg leading-none">
               add_circle
             </span>
             Sell Item
+            {user && (
+              <span
+                className={`absolute top-0 right-0 w-3 h-3 rounded-full ${
+                  isVerifiedStudent
+                    ? "bg-emerald-400"
+                    : "bg-amber-400"
+                }`}
+                title={isVerifiedStudent ? "Verified - Ready to sell" : "Not verified - Link student email to sell"}
+              />
+            )}
           </Link>
         </div>
 
@@ -261,9 +275,14 @@ export default function HeaderClient({
                 <Link
                   href="/profile"
                   onClick={() => setMenuOpen(false)}
-                  className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
+                  className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10 flex items-center justify-between"
                 >
                   My Profile
+                  {isVerifiedStudent && (
+                    <span className="material-symbols-outlined text-sm text-emerald-500">
+                      verified
+                    </span>
+                  )}
                 </Link>
                 {isAdmin ? (
                   <Link
