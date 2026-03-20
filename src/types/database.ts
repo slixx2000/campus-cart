@@ -152,7 +152,7 @@ export type Database = {
       };
       profiles: {
         Row: ProfileRow;
-        Insert: Omit<ProfileRow, "created_at" | "updated_at" | "full_name" | "is_verified_student" | "is_pioneer_seller" | "pioneer_awarded_at" | "phone" | "university_id" | "avatar_url" | "student_email" | "student_email_requested_at" | "student_email_verified_at"> & {
+        Insert: Omit<ProfileRow, "created_at" | "updated_at" | "full_name" | "is_verified_student" | "is_pioneer_seller" | "pioneer_awarded_at" | "phone" | "university_id" | "avatar_url" | "student_email" | "student_email_requested_at" | "student_email_verified_at" | "is_admin"> & {
           full_name?: string;
           phone?: string | null;
           university_id?: string | null;
@@ -160,6 +160,7 @@ export type Database = {
           student_email?: string | null;
           student_email_requested_at?: string | null;
           student_email_verified_at?: string | null;
+          is_admin?: boolean;
           is_verified_student?: boolean;
           is_pioneer_seller?: boolean;
           pioneer_awarded_at?: string | null;
