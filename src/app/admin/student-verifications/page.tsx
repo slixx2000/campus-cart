@@ -26,7 +26,7 @@ export default async function StudentVerificationsPage() {
 
   const { data: rows, error } = await supabase
     .from("profiles")
-    .select("id, full_name, student_email, student_email_requested_at, student_email_verified_at, is_verified_student")
+    .select("id, full_name, student_email, student_email_requested_at, student_email_verified_at, verification_review_note, verification_rejection_reason, is_verified_student")
     .not("student_email", "is", null)
     .order("student_email_requested_at", { ascending: true });
 

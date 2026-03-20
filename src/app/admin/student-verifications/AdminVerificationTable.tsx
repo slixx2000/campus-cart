@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import {
   approveStudentEmailAction,
+  createStudentVerificationLinkAction,
   rejectStudentEmailAction,
 } from "./actions";
 
@@ -12,6 +13,8 @@ type VerificationRow = {
   student_email: string | null;
   student_email_requested_at: string | null;
   student_email_verified_at: string | null;
+  verification_review_note: string | null;
+  verification_rejection_reason: string | null;
   is_verified_student: boolean;
 };
 
@@ -28,7 +31,7 @@ function formatDate(value?: string | null) {
   }
 }
 
-function VerificationActions({ profileId, isVerified }: { profileId: string; isVerified: boolean }) {
+function VerificationActions({ row }: { row: VerificationRow }) {
   const [approveState, approveAction, approvePending] = useActionState(
     approveStudentEmailAction,
     {}
@@ -37,22 +40,40 @@ function VerificationActions({ profileId, isVerified }: { profileId: string; isV
     rejectStudentEmailAction,
     {}
   );
+  const [linkState, linkAction, linkPending] = useActionState(
+    createStudentVerificationLinkAction,
+    {}
+  );
 
   return (
-    <div className="flex flex-col items-start gap-3">
-      <form action={approveAction}>
-        <input type="hidden" name="profileId" value={profileId} />
+    <div className="flex min-w-[260px] flex-col gap-3">
+      <form action={approveAction} className="space-y-2">
+        <input type="hidden" name="profileId" value={row.id} />
+        <textarea
+          name="note"
+          rows={2}
+          defaultValue={row.verification_review_note ?? ""}
+          placeholder="Approval note (optional)"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+        />
         <button
           type="submit"
-          disabled={approvePending || isVerified}
+          disabled={approvePending || row.is_verified_student}
           className="rounded-full bg-green-600 px-4 py-2 text-xs font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {approvePending ? "Approving..." : isVerified ? "Approved" : "Approve"}
+          {approvePending ? "Approving..." : row.is_verified_student ? "Approved" : "Approve"}
         </button>
       </form>
 
-      <form action={rejectAction}>
-        <input type="hidden" name="profileId" value={profileId} />
+      <form action={rejectAction} className="space-y-2">
+        <input type="hidden" name="profileId" value={row.id} />
+        <textarea
+          name="reason"
+          rows={2}
+          defaultValue={row.verification_rejection_reason ?? ""}
+          placeholder="Rejection reason (required if rejecting)"
+          className="w-full rounded-xl border border-red-200 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-300 dark:border-red-300/20 dark:bg-[#0d1a2b] dark:text-white"
+        />
         <button
           type="submit"
           disabled={rejectPending}
@@ -62,9 +83,26 @@ function VerificationActions({ profileId, isVerified }: { profileId: string; isV
         </button>
       </form>
 
-      {(approveState.message || rejectState.message) && (
+      <form action={linkAction} className="space-y-2">
+        <input type="hidden" name="profileId" value={row.id} />
+        <button
+          type="submit"
+          disabled={linkPending || !row.student_email}
+          className="rounded-full border border-sky-200 px-4 py-2 text-xs font-bold text-sky-700 transition hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-sky-300/20 dark:text-sky-200 dark:hover:bg-sky-300/10"
+        >
+          {linkPending ? "Generating link..." : "Create verification link"}
+        </button>
+        {linkState.verificationLink ? (
+          <div className="rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-800 dark:border-sky-300/20 dark:bg-sky-300/10 dark:text-sky-100">
+            <p className="mb-2 font-semibold">Manual send link</p>
+            <p className="break-all">{linkState.verificationLink}</p>
+          </div>
+        ) : null}
+      </form>
+
+      {(approveState.message || rejectState.message || linkState.message) && (
         <p className="text-xs text-slate-500 dark:text-slate-400">
-          {approveState.message ?? rejectState.message}
+          {approveState.message ?? rejectState.message ?? linkState.message}
         </p>
       )}
     </div>
@@ -90,6 +128,7 @@ export default function AdminVerificationTable({ rows }: { rows: VerificationRow
               <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Student email</th>
               <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Requested</th>
               <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Status</th>
+              <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Last review</th>
               <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Actions</th>
             </tr>
           </thead>
@@ -104,8 +143,23 @@ export default function AdminVerificationTable({ rows }: { rows: VerificationRow
                     {row.is_verified_student ? "Verified" : "Pending"}
                   </span>
                 </td>
-                <td className="px-4 py-4">
-                  <VerificationActions profileId={row.id} isVerified={row.is_verified_student} />
+                <td className="px-4 py-4 text-xs text-slate-500 dark:text-slate-400">
+                  {row.verification_rejection_reason ? (
+                    <div>
+                      <p className="font-semibold text-red-600 dark:text-red-200">Rejected</p>
+                      <p>{row.verification_rejection_reason}</p>
+                    </div>
+                  ) : row.verification_review_note ? (
+                    <div>
+                      <p className="font-semibold text-green-700 dark:text-emerald-200">Approved note</p>
+                      <p>{row.verification_review_note}</p>
+                    </div>
+                  ) : (
+                    "—"
+                  )}
+                </td>
+                <td className="px-4 py-4 align-top">
+                  <VerificationActions row={row} />
                 </td>
               </tr>
             ))}

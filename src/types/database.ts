@@ -14,9 +14,6 @@ export type ListingCondition = "new" | "like_new" | "good" | "fair";
 export type ListingStatus = "draft" | "active" | "sold" | "archived" | "removed";
 export type ReportType = "user" | "listing" | "conversation";
 
-// Row shapes — must be `type` aliases (not interfaces) so they satisfy
-// Record<string, unknown> in TypeScript's conditional type checking,
-// which is required by Supabase's GenericTable constraint.
 export type UniversityRow = {
   id: string;
   code: string;
@@ -42,6 +39,14 @@ export type ProfileRow = {
   phone: string | null;
   university_id: string | null;
   avatar_url: string | null;
+  student_email: string | null;
+  student_email_requested_at: string | null;
+  student_email_verified_at: string | null;
+  verification_review_note: string | null;
+  verification_rejection_reason: string | null;
+  verification_reviewed_at: string | null;
+  verification_reviewed_by: string | null;
+  is_admin: boolean;
   is_verified_student: boolean;
   is_pioneer_seller: boolean;
   pioneer_awarded_at: string | null;
@@ -124,8 +129,18 @@ export type MessageRow = {
   conversation_id: string;
   sender_id: string;
   content: string;
-  /** ISO timestamp when this message is no longer visible. */
   expires_at: string;
+  created_at: string;
+};
+
+export type StudentEmailVerificationTokenRow = {
+  id: string;
+  profile_id: string;
+  student_email: string;
+  token_hash: string;
+  expires_at: string;
+  consumed_at: string | null;
+  created_by: string;
   created_at: string;
 };
 
@@ -134,25 +149,38 @@ export type Database = {
     Tables: {
       universities: {
         Row: UniversityRow;
-        Insert: Omit<UniversityRow, "id" | "created_at"> & {
-          id?: string;
-          created_at?: string;
-        };
+        Insert: Omit<UniversityRow, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<UniversityRow>;
         Relationships: [];
       };
       categories: {
         Row: CategoryRow;
-        Insert: Omit<CategoryRow, "id" | "created_at"> & {
-          id?: string;
-          created_at?: string;
-        };
+        Insert: Omit<CategoryRow, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<CategoryRow>;
         Relationships: [];
       };
       profiles: {
         Row: ProfileRow;
-        Insert: Omit<ProfileRow, "created_at" | "updated_at" | "full_name" | "is_verified_student" | "is_pioneer_seller" | "pioneer_awarded_at" | "phone" | "university_id" | "avatar_url" | "student_email" | "student_email_requested_at" | "student_email_verified_at" | "is_admin"> & {
+        Insert: Omit<
+          ProfileRow,
+          | "created_at"
+          | "updated_at"
+          | "full_name"
+          | "phone"
+          | "university_id"
+          | "avatar_url"
+          | "student_email"
+          | "student_email_requested_at"
+          | "student_email_verified_at"
+          | "verification_review_note"
+          | "verification_rejection_reason"
+          | "verification_reviewed_at"
+          | "verification_reviewed_by"
+          | "is_admin"
+          | "is_verified_student"
+          | "is_pioneer_seller"
+          | "pioneer_awarded_at"
+        > & {
           full_name?: string;
           phone?: string | null;
           university_id?: string | null;
@@ -160,6 +188,10 @@ export type Database = {
           student_email?: string | null;
           student_email_requested_at?: string | null;
           student_email_verified_at?: string | null;
+          verification_review_note?: string | null;
+          verification_rejection_reason?: string | null;
+          verification_reviewed_at?: string | null;
+          verification_reviewed_by?: string | null;
           is_admin?: boolean;
           is_verified_student?: boolean;
           is_pioneer_seller?: boolean;
@@ -187,10 +219,7 @@ export type Database = {
       };
       listing_images: {
         Row: ListingImageRow;
-        Insert: Omit<ListingImageRow, "id" | "created_at"> & {
-          id?: string;
-          created_at?: string;
-        };
+        Insert: Omit<ListingImageRow, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<ListingImageRow>;
         Relationships: [];
       };
@@ -202,10 +231,7 @@ export type Database = {
       };
       reports: {
         Row: ReportRow;
-        Insert: Omit<ReportRow, "id" | "created_at"> & {
-          id?: string;
-          created_at?: string;
-        };
+        Insert: Omit<ReportRow, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<ReportRow>;
         Relationships: [];
       };
@@ -243,6 +269,16 @@ export type Database = {
         Update: Partial<MessageRow>;
         Relationships: [];
       };
+      student_email_verification_tokens: {
+        Row: StudentEmailVerificationTokenRow;
+        Insert: Omit<StudentEmailVerificationTokenRow, "id" | "created_at" | "consumed_at"> & {
+          id?: string;
+          created_at?: string;
+          consumed_at?: string | null;
+        };
+        Update: Partial<StudentEmailVerificationTokenRow>;
+        Relationships: [];
+      };
     };
     Enums: {
       listing_condition: ListingCondition;
@@ -253,6 +289,10 @@ export type Database = {
       increment_listing_view: {
         Args: { p_listing_id: string };
         Returns: undefined;
+      };
+      consume_student_email_verification: {
+        Args: { p_token_hash: string };
+        Returns: boolean;
       };
       mark_conversation_read: {
         Args: { p_conversation_id: string };
@@ -286,18 +326,13 @@ export type Database = {
   };
 };
 
-/** A conversation joined with listing title and both participant profiles. */
 export type ConversationWithRelations = ConversationRow & {
   listings: { id: string; title: string } | null;
-  /** Profile of the buyer (joined via buyer_id FK). */
   buyer_profile: { id: string; full_name: string; avatar_url: string | null } | null;
-  /** Profile of the seller (joined via seller_id FK). */
   seller_profile: { id: string; full_name: string; avatar_url: string | null } | null;
-  /** Most recent non-expired message preview (optional, enriched in JS). */
   last_message?: { content: string; created_at: string } | null;
 };
 
-/** A listing joined with its images, seller profile, category, and university. */
 export type ListingWithRelations = ListingRow & {
   categories: Pick<CategoryRow, "id" | "name" | "slug" | "material_icon" | "color_class"> | null;
   universities: Pick<UniversityRow, "id" | "name" | "short_name" | "city"> | null;

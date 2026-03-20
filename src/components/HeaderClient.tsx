@@ -143,7 +143,17 @@ export default function HeaderClient({
           ) : null}
           <ThemeToggle />
           {user ? (
-            <SlideTabs unreadMessages={liveUnread} />
+            <>
+              {isAdmin ? (
+                <Link
+                  href="/admin/student-verifications"
+                  className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+                >
+                  Admin
+                </Link>
+              ) : null}
+              <SlideTabs unreadMessages={liveUnread} />
+            </>
           ) : (
             <>
               <Link
@@ -255,6 +265,15 @@ export default function HeaderClient({
                 >
                   My Profile
                 </Link>
+                {isAdmin ? (
+                  <Link
+                    href="/admin/student-verifications"
+                    onClick={() => setMenuOpen(false)}
+                    className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
+                  >
+                    Admin
+                  </Link>
+                ) : null}
                 <form action={signOutAction}>
                   <button
                     type="submit"
