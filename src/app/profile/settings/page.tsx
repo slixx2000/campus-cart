@@ -23,6 +23,9 @@ export default async function ProfileSettingsPage() {
         <ProfileSettingsForm
           initialAvatarUrl={profile?.avatar_url ?? null}
           isVerifiedStudent={profile?.is_verified_student ?? false}
+          studentEmail={profile?.student_email ?? null}
+          studentEmailRequestedAt={profile?.student_email_requested_at ?? null}
+          studentEmailVerifiedAt={profile?.student_email_verified_at ?? null}
         />
       </div>
     </div>
