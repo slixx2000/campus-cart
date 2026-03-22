@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "Campus Cart",
+    "slug": "campus-cart-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "campuscart",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#020817"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.campuscart.mobile"
+    },
+    "android": {
+      "package": "com.campuscart.mobile",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.READ_MEDIA_IMAGES"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Campus Cart needs access to your photos so you can upload listing images.",
+          "cameraPermission": "Campus Cart uses your camera so you can take listing photos."
+        }
+      ],
+      "expo-image"
+    ],
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f81aec8d-45dd-4d92-8cff-e52ba219bae8"
+      }
+    }
+  }
+}
