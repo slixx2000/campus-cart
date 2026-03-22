@@ -64,8 +64,8 @@ export default async function HomePage() {
   return (
     <div className="bg-background-light transition-colors dark:bg-background-dark">
       {/* Hero */}
-      <section className="max-w-[1200px] mx-auto px-6 pt-10 pb-6">
-        <div className="relative flex min-h-[520px] flex-col items-center justify-center overflow-hidden rounded-xl bg-slate-900 p-8 text-center md:p-20 dark:glass-card-dark dark:bg-background-dark">
+      <section className="mx-auto max-w-[1200px] px-4 pb-6 pt-6 sm:px-6 sm:pt-10">
+        <div className="relative flex min-h-[460px] flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-900 p-5 text-center sm:min-h-[520px] sm:p-8 md:p-20 dark:glass-card-dark dark:bg-background-dark">
           {/* Gradient overlay */}
           <div className="absolute inset-0 opacity-40 fluid-gradient dark:hidden" />
           <div className="absolute inset-0 hidden fluid-gradient-dark dark:block" />
@@ -73,20 +73,20 @@ export default async function HomePage() {
           <div className="absolute -bottom-16 -right-16 hidden h-64 w-64 rounded-full bg-blue-400/10 blur-[100px] dark:block" />
 
           <div className="relative z-10 max-w-3xl">
-            <h1 className="text-white text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6">
+            <h1 className="mb-4 text-3xl font-extrabold leading-[1.1] tracking-tight text-white sm:mb-6 sm:text-5xl md:text-7xl">
               The Marketplace for Your{" "}
               <span className="text-primary italic">Campus</span>
             </h1>
-            <p className="text-white/80 text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto">
+            <p className="mx-auto mb-7 max-w-2xl text-base font-medium text-white/80 sm:mb-10 sm:text-lg md:text-xl">
               Browse campus deals with ease. Only verified students can create listings and sell.
             </p>
 
             {/* Hero search */}
-            <form action="/browse" method="get" className="relative w-full max-w-2xl mx-auto mb-8">
-              <div className="flex items-center rounded-full border border-white/20 bg-white/10 p-2 shadow-2xl backdrop-blur-md dark:border-primary/20 dark:bg-primary/5">
-                <span className="material-symbols-outlined ml-4 text-white/60">search</span>
+            <form action="/browse" method="get" className="relative mx-auto mb-7 w-full max-w-2xl sm:mb-8">
+              <div className="flex flex-col items-stretch gap-2 rounded-3xl border border-white/20 bg-white/10 p-3 shadow-2xl backdrop-blur-md sm:flex-row sm:items-center sm:gap-0 sm:rounded-full sm:p-2 dark:border-primary/20 dark:bg-primary/5">
+                <span className="material-symbols-outlined ml-1 hidden text-white/60 sm:ml-4 sm:block">search</span>
                 <input
-                  className="w-full bg-transparent border-none focus:ring-0 text-white placeholder:text-white/50 px-4 py-3 text-lg outline-none"
+                  className="w-full border-none bg-transparent px-3 py-2 text-base text-white placeholder:text-white/50 outline-none focus:ring-0 sm:px-4 sm:py-3 sm:text-lg"
                   placeholder="Search for textbooks, electronics, or services..."
                   type="text"
                   name="q"
@@ -94,24 +94,24 @@ export default async function HomePage() {
                 />
                 <button
                   type="submit"
-                  className="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-lg hover:opacity-90 transition-all shrink-0"
+                  className="w-full shrink-0 rounded-full bg-primary px-8 py-3 font-bold text-white shadow-lg transition-all hover:opacity-90 sm:w-auto"
                 >
                   Search
                 </button>
               </div>
             </form>
 
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4">
               <Link
                 href="/browse"
-                className="flex items-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-slate-900 shadow-xl transition-transform hover:scale-105 dark:bg-white/10 dark:text-white dark:backdrop-blur-sm"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-4 font-bold text-slate-900 shadow-xl transition-transform hover:scale-105 sm:w-auto dark:bg-white/10 dark:text-white dark:backdrop-blur-sm"
               >
                 <span className="material-symbols-outlined">explore</span>
                 Browse
               </Link>
               <Link
                 href="/sell"
-                className="bg-primary/20 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-full font-bold hover:bg-primary/30 transition-all flex items-center gap-2"
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-primary/20 px-8 py-4 font-bold text-white backdrop-blur-sm transition-all hover:bg-primary/30 sm:w-auto"
               >
                 <span className="material-symbols-outlined">add_circle</span>
                 Sell Item
@@ -122,14 +122,14 @@ export default async function HomePage() {
       </section>
 
       {/* Featured Categories */}
-      <section className="max-w-[1200px] mx-auto px-6 mt-16">
-        <h2 className="mb-8 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+      <section className="mx-auto mt-10 max-w-[1200px] px-4 sm:mt-16 sm:px-6">
+        <h2 className="mb-5 flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:mb-8 sm:text-2xl dark:text-white">
           <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
             category
           </span>
           Featured Categories
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
           {CATEGORIES.slice(0, 10).map((cat) => (
             <CategoryCard
               key={cat.label}
@@ -150,8 +150,8 @@ export default async function HomePage() {
       />
 
       {/* Partner Universities */}
-      <section className="max-w-[1200px] mx-auto px-6 py-16">
-        <h2 className="mb-8 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+      <section className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 sm:py-16">
+        <h2 className="mb-5 flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:mb-8 sm:text-2xl dark:text-white">
           <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
             apartment
           </span>
@@ -161,20 +161,20 @@ export default async function HomePage() {
       </section>
 
       {/* CTA Banner */}
-      <section className="bg-slate-900 px-6 py-16 dark:bg-background-dark">
-        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-xl bg-slate-900 px-8 py-14 text-center dark:bg-white/5 dark:border dark:border-white/15 dark:shadow-2xl dark:shadow-black/35 dark:backdrop-blur-md">
+      <section className="bg-slate-900 px-4 py-10 sm:px-6 sm:py-16 dark:bg-background-dark">
+        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-xl bg-slate-900 px-5 py-10 text-center sm:px-8 sm:py-14 dark:border dark:border-white/15 dark:bg-white/5 dark:shadow-2xl dark:shadow-black/35 dark:backdrop-blur-md">
           <div className="pointer-events-none absolute inset-0 opacity-40 fluid-gradient dark:hidden" />
           <div className="pointer-events-none absolute inset-0 hidden opacity-30 fluid-gradient-dark dark:block" />
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-4 dark:text-sky-100">
+          <h2 className="mb-4 text-2xl font-extrabold text-white sm:text-4xl dark:text-sky-100">
             Got something to sell?
           </h2>
-          <p className="text-white/70 mb-8 text-lg dark:text-slate-200">
+          <p className="mb-7 text-base text-white/70 sm:mb-8 sm:text-lg dark:text-slate-200">
             List your items for free and reach thousands of verified students on
             campus.
           </p>
           <Link
             href="/sell"
-            className="inline-flex items-center gap-2 bg-primary text-white font-bold px-10 py-4 rounded-full hover:scale-105 transition-transform shadow-lg shadow-primary/30 text-base"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-primary/30 transition-transform hover:scale-105 sm:px-10 sm:py-4 sm:text-base"
           >
             <span className="material-symbols-outlined">add_circle</span>
             Post a Free Listing

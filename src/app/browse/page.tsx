@@ -98,23 +98,23 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
 
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-5 md:px-8 md:py-8">
         <BrowseScrollRestorer storageKey={browseStateKey} />
-        <div className="mb-8 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/80 p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
+        <div className="mb-5 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/80 p-4 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur sm:mb-8 sm:p-6 dark:glass-card-dark dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/80 dark:text-sky-300">
                 Marketplace Feed
               </span>
-              <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+              <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:mt-3 sm:text-4xl">
                 Browse campus listings with live filters
               </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300 sm:mt-3">
                 Search verified student listings, refine by category or university,
                 and move between results without leaving the page context.
               </p>
             </div>
-            <div className="rounded-2xl border border-primary/15 bg-primary/5 px-5 py-4 dark:border-sky-400/20 dark:bg-sky-400/10">
+            <div className="rounded-2xl border border-primary/15 bg-primary/5 px-4 py-3 sm:px-5 sm:py-4 dark:border-sky-400/20 dark:bg-sky-400/10">
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-primary/80 dark:text-sky-200">
                 Active inventory
               </p>
@@ -128,7 +128,7 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
         <Suspense fallback={null}>
           <BrowseFilters categories={categories} count={count} showPagination={false}>
             {allListings.length === 0 ? (
-              <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-16 text-center shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+              <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-9 text-center shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur sm:p-16 dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
                 <span className="material-symbols-outlined mb-4 block text-5xl text-slate-300 dark:text-slate-500">
                   search_off
                 </span>
@@ -140,7 +140,7 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
                 </p>
               </div>
             ) : (
-              <div className="space-y-10">
+              <div className="space-y-7 sm:space-y-10">
                 {renderSection("Featured Listings", featuredListings)}
                 {renderSection("Nearby Listings", nearbyListings)}
                 {renderSection("All Listings", allListings)}

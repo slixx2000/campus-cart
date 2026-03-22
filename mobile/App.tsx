@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Session, User } from '@supabase/supabase-js';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -16,6 +17,7 @@ import { SellerProfileScreen } from './src/screens/SellerProfileScreen';
 import { SellScreen } from './src/screens/SellScreen';
 import { pickImages, uploadListingImages, type PickedImage } from './src/lib/imageUpload';
 import { pickSingleProfileImage, uploadProfileAvatar } from './src/lib/profileUpload';
+import { registerPushToken } from './src/lib/pushNotifications';
 import { findOrCreateConversation, getConversationsForUser, getMessages, markConversationRead, sendMessage } from './src/lib/conversations';
 import { getFavoriteIds, toggleFavorite } from './src/lib/favorites';
 import { CATEGORY_OPTIONS, LISTING_SELECT } from './src/lib/constants';
@@ -38,6 +40,255 @@ const navTheme = {
     primary: colors.primary,
   },
 };
+
+function MainTabsNavigator(props: any) {
+  const {
+    featuredListings,
+    nearbyListings,
+    query,
+    selectedCategory,
+    listingType,
+    maxPrice,
+    sortBy,
+    favoritesOnly,
+    favoriteIds,
+    user,
+    handleToggleFavorite,
+    setQuery,
+    setSelectedCategory,
+    setListingType,
+    setMaxPrice,
+    setSortBy,
+    setFavoritesOnly,
+    filteredListings,
+    sellTitle,
+    setSellTitle,
+    sellDescription,
+    setSellDescription,
+    sellPrice,
+    setSellPrice,
+    sellCategory,
+    setSellCategory,
+    listingImages,
+    pickingImages,
+    sellSubmitting,
+    handlePickImages,
+    handleCreateListing,
+    unreadCount,
+    conversations,
+    conversationLoading,
+    loadConversations,
+    loadMessages,
+    AboutScreen,
+    AccountScreen,
+    universityName,
+    activeCount,
+    soldCount,
+    userListings,
+    email,
+    password,
+    fullName,
+    phone,
+    setEmail,
+    setPassword,
+    setFullName,
+    setPhone,
+    authMode,
+    setAuthMode,
+    authLoading,
+    handleAuth,
+    resetEmail,
+    setResetEmail,
+    resetLoading,
+    handlePasswordReset,
+    signOut,
+    editFullName,
+    editPhone,
+    editStudentEmail,
+    editUniversityId,
+    universities,
+    saveLoading,
+    avatarLoading,
+    setEditFullName,
+    setEditPhone,
+    setEditStudentEmail,
+    setEditUniversityId,
+    handleSaveProfile,
+    handlePickAvatar,
+    updateListingStatus,
+    refreshingFeed,
+    refreshingMessages,
+    refreshingAccount,
+    handleRefreshFeed,
+    handleRefreshMessages,
+    handleRefreshAccount,
+  } = props;
+
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerStyle: { backgroundColor: colors.bg },
+        headerTintColor: colors.text,
+        headerTitleStyle: { fontWeight: '800' },
+        tabBarStyle: {
+          backgroundColor: 'rgba(15, 23, 42, 0.75)',
+          borderTopColor: 'rgba(148, 163, 184, 0.15)',
+          borderTopWidth: 1,
+          elevation: 8,
+          shadowColor: '#000',
+          shadowOpacity: 0.2,
+          shadowRadius: 16,
+          shadowOffset: { width: 0, height: -4 },
+          paddingBottom: 8,
+        },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.muted,
+        tabBarIcon: ({ color, size }) => {
+          let iconName: any = 'home';
+          if (route.name === 'Browse') iconName = 'search';
+          if (route.name === 'Sell') iconName = 'add-circle-outline';
+          if (route.name === 'Messages') iconName = 'chat-bubble-outline';
+          if (route.name === 'About') iconName = 'info-outline';
+          if (route.name === 'Account') iconName = 'person-outline';
+          return <MaterialIcons name={iconName} size={size} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Home">
+        {({ navigation }) => (
+          <HomeScreen
+            featuredListings={featuredListings}
+            nearbyListings={nearbyListings}
+            refreshing={refreshingFeed}
+            onRefresh={handleRefreshFeed}
+            onOpenListing={(listing) => navigation.getParent()?.navigate('ListingDetail', { listing })}
+            onBrowsePress={() => navigation.navigate('Browse')}
+            onSellPress={() => navigation.navigate('Sell')}
+            onCategoryPress={(category) => {
+              setFavoritesOnly(false);
+              setSelectedCategory(category);
+              navigation.navigate('Browse');
+            }}
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="Browse">
+        {({ navigation }) => (
+          <BrowseScreen
+            query={query}
+            selectedCategory={selectedCategory}
+            listingType={listingType}
+            maxPrice={maxPrice}
+            sortBy={sortBy}
+            favoritesOnly={favoritesOnly}
+            favoriteCount={favoriteIds.length}
+            setQuery={setQuery}
+            setSelectedCategory={setSelectedCategory}
+            setListingType={setListingType}
+            setMaxPrice={setMaxPrice}
+            setSortBy={setSortBy}
+            setFavoritesOnly={setFavoritesOnly}
+            listings={filteredListings}
+            favoriteIds={favoriteIds}
+            canFavorite={!!user}
+            refreshing={refreshingFeed}
+            onRefresh={handleRefreshFeed}
+            onToggleFavorite={handleToggleFavorite}
+            onOpenListing={(listing) => navigation.getParent()?.navigate('ListingDetail', { listing })}
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="Sell">
+        {() => (
+          <SellScreen
+            user={user}
+            profile={props.profile}
+            sellTitle={sellTitle}
+            setSellTitle={setSellTitle}
+            sellDescription={sellDescription}
+            setSellDescription={setSellDescription}
+            sellPrice={sellPrice}
+            setSellPrice={setSellPrice}
+            sellCategory={sellCategory}
+            setSellCategory={setSellCategory}
+            listingImages={listingImages}
+            pickingImages={pickingImages}
+            submitting={sellSubmitting}
+            onPickImages={handlePickImages}
+            onSubmit={handleCreateListing}
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="Messages" options={{ tabBarBadge: unreadCount > 0 ? unreadCount : undefined }}>
+        {({ navigation }) => (
+          <MessagesScreen
+            signedIn={!!user}
+            conversations={conversations}
+            loading={conversationLoading}
+            refreshing={refreshingMessages}
+            onRefresh={handleRefreshMessages}
+            onOpenConversation={async (conversation) => {
+              await loadMessages(conversation.id, user?.id);
+              navigation.getParent()?.navigate('ChatDetail', {
+                conversationId: conversation.id,
+                title: conversation.other_participant_name,
+                currentUserId: user?.id || '',
+              });
+            }}
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="About">{() => <AboutScreen />}</Tab.Screen>
+      <Tab.Screen name="Account">
+        {() => (
+          <AccountScreen
+            user={user}
+            profile={props.profile}
+            universityName={universityName}
+            activeCount={activeCount}
+            soldCount={soldCount}
+            myListings={userListings}
+            email={email}
+            password={password}
+            fullName={fullName}
+            phone={phone}
+            setEmail={setEmail}
+            setPassword={setPassword}
+            setFullName={setFullName}
+            setPhone={setPhone}
+            authMode={authMode}
+            setAuthMode={setAuthMode}
+            authLoading={authLoading}
+            onAuth={handleAuth}
+            resetEmail={resetEmail}
+            setResetEmail={setResetEmail}
+            resetLoading={resetLoading}
+            onRequestPasswordReset={handlePasswordReset}
+            onSignOut={signOut}
+            editFullName={editFullName}
+            editPhone={editPhone}
+            editStudentEmail={editStudentEmail}
+            editUniversityId={editUniversityId}
+            universities={universities}
+            saveLoading={saveLoading}
+            avatarLoading={avatarLoading}
+            onEditFullName={setEditFullName}
+            onEditPhone={setEditPhone}
+            onEditStudentEmail={setEditStudentEmail}
+            onEditUniversityId={setEditUniversityId}
+            onSaveProfile={handleSaveProfile}
+            onPickAvatar={handlePickAvatar}
+            onMarkSold={(listingId: string) => updateListingStatus(listingId, { status: 'sold' }, 'Marked as sold.')}
+            onArchiveListing={(listingId: string) => updateListingStatus(listingId, { deleted_at: new Date().toISOString() }, 'Listing archived.')}
+            onBumpListing={(listingId: string) => updateListingStatus(listingId, { last_bumped_at: new Date().toISOString() }, 'Listing bumped to the top.')}
+            refreshing={refreshingAccount}
+            onRefresh={handleRefreshAccount}
+          />
+        )}
+      </Tab.Screen>
+    </Tab.Navigator>
+  );
+}
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -79,6 +330,9 @@ export default function App() {
   const [conversationLoading, setConversationLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [refreshingFeed, setRefreshingFeed] = useState(false);
+  const [refreshingMessages, setRefreshingMessages] = useState(false);
+  const [refreshingAccount, setRefreshingAccount] = useState(false);
   const [editFullName, setEditFullName] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editStudentEmail, setEditStudentEmail] = useState('');
@@ -210,6 +464,7 @@ export default function App() {
         loadProfile(data.session.user.id);
         loadConversations(data.session.user.id);
         loadFavorites(data.session.user.id);
+        registerPushToken(data.session.user.id).catch(() => undefined);
       }
     });
 
@@ -220,6 +475,7 @@ export default function App() {
         loadProfile(nextSession.user.id);
         loadConversations(nextSession.user.id);
         loadFavorites(nextSession.user.id);
+        registerPushToken(nextSession.user.id).catch(() => undefined);
       } else {
         setProfile(null);
         setConversations([]);
@@ -311,10 +567,16 @@ export default function App() {
   }, [authMode, email, fullName, password, phone]);
 
   const signOut = useCallback(async () => {
+    if (user?.id) {
+      await supabase
+        .from('push_tokens')
+        .update({ is_active: false, updated_at: new Date().toISOString() })
+        .eq('user_id', user.id);
+    }
     await supabase.auth.signOut();
     setSession(null);
     Alert.alert('Signed out', 'You have been signed out.');
-  }, []);
+  }, [user?.id]);
 
   const handlePasswordReset = useCallback(async () => {
     const normalizedEmail = resetEmail.trim();
@@ -520,6 +782,43 @@ export default function App() {
 
   const unreadCount = useMemo(() => conversations.filter((conversation) => conversation.unread).length, [conversations]);
 
+  const handleRefreshFeed = useCallback(async () => {
+    setRefreshingFeed(true);
+    try {
+      await Promise.all([
+        loadListings(),
+        user?.id ? loadFavorites(user.id) : Promise.resolve(),
+      ]);
+    } finally {
+      setRefreshingFeed(false);
+    }
+  }, [loadFavorites, loadListings, user?.id]);
+
+  const handleRefreshMessages = useCallback(async () => {
+    setRefreshingMessages(true);
+    try {
+      await loadConversations(user?.id);
+      if (activeConversationId && user?.id) {
+        await loadMessages(activeConversationId, user.id);
+      }
+    } finally {
+      setRefreshingMessages(false);
+    }
+  }, [activeConversationId, loadConversations, loadMessages, user?.id]);
+
+  const handleRefreshAccount = useCallback(async () => {
+    setRefreshingAccount(true);
+    try {
+      await Promise.all([
+        loadListings(),
+        user?.id ? loadProfile(user.id) : Promise.resolve(),
+        user?.id ? loadFavorites(user.id) : Promise.resolve(),
+      ]);
+    } finally {
+      setRefreshingAccount(false);
+    }
+  }, [loadFavorites, loadListings, loadProfile, user?.id]);
+
   if (loading) {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -528,154 +827,6 @@ export default function App() {
           <Text style={styles.loadingText}>Loading Campus Cart…</Text>
         </View>
       </SafeAreaView>
-    );
-  }
-
-  function MainTabs() {
-    return (
-      <Tab.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: colors.bg },
-          headerTintColor: colors.text,
-          headerTitleStyle: { fontWeight: '800' },
-          tabBarStyle: { 
-            backgroundColor: 'rgba(15, 23, 42, 0.75)',
-            borderTopColor: 'rgba(148, 163, 184, 0.15)',
-            borderTopWidth: 1,
-            elevation: 8,
-            shadowColor: '#000',
-            shadowOpacity: 0.2,
-            shadowRadius: 16,
-            shadowOffset: { width: 0, height: -4 },
-            paddingBottom: 8,
-          },
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.muted,
-        }}
-      >
-        <Tab.Screen name="Home">
-          {({ navigation }) => (
-            <HomeScreen
-              featuredListings={featuredListings}
-              nearbyListings={nearbyListings}
-              onOpenListing={(listing) => navigation.getParent()?.navigate('ListingDetail', { listing })}
-              onBrowsePress={() => navigation.navigate('Browse')}
-              onSellPress={() => navigation.navigate('Sell')}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="Browse">
-          {({ navigation }) => (
-            <BrowseScreen
-              query={query}
-              selectedCategory={selectedCategory}
-              listingType={listingType}
-              maxPrice={maxPrice}
-              sortBy={sortBy}
-              favoritesOnly={favoritesOnly}
-              favoriteCount={favoriteIds.length}
-              setQuery={setQuery}
-              setSelectedCategory={setSelectedCategory}
-              setListingType={setListingType}
-              setMaxPrice={setMaxPrice}
-              setSortBy={setSortBy}
-              setFavoritesOnly={setFavoritesOnly}
-              listings={filteredListings}
-              favoriteIds={favoriteIds}
-              canFavorite={!!user}
-              onToggleFavorite={handleToggleFavorite}
-              onOpenListing={(listing) => navigation.getParent()?.navigate('ListingDetail', { listing })}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="Sell">
-          {() => (
-            <SellScreen
-              user={user}
-              profile={profile}
-              sellTitle={sellTitle}
-              setSellTitle={setSellTitle}
-              sellDescription={sellDescription}
-              setSellDescription={setSellDescription}
-              sellPrice={sellPrice}
-              setSellPrice={setSellPrice}
-              sellCategory={sellCategory}
-              setSellCategory={setSellCategory}
-              listingImages={listingImages}
-              pickingImages={pickingImages}
-              submitting={sellSubmitting}
-              onPickImages={handlePickImages}
-              onSubmit={handleCreateListing}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="Messages" options={{ tabBarBadge: unreadCount > 0 ? unreadCount : undefined }}>
-          {({ navigation }) => (
-            <MessagesScreen
-              signedIn={!!user}
-              conversations={conversations}
-              loading={conversationLoading}
-              onRefresh={() => loadConversations(user?.id)}
-              onOpenConversation={async (conversation) => {
-                await loadMessages(conversation.id, user?.id);
-                navigation.getParent()?.navigate('ChatDetail', {
-                  conversationId: conversation.id,
-                  title: conversation.other_participant_name,
-                  currentUserId: user?.id || '',
-                });
-              }}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="About">
-          {() => <AboutScreen />}
-        </Tab.Screen>
-        <Tab.Screen name="Account">
-          {() => (
-            <AccountScreen
-              user={user}
-              profile={profile}
-              universityName={universityName}
-              activeCount={activeCount}
-              soldCount={soldCount}
-              myListings={userListings}
-              email={email}
-              password={password}
-              fullName={fullName}
-              phone={phone}
-              setEmail={setEmail}
-              setPassword={setPassword}
-              setFullName={setFullName}
-              setPhone={setPhone}
-              authMode={authMode}
-              setAuthMode={setAuthMode}
-              authLoading={authLoading}
-              onAuth={handleAuth}
-              resetEmail={resetEmail}
-              setResetEmail={setResetEmail}
-              resetLoading={resetLoading}
-              onRequestPasswordReset={handlePasswordReset}
-              onSignOut={signOut}
-              editFullName={editFullName}
-              editPhone={editPhone}
-              editStudentEmail={editStudentEmail}
-              editUniversityId={editUniversityId}
-              universities={universities}
-              saveLoading={saveLoading}
-              avatarLoading={avatarLoading}
-              onEditFullName={setEditFullName}
-              onEditPhone={setEditPhone}
-              onEditStudentEmail={setEditStudentEmail}
-              onEditUniversityId={setEditUniversityId}
-              onSaveProfile={handleSaveProfile}
-              onPickAvatar={handlePickAvatar}
-              onMarkSold={(listingId) => updateListingStatus(listingId, { status: 'sold' }, 'Marked as sold.')}
-              onArchiveListing={(listingId) => updateListingStatus(listingId, { deleted_at: new Date().toISOString() }, 'Listing archived.')}
-              onBumpListing={(listingId) => updateListingStatus(listingId, { last_bumped_at: new Date().toISOString() }, 'Listing bumped to the top.')}
-            />
-          )}
-        </Tab.Screen>
-      </Tab.Navigator>
     );
   }
 
@@ -691,7 +842,92 @@ export default function App() {
             headerTitleStyle: { fontWeight: '800' },
           }}
         >
-          <Stack.Screen name="MainTabs" component={MainTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="MainTabs" options={{ headerShown: false }}>
+            {() => (
+              <MainTabsNavigator
+                featuredListings={featuredListings}
+                nearbyListings={nearbyListings}
+                query={query}
+                selectedCategory={selectedCategory}
+                listingType={listingType}
+                maxPrice={maxPrice}
+                sortBy={sortBy}
+                favoritesOnly={favoritesOnly}
+                favoriteIds={favoriteIds}
+                user={user}
+                profile={profile}
+                handleToggleFavorite={handleToggleFavorite}
+                setQuery={setQuery}
+                setSelectedCategory={setSelectedCategory}
+                setListingType={setListingType}
+                setMaxPrice={setMaxPrice}
+                setSortBy={setSortBy}
+                setFavoritesOnly={setFavoritesOnly}
+                filteredListings={filteredListings}
+                sellTitle={sellTitle}
+                setSellTitle={setSellTitle}
+                sellDescription={sellDescription}
+                setSellDescription={setSellDescription}
+                sellPrice={sellPrice}
+                setSellPrice={setSellPrice}
+                sellCategory={sellCategory}
+                setSellCategory={setSellCategory}
+                listingImages={listingImages}
+                pickingImages={pickingImages}
+                sellSubmitting={sellSubmitting}
+                handlePickImages={handlePickImages}
+                handleCreateListing={handleCreateListing}
+                unreadCount={unreadCount}
+                conversations={conversations}
+                conversationLoading={conversationLoading}
+                loadConversations={loadConversations}
+                loadMessages={loadMessages}
+                AboutScreen={AboutScreen}
+                AccountScreen={AccountScreen}
+                universityName={universityName}
+                activeCount={activeCount}
+                soldCount={soldCount}
+                userListings={userListings}
+                email={email}
+                password={password}
+                fullName={fullName}
+                phone={phone}
+                setEmail={setEmail}
+                setPassword={setPassword}
+                setFullName={setFullName}
+                setPhone={setPhone}
+                authMode={authMode}
+                setAuthMode={setAuthMode}
+                authLoading={authLoading}
+                handleAuth={handleAuth}
+                resetEmail={resetEmail}
+                setResetEmail={setResetEmail}
+                resetLoading={resetLoading}
+                handlePasswordReset={handlePasswordReset}
+                signOut={signOut}
+                editFullName={editFullName}
+                editPhone={editPhone}
+                editStudentEmail={editStudentEmail}
+                editUniversityId={editUniversityId}
+                universities={universities}
+                saveLoading={saveLoading}
+                avatarLoading={avatarLoading}
+                setEditFullName={setEditFullName}
+                setEditPhone={setEditPhone}
+                setEditStudentEmail={setEditStudentEmail}
+                setEditUniversityId={setEditUniversityId}
+                handleSaveProfile={handleSaveProfile}
+                handlePickAvatar={handlePickAvatar}
+                updateListingStatus={updateListingStatus}
+                refreshingFeed={refreshingFeed}
+                refreshingMessages={refreshingMessages}
+                refreshingAccount={refreshingAccount}
+                handleRefreshFeed={handleRefreshFeed}
+                handleRefreshMessages={handleRefreshMessages}
+                handleRefreshAccount={handleRefreshAccount}
+              />
+            )}
+          </Stack.Screen>
           <Stack.Screen
             name="ListingDetail"
             options={{ title: 'Listing' }}

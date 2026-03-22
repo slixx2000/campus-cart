@@ -1,5 +1,6 @@
+import { Image } from 'expo-image';
 import React from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { styles } from '../lib/styles';
 import type { Listing } from '../types';
 import { ListingSection } from '../components/ListingSection';
@@ -11,6 +12,9 @@ type Props = {
   onOpenListing: (listing: Listing) => void;
   onBrowsePress: () => void;
   onSellPress: () => void;
+  onCategoryPress: (category: string) => void;
+  refreshing: boolean;
+  onRefresh: () => void;
 };
 
 export function HomeScreen({
@@ -19,10 +23,24 @@ export function HomeScreen({
   onOpenListing,
   onBrowsePress,
   onSellPress,
+  onCategoryPress,
+  refreshing,
+  onRefresh,
 }: Props) {
   return (
-    <ScrollView contentContainerStyle={styles.screenContent} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.screenContent}
+      showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+    >
       <View style={styles.heroCard}>
+        <View style={styles.heroBrandRow}>
+          <Image source={require('../../assets/icon.png')} style={styles.heroLogo} contentFit="cover" />
+          <View>
+            <Text style={styles.heroBrandTitle}>Campus Cart</Text>
+            <Text style={styles.heroBrandSubtitle}>Student marketplace</Text>
+          </View>
+        </View>
         <Text style={styles.heroEyebrow}>Your campus marketplace</Text>
         <Text style={styles.heroTitle}>Buy, sell, and discover trusted student deals.</Text>
         <Text style={styles.heroBody}>
@@ -55,9 +73,9 @@ export function HomeScreen({
       />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalStrip}>
         {['Electronics', 'Books & Stationery', 'Food & Drinks', 'Services', 'Tutoring', 'Home & Dorm'].map((item) => (
-          <View key={item} style={styles.chip}>
+          <Pressable key={item} onPress={() => onCategoryPress(item)} style={styles.chip}>
             <Text style={styles.chipText}>{item}</Text>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
 

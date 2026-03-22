@@ -9,6 +9,11 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function DownloadsPage() {
+  const mobileRepoUrl = 'https://github.com/slixx2000/campus-cart-mobile';
+  const mobileReleasesUrl = 'https://github.com/slixx2000/campus-cart-mobile/releases';
+  const latestApkUrl =
+    'https://github.com/slixx2000/campus-cart-mobile/releases/latest/download/campus-cart-mobile.apk';
+
   const [isAndroid, setIsAndroid] = useState(false);
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -43,7 +48,7 @@ export default function DownloadsPage() {
   const handleInstallClick = async () => {
     if (!installEvent) return;
     await installEvent.prompt();
-                href="https://expo.dev/artifacts/eas/7js5R9VdQjXbH8USoetXMh.apk"
+    const result = await installEvent.userChoice;
     if (result.outcome === 'accepted') {
       setInstallEvent(null);
     }
@@ -134,35 +139,44 @@ export default function DownloadsPage() {
 
             <div className="space-y-3">
               <a
-                href="https://expo.dev/artifacts/eas/rFC6NkD2cFaiTDTy5KG9Hh.apk"
+                href={latestApkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-primary-500 text-white hover:bg-primary-600"
               >
-                Download Latest Stable APK
+                Download Latest APK (GitHub)
               </a>
 
               <a
-                href="https://expo.dev/accounts/campuscartmobile/projects/campus-cart-mobile/builds"
+                href={mobileReleasesUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
               >
-                View All Mobile Builds (EAS)
+                View Mobile Releases (GitHub)
+              </a>
+
+              <a
+                href={mobileRepoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
+              >
+                Open Mobile Repository
               </a>
 
               {/* Local APK Path for Development */}
               <details className="text-left">
                 <summary className="cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium">
-                  Developer: Local APK Build Instructions
+                  Developer: GitHub Release Workflow
                 </summary>
                 <div className="mt-3 p-3 bg-slate-100 dark:bg-slate-900 rounded text-sm text-slate-700 dark:text-slate-300 font-mono">
-                  <p className="mb-2">Once built locally, the APK will be at:</p>
+                  <p className="mb-2">Upload APK to the mobile repo Releases page:</p>
                   <code className="block bg-slate-800 text-slate-100 p-2 rounded mb-2 overflow-x-auto">
-                    mobile/android/app/build/outputs/apk/release/app-release.apk
+                    {mobileReleasesUrl}
                   </code>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Run: <code className="bg-slate-800 text-slate-100 px-1">cd mobile && eas build --platform android</code>
+                    Suggested asset name for auto-download link: <code className="bg-slate-800 text-slate-100 px-1">campus-cart-mobile.apk</code>
                   </p>
                 </div>
               </details>

@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import React from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SectionHeader } from '../components/SectionHeader';
 import { relativeDate } from '../lib/format';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
@@ -11,18 +11,23 @@ export function MessagesScreen({
   signedIn,
   conversations,
   loading,
+  refreshing,
   onRefresh,
   onOpenConversation,
 }: {
   signedIn: boolean;
   conversations: ConversationPreview[];
   loading: boolean;
+  refreshing: boolean;
   onRefresh: () => void;
   onOpenConversation: (conversation: ConversationPreview) => void;
 }) {
   if (!signedIn) {
     return (
-      <ScrollView contentContainerStyle={styles.screenContent}>
+      <ScrollView
+        contentContainerStyle={styles.screenContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+      >
         <SectionHeader
           eyebrow="Messages"
           title="Chat"
@@ -37,7 +42,10 @@ export function MessagesScreen({
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.screenContent}>
+    <ScrollView
+      contentContainerStyle={styles.screenContent}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+    >
       <SectionHeader
         eyebrow="Messages"
         title="Conversations"
@@ -45,7 +53,7 @@ export function MessagesScreen({
         rightLabel={`${conversations.length} threads`}
       />
 
-      <Pressable style={styles.secondaryButton} onPress={onRefresh} disabled={loading}>
+      <Pressable style={styles.secondaryButton} onPress={onRefresh} disabled={loading || refreshing}>
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Refresh conversations</Text>}
       </Pressable>
 

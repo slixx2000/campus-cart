@@ -146,9 +146,9 @@ export default function HomeFeedSections({
 
   return (
     <>
-      <section className="max-w-[1200px] mx-auto px-6 mt-20 pb-6">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+      <section className="mx-auto mt-12 max-w-[1200px] px-4 pb-4 sm:mt-20 sm:px-6 sm:pb-6">
+        <div className="mb-5 flex items-center justify-between sm:mb-8">
+          <h2 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl dark:text-white">
             <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
               trending_up
             </span>
@@ -172,10 +172,10 @@ export default function HomeFeedSections({
 
       <div className="mx-auto h-px w-[1200px] max-w-[calc(100%-3rem)] bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/10" />
 
-      <section className="bg-white py-16 dark:bg-primary/5 dark:border-y dark:border-primary/10">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+      <section className="bg-white py-10 sm:py-16 dark:border-y dark:border-primary/10 dark:bg-primary/5">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+          <div className="mb-5 flex items-center justify-between sm:mb-8">
+            <h2 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl dark:text-white">
               <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
                 location_on
               </span>
@@ -195,7 +195,7 @@ export default function HomeFeedSections({
             </p>
           ) : (
             <>
-              <div className="grid grid-cols-2 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
                 {nearbyListings.map((listing) => (
                   <ProductCard key={listing.id} listing={{ ...listing, isNearby: true }} />
                 ))}
@@ -212,10 +212,10 @@ export default function HomeFeedSections({
 
       <div className="mx-auto h-px w-[1200px] max-w-[calc(100%-3rem)] bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/10" />
 
-      <section className="bg-white py-16 dark:bg-primary/5 dark:border-y dark:border-primary/10">
-        <div className="max-w-[1200px] mx-auto px-6">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
+      <section className="bg-white py-10 sm:py-16 dark:border-y dark:border-primary/10 dark:bg-primary/5">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
+          <div className="mb-5 flex items-center justify-between sm:mb-8">
+            <h2 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl dark:text-white">
               <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
                 schedule
               </span>
@@ -229,7 +229,7 @@ export default function HomeFeedSections({
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
             {recentlyActiveListings.map((listing) => (
               <ProductCard key={listing.id} listing={listing} />
             ))}
@@ -242,9 +242,9 @@ export default function HomeFeedSections({
         </div>
       </section>
 
-      <div ref={sentinelRef} className="mx-auto max-w-[1200px] px-6 py-8">
+      <div ref={sentinelRef} className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
         {isLoadingMore ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="animate-pulse space-y-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
                 <div className="h-40 rounded-lg bg-gray-200 dark:bg-slate-700" />

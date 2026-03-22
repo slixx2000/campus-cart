@@ -47,154 +47,156 @@ export default function BrowseFilters({
   const sortBy = get("sort") || "newest";
   const currentPage = Number(get("page") || 1);
 
-  return (
-    <div className="flex flex-col gap-8 md:flex-row">
-      <aside className="w-full shrink-0 space-y-6 md:w-72">
-        <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-lg text-slate-900 dark:text-white">Filters</h3>
-              {hasFilters && (
-                <button
-                  onClick={clearAll}
-                  className="text-sm font-medium text-primary hover:underline dark:text-sky-300"
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
+  const filtersPanel = (
+    <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-4 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur sm:p-6 dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+      <div className="mb-4 flex items-center justify-between sm:mb-6">
+        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Filters</h3>
+        {hasFilters && (
+          <button
+            onClick={clearAll}
+            className="text-sm font-medium text-primary hover:underline dark:text-sky-300"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
 
-            {/* Search */}
-            <div className="mb-6">
-              <MarketplaceSearchBar
-                initialValue={get("q")}
-                placeholder="Search listings..."
-                onSubmitQuery={(nextQuery) => push({ q: nextQuery })}
-                inputClassName="w-full rounded-full border border-slate-200 bg-slate-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
-              />
-            </div>
+      <div className="mb-4 sm:mb-6">
+        <MarketplaceSearchBar
+          initialValue={get("q")}
+          placeholder="Search listings..."
+          onSubmitQuery={(nextQuery) => push({ q: nextQuery })}
+          inputClassName="w-full rounded-full border border-slate-200 bg-slate-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+        />
+      </div>
 
-            {/* Category */}
-            <fieldset className="space-y-3 mb-6">
-              <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                Category
-              </legend>
-              <div className="space-y-2 mt-2">
-                <label className="group flex cursor-pointer items-center gap-3">
-                  <input
-                    type="radio"
-                    name="category"
-                    checked={!get("category")}
-                    onChange={() => push({ category: "" })}
-                    className="text-primary focus:ring-primary"
-                  />
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
-                    All Categories
-                  </span>
-                </label>
-                {categories.map((c) => (
-                  <label
-                    key={c.id}
-                    className="group flex cursor-pointer items-center gap-3"
-                  >
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={get("category") === c.slug}
-                      onChange={() => push({ category: c.slug })}
-                      className="text-primary focus:ring-primary"
-                    />
-                    <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
-                      {c.name}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-
-            {/* Price Range */}
-            <div className="space-y-3 mb-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                Max Price (ZMW)
-              </h4>
+      <fieldset className="mb-4 space-y-3 sm:mb-6">
+        <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Category
+        </legend>
+        <div className="mt-2 space-y-2">
+          <label className="group flex cursor-pointer items-center gap-3">
+            <input
+              type="radio"
+              name="category"
+              checked={!get("category")}
+              onChange={() => push({ category: "" })}
+              className="text-primary focus:ring-primary"
+            />
+            <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
+              All Categories
+            </span>
+          </label>
+          {categories.map((c) => (
+            <label key={c.id} className="group flex cursor-pointer items-center gap-3">
               <input
-                type="number"
-                defaultValue={get("maxPrice")}
-                placeholder="Max ZMW"
-                onBlur={(e) => push({ maxPrice: e.target.value })}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter")
-                    push({ maxPrice: (e.target as HTMLInputElement).value });
-                }}
-                className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+                type="radio"
+                name="category"
+                checked={get("category") === c.slug}
+                onChange={() => push({ category: c.slug })}
+                className="text-primary focus:ring-primary"
               />
-            </div>
-
-            {/* University */}
-            <div className="space-y-3 mb-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                University
-              </h4>
-              {error && (
-                <p className="text-xs text-amber-700 dark:text-amber-300">{error}</p>
-              )}
-              <select
-                value={get("university")}
-                disabled={isLoading || universities.length === 0}
-                onChange={(e) => push({ university: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
-              >
-                <option value="">
-                  {isLoading
-                    ? "Loading universities..."
-                    : universities.length === 0
-                    ? "No universities available"
-                    : "All Universities"}
-                </option>
-                {universities.map((u) => (
-                  <option key={u.id} value={u.code}>
-                    {u.short_name} — {u.city}
-                  </option>
-                ))}
-              </select>
-              {!isLoading && !error && universities.length === 0 && (
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  No universities found in the database.
-                </p>
-              )}
-            </div>
-
-            {/* Listing Type */}
-            <fieldset className="space-y-3">
-              <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                Listing Type
-              </legend>
-              <div className="space-y-2 mt-2">
-                {(
-                  [
-                    { value: "", label: "All" },
-                    { value: "products", label: "Products" },
-                    { value: "services", label: "Services" },
-                  ] as const
-                ).map(({ value, label }) => (
-                  <label
-                    key={label}
-                    className="group flex cursor-pointer items-center gap-3"
-                  >
-                    <input
-                      type="radio"
-                      name="listing-type"
-                      checked={get("type") === value}
-                      onChange={() => push({ type: value })}
-                      className="text-primary focus:ring-primary"
-                    />
-                    <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
-                      {label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
+              <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
+                {c.name}
+              </span>
+            </label>
+          ))}
         </div>
+      </fieldset>
+
+      <div className="mb-4 space-y-3 sm:mb-6">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Max Price (ZMW)
+        </h4>
+        <input
+          type="number"
+          defaultValue={get("maxPrice")}
+          placeholder="Max ZMW"
+          onBlur={(e) => push({ maxPrice: e.target.value })}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") push({ maxPrice: (e.target as HTMLInputElement).value });
+          }}
+          className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+        />
+      </div>
+
+      <div className="mb-4 space-y-3 sm:mb-6">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          University
+        </h4>
+        {error && <p className="text-xs text-amber-700 dark:text-amber-300">{error}</p>}
+        <select
+          value={get("university")}
+          disabled={isLoading || universities.length === 0}
+          onChange={(e) => push({ university: e.target.value })}
+          className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+        >
+          <option value="">
+            {isLoading
+              ? "Loading universities..."
+              : universities.length === 0
+              ? "No universities available"
+              : "All Universities"}
+          </option>
+          {universities.map((u) => (
+            <option key={u.id} value={u.code}>
+              {u.short_name} - {u.city}
+            </option>
+          ))}
+        </select>
+        {!isLoading && !error && universities.length === 0 && (
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            No universities found in the database.
+          </p>
+        )}
+      </div>
+
+      <fieldset className="space-y-3">
+        <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          Listing Type
+        </legend>
+        <div className="mt-2 space-y-2">
+          {(
+            [
+              { value: "", label: "All" },
+              { value: "products", label: "Products" },
+              { value: "services", label: "Services" },
+            ] as const
+          ).map(({ value, label }) => (
+            <label key={label} className="group flex cursor-pointer items-center gap-3">
+              <input
+                type="radio"
+                name="listing-type"
+                checked={get("type") === value}
+                onChange={() => push({ type: value })}
+                className="text-primary focus:ring-primary"
+              />
+              <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
+                {label}
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col gap-5 md:gap-8 md:flex-row">
+      <aside className="w-full shrink-0 space-y-4 md:w-72 md:space-y-6">
+        <details className="md:hidden">
+          <summary className="cursor-pointer list-none rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 text-sm font-bold text-slate-800 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-100">
+            <span className="flex items-center justify-between">
+              <span>Filters</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                {hasFilters ? "active" : "show"}
+              </span>
+            </span>
+          </summary>
+          <div className="mt-3">{filtersPanel}</div>
+        </details>
+
+        <div className="hidden md:block">{filtersPanel}</div>
 
         <div className="rounded-[1.5rem] border border-primary/20 bg-primary/10 p-5 dark:border-sky-400/20 dark:bg-sky-400/10">
           <p className="mb-2 flex items-center gap-2 text-sm font-bold text-primary dark:text-sky-200">
@@ -207,9 +209,9 @@ export default function BrowseFilters({
         </div>
       </aside>
 
-      <div className="flex-1 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-2">
+      <div className="flex-1 space-y-4 sm:space-y-6">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <div className="hidden flex-wrap gap-2 sm:flex">
               {(["newest", "price-asc", "price-desc"] as const).map((s) => (
                 <button
                   key={s}
@@ -227,6 +229,20 @@ export default function BrowseFilters({
                     : "Price: High to Low"}
                 </button>
               ))}
+            </div>
+            <div className="sm:hidden">
+              <label className="mb-1 block text-xs font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+                Sort
+              </label>
+              <select
+                value={sortBy}
+                onChange={(e) => push({ sort: e.target.value })}
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+              >
+                <option value="newest">Newest</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
             </div>
             <p className="whitespace-nowrap text-sm font-medium text-slate-500 dark:text-slate-400">
               Showing {count} {count === 1 ? "result" : "results"}

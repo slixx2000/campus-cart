@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import React from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { formatPrice, relativeDate } from '../lib/format';
@@ -48,6 +48,8 @@ type Props = {
   onMarkSold: (listingId: string) => void;
   onArchiveListing: (listingId: string) => void;
   onBumpListing: (listingId: string) => void;
+  refreshing: boolean;
+  onRefresh: () => void;
 };
 
 export function AccountScreen(props: Props) {
@@ -91,6 +93,8 @@ export function AccountScreen(props: Props) {
     onMarkSold,
     onArchiveListing,
     onBumpListing,
+    refreshing,
+    onRefresh,
   } = props;
 
   if (user) {
@@ -101,7 +105,10 @@ export function AccountScreen(props: Props) {
       : 'Link your student email to unlock selling.';
 
     return (
-      <ScrollView contentContainerStyle={styles.screenContent}>
+      <ScrollView
+        contentContainerStyle={styles.screenContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+      >
         <SectionHeader
           eyebrow="Your Campus Cart"
           title="Account"
@@ -210,7 +217,10 @@ export function AccountScreen(props: Props) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.screenContent}>
+    <ScrollView
+      contentContainerStyle={styles.screenContent}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+    >
       <SectionHeader
         eyebrow="Welcome"
         title={authMode === 'sign-in' ? 'Sign In' : 'Create Account'}

@@ -18,7 +18,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
     <Link href={`/product/${listing.id}`} className="block h-full group">
       <article className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-300/90 bg-slate-50/95 shadow-lg shadow-slate-900/10 ring-1 ring-slate-200/70 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:bg-white hover:shadow-xl hover:ring-black/10 dark:border-white/10 dark:bg-white/5 dark:shadow-none dark:ring-0 dark:hover:border-primary/40 dark:hover:ring-white/10">
         {/* Image */}
-        <div className="relative aspect-square overflow-hidden rounded-lg">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-lg sm:aspect-square">
           <Image
             src={listing.images[0]}
             alt={listing.title}
@@ -47,8 +47,8 @@ export default function ProductCard({ listing }: ProductCardProps) {
         </div>
 
         {/* Body */}
-        <div className="flex flex-1 flex-col p-4">
-          <div className="flex justify-between items-start mb-2">
+        <div className="flex flex-1 flex-col p-3 sm:p-4">
+          <div className="mb-2 flex items-start justify-between">
             <h3 className="truncate pr-3 text-sm font-bold text-slate-900 dark:text-white">
               {listing.title}
             </h3>
@@ -61,7 +61,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
           </div>
 
           {listing.condition && (
-            <div className="flex items-center gap-2 mb-3">
+            <div className="mb-2 flex items-center gap-2 sm:mb-3">
               <span
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                   listing.condition === "New"
@@ -76,7 +76,7 @@ export default function ProductCard({ listing }: ProductCardProps) {
             </div>
           )}
 
-          <div className="mt-auto space-y-3 border-t border-slate-100 pt-3 dark:border-white/10">
+          <div className="mt-auto space-y-2 border-t border-slate-100 pt-2.5 sm:space-y-3 sm:pt-3 dark:border-white/10">
             <div className="flex items-center gap-2">
               <div className="size-8 overflow-hidden rounded-full bg-slate-100 dark:bg-white/10">
                 <AvatarImage

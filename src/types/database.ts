@@ -144,6 +144,17 @@ export type StudentEmailVerificationTokenRow = {
   created_at: string;
 };
 
+export type PushTokenRow = {
+  id: string;
+  user_id: string;
+  expo_push_token: string;
+  platform: "android" | "ios" | "web" | "unknown";
+  is_active: boolean;
+  last_seen_at: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -279,6 +290,18 @@ export type Database = {
         Update: Partial<StudentEmailVerificationTokenRow>;
         Relationships: [];
       };
+      push_tokens: {
+        Row: PushTokenRow;
+        Insert: Omit<PushTokenRow, "id" | "created_at" | "updated_at" | "last_seen_at" | "is_active"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+          last_seen_at?: string;
+          is_active?: boolean;
+        };
+        Update: Partial<PushTokenRow>;
+        Relationships: [];
+      };
     };
     Enums: {
       listing_condition: ListingCondition;
@@ -296,6 +319,15 @@ export type Database = {
       };
       mark_conversation_read: {
         Args: { p_conversation_id: string };
+        Returns: undefined;
+      };
+      send_expo_push_to_user: {
+        Args: {
+          p_user_id: string;
+          p_title: string;
+          p_body: string;
+          p_data?: Json;
+        };
         Returns: undefined;
       };
       search_listings_ranked: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { ListingCard } from '../components/ListingCard';
 import { SectionHeader } from '../components/SectionHeader';
 import { CATEGORY_OPTIONS } from '../lib/constants';
@@ -25,6 +25,8 @@ type Props = {
   canFavorite: boolean;
   onToggleFavorite: (listingId: string) => void;
   onOpenListing: (listing: Listing) => void;
+  refreshing: boolean;
+  onRefresh: () => void;
 };
 
 export function BrowseScreen({
@@ -46,6 +48,8 @@ export function BrowseScreen({
   canFavorite,
   onToggleFavorite,
   onOpenListing,
+  refreshing,
+  onRefresh,
 }: Props) {
   return (
     <View style={styles.screenContent}>
@@ -129,6 +133,7 @@ export function BrowseScreen({
         data={listings}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
         contentContainerStyle={{ paddingBottom: 120, gap: 14 }}
         renderItem={({ item }) => (
           <ListingCard

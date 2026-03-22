@@ -38,6 +38,13 @@
           "cameraPermission": "Campus Cart uses your camera so you can take listing photos."
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/android-icon-monochrome.png",
+          "color": "#0284c7"
+        }
+      ],
       "expo-image"
     ],
     "web": {
