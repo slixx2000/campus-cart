@@ -134,7 +134,7 @@ export default function DownloadsPage() {
 
             <div className="space-y-3">
               <a
-                href="https://expo.dev/artifacts/eas/tUyP4tvPijCTiJNLxDGQJu.apk"
+                href="https://expo.dev/artifacts/eas/rFC6NkD2cFaiTDTy5KG9Hh.apk"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-primary-500 text-white hover:bg-primary-600"

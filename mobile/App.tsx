@@ -538,7 +538,17 @@ export default function App() {
           headerStyle: { backgroundColor: colors.bg },
           headerTintColor: colors.text,
           headerTitleStyle: { fontWeight: '800' },
-          tabBarStyle: { backgroundColor: colors.card, borderTopColor: colors.border },
+          tabBarStyle: { 
+            backgroundColor: 'rgba(15, 23, 42, 0.75)',
+            borderTopColor: 'rgba(148, 163, 184, 0.15)',
+            borderTopWidth: 1,
+            elevation: 8,
+            shadowColor: '#000',
+            shadowOpacity: 0.2,
+            shadowRadius: 16,
+            shadowOffset: { width: 0, height: -4 },
+            paddingBottom: 8,
+          },
           tabBarActiveTintColor: colors.primary,
           tabBarInactiveTintColor: colors.muted,
         }}
