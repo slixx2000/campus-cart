@@ -43,7 +43,7 @@ export default function DownloadsPage() {
   const handleInstallClick = async () => {
     if (!installEvent) return;
     await installEvent.prompt();
-    const result = await installEvent.userChoice;
+                href="https://expo.dev/artifacts/eas/7js5R9VdQjXbH8USoetXMh.apk"
     if (result.outcome === 'accepted') {
       setInstallEvent(null);
     }
