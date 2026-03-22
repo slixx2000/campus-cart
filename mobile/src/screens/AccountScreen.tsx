@@ -27,6 +27,10 @@ type Props = {
   setAuthMode: (value: 'sign-in' | 'sign-up') => void;
   authLoading: boolean;
   onAuth: () => void;
+  resetEmail: string;
+  setResetEmail: (value: string) => void;
+  resetLoading: boolean;
+  onRequestPasswordReset: () => void;
   onSignOut: () => void;
   editFullName: string;
   editPhone: string;
@@ -66,6 +70,10 @@ export function AccountScreen(props: Props) {
     setAuthMode,
     authLoading,
     onAuth,
+    resetEmail,
+    setResetEmail,
+    resetLoading,
+    onRequestPasswordReset,
     onSignOut,
     editFullName,
     editPhone,
@@ -222,6 +230,25 @@ export function AccountScreen(props: Props) {
       <Pressable onPress={() => setAuthMode(authMode === 'sign-in' ? 'sign-up' : 'sign-in')}>
         <Text style={styles.switchAuthText}>{authMode === 'sign-in' ? 'Need an account? Sign up' : 'Already have an account? Sign in'}</Text>
       </Pressable>
+
+      {authMode === 'sign-in' ? (
+        <View style={styles.helperCard}>
+          <Text style={styles.helperCardTitle}>Forgot password?</Text>
+          <Text style={styles.helperText}>Enter your account email and we will send a password reset link.</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Reset email"
+            placeholderTextColor="#64748b"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={resetEmail}
+            onChangeText={setResetEmail}
+          />
+          <Pressable style={styles.secondaryButton} onPress={onRequestPasswordReset} disabled={resetLoading}>
+            {resetLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Send reset email</Text>}
+          </Pressable>
+        </View>
+      ) : null}
     </ScrollView>
   );
 }

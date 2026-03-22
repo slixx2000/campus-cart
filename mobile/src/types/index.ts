@@ -84,5 +84,6 @@ export type MainTabParamList = {
   Browse: undefined;
   Sell: undefined;
   Messages: undefined;
+  About: undefined;
   Account: undefined;
 };

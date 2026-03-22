@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, SafeAreaView, Text, View } from 'react-native';
 import { AccountScreen } from './src/screens/AccountScreen';
+import { AboutScreen } from './src/screens/AboutScreen';
 import { BrowseScreen } from './src/screens/BrowseScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ListingDetailScreen } from './src/screens/ListingDetailScreen';
@@ -46,12 +47,17 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [listingType, setListingType] = useState<'all' | 'products' | 'services'>('all');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [sortBy, setSortBy] = useState<'newest' | 'price-asc' | 'price-desc'>('newest');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in');
   const [authLoading, setAuthLoading] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
   const [sellTitle, setSellTitle] = useState('');
   const [sellDescription, setSellDescription] = useState('');
   const [sellPrice, setSellPrice] = useState('');
@@ -237,19 +243,36 @@ export default function App() {
   const universityName = useMemo(() => universities.find((uni) => uni.id === profile?.university_id)?.name, [universities, profile?.university_id]);
 
   const filteredListings = useMemo(
-    () =>
-      listings.filter((listing) => {
+    () => {
+      const filtered = listings.filter((listing) => {
         const q = query.trim().toLowerCase();
+        const maxPriceValue = Number(maxPrice);
         const matchesQuery =
           !q ||
           listing.title.toLowerCase().includes(q) ||
           listing.description.toLowerCase().includes(q) ||
           listing.category.toLowerCase().includes(q);
         const matchesCategory = selectedCategory === 'All' || listing.category === selectedCategory;
+        const matchesType =
+          listingType === 'all' ||
+          (listingType === 'products' && !listing.isService) ||
+          (listingType === 'services' && listing.isService);
+        const matchesPrice = !maxPrice || Number.isNaN(maxPriceValue) || listing.price <= maxPriceValue;
         const matchesFavorites = !favoritesOnly || favoriteIds.includes(listing.id);
-        return matchesQuery && matchesCategory && matchesFavorites;
-      }),
-    [favoriteIds, favoritesOnly, listings, query, selectedCategory]
+        return matchesQuery && matchesCategory && matchesType && matchesPrice && matchesFavorites;
+      });
+
+      if (sortBy === 'price-asc') {
+        return [...filtered].sort((a, b) => a.price - b.price);
+      }
+      if (sortBy === 'price-desc') {
+        return [...filtered].sort((a, b) => b.price - a.price);
+      }
+      return [...filtered].sort(
+        (a, b) => new Date(b.lastBumpedAt || b.createdAt).getTime() - new Date(a.lastBumpedAt || a.createdAt).getTime()
+      );
+    },
+    [favoriteIds, favoritesOnly, listingType, listings, maxPrice, query, selectedCategory, sortBy]
   );
 
   const handleAuth = useCallback(async () => {
@@ -292,6 +315,25 @@ export default function App() {
     setSession(null);
     Alert.alert('Signed out', 'You have been signed out.');
   }, []);
+
+  const handlePasswordReset = useCallback(async () => {
+    const normalizedEmail = resetEmail.trim();
+    if (!normalizedEmail) {
+      Alert.alert('Missing email', 'Enter the email you use to sign in.');
+      return;
+    }
+
+    setResetLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail);
+    setResetLoading(false);
+
+    if (error) {
+      Alert.alert('Could not send reset email', error.message);
+      return;
+    }
+
+    Alert.alert('Reset email sent', 'Check your inbox for password reset instructions.');
+  }, [resetEmail]);
 
   const handleSaveProfile = useCallback(async () => {
     if (!user) return;
@@ -517,10 +559,16 @@ export default function App() {
             <BrowseScreen
               query={query}
               selectedCategory={selectedCategory}
+              listingType={listingType}
+              maxPrice={maxPrice}
+              sortBy={sortBy}
               favoritesOnly={favoritesOnly}
               favoriteCount={favoriteIds.length}
               setQuery={setQuery}
               setSelectedCategory={setSelectedCategory}
+              setListingType={setListingType}
+              setMaxPrice={setMaxPrice}
+              setSortBy={setSortBy}
               setFavoritesOnly={setFavoritesOnly}
               listings={filteredListings}
               favoriteIds={favoriteIds}
@@ -569,6 +617,9 @@ export default function App() {
             />
           )}
         </Tab.Screen>
+        <Tab.Screen name="About">
+          {() => <AboutScreen />}
+        </Tab.Screen>
         <Tab.Screen name="Account">
           {() => (
             <AccountScreen
@@ -590,6 +641,10 @@ export default function App() {
               setAuthMode={setAuthMode}
               authLoading={authLoading}
               onAuth={handleAuth}
+              resetEmail={resetEmail}
+              setResetEmail={setResetEmail}
+              resetLoading={resetLoading}
+              onRequestPasswordReset={handlePasswordReset}
               onSignOut={signOut}
               editFullName={editFullName}
               editPhone={editPhone}

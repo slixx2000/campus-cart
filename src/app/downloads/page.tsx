@@ -49,7 +49,7 @@ export default function DownloadsPage() {
     }
   };
 
-  const packageVersion = '0.1.0'; // Match mobile/package.json version
+  const packageVersion = '1.0.0'; // Match mobile/package.json version
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background-light to-surface-light dark:from-background-dark dark:to-surface-dark transition-colors">
@@ -134,12 +134,21 @@ export default function DownloadsPage() {
 
             <div className="space-y-3">
               <a
-                href="https://expo.dev/accounts/campuscart/projects/campus-cart-mobile/builds"
+                href="https://expo.dev/artifacts/eas/iBh2SXT2sB3ggHeUUNjn57.apk"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-primary-500 text-white hover:bg-primary-600"
+              >
+                Download Latest Stable APK
+              </a>
+
+              <a
+                href="https://expo.dev/accounts/campuscartmobile/projects/campus-cart-mobile/builds"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
               >
-                Download APK (Expo EAS)
+                View All Mobile Builds (EAS)
               </a>
 
               {/* Local APK Path for Development */}
