@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "mobile",
     "packages/*"
   ],
   "scripts": {
@@ -11,10 +10,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "mobile:start": "npm run -w mobile start",
-    "mobile:android": "npm run -w mobile android",
-    "mobile:ios": "npm run -w mobile ios",
-    "mobile:web": "npm run -w mobile web",
+    "mobile:start": "npm --prefix mobile run start",
+    "mobile:android": "npm --prefix mobile run android",
+    "mobile:ios": "npm --prefix mobile run ios",
+    "mobile:web": "npm --prefix mobile run web",
     "shared:typecheck": "npm run -w @campuscart/shared typecheck"
   },
   "dependencies": {
