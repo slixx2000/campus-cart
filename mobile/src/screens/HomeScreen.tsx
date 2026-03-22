@@ -54,16 +54,6 @@ export function HomeScreen({
             <Text style={styles.secondaryButtonText}>Sell item</Text>
           </Pressable>
         </View>
-        <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{featuredListings.length}</Text>
-            <Text style={styles.statLabel}>featured now</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{nearbyListings.length}</Text>
-            <Text style={styles.statLabel}>fresh listings</Text>
-          </View>
-        </View>
       </View>
 
       <SectionHeader

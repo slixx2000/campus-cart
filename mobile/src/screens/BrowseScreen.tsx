@@ -1,7 +1,6 @@
 import React from 'react';
 import { FlatList, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { ListingCard } from '../components/ListingCard';
-import { SectionHeader } from '../components/SectionHeader';
 import { CATEGORY_OPTIONS } from '../lib/constants';
 import { styles } from '../lib/styles';
 import type { Listing } from '../types';
@@ -53,12 +52,6 @@ export function BrowseScreen({
 }: Props) {
   return (
     <View style={styles.screenContent}>
-      <SectionHeader
-        eyebrow="Marketplace feed"
-        title="Browse"
-        body="Search listings, narrow by category, and jump into item details without leaving the page flow."
-        rightLabel={`${listings.length} live`}
-      />
       <TextInput
         style={styles.input}
         placeholder="Search textbooks, phones, services…"

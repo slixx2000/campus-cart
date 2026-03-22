@@ -1,6 +1,5 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { SectionHeader } from '../components/SectionHeader';
 import { styles } from '../lib/styles';
 
 export function AboutScreen() {
@@ -13,12 +12,6 @@ export function AboutScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.screenContent}>
-      <SectionHeader
-        eyebrow="About"
-        title="Trust & Safety"
-        body="Campus Cart is built for students. Anyone can browse, but only verified students can create listings and sell."
-      />
-
       <View style={styles.noticeCard}>
         <Text style={styles.noticeTitle}>How trust works</Text>
         <Text style={styles.noticeBody}>Browsing is open with any email so discovery stays easy.</Text>

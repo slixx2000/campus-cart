@@ -9,10 +9,11 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function DownloadsPage() {
-  const mobileRepoUrl = 'https://github.com/slixx2000/campus-cart-mobile';
-  const mobileReleasesUrl = 'https://github.com/slixx2000/campus-cart-mobile/releases';
+  const mobileRepoUrl = 'https://github.com/slixx2000/campus-cart';
+  const mobileReleasesUrl = 'https://github.com/slixx2000/campus-cart/releases';
+  const qaReleaseUrl = 'https://github.com/slixx2000/campus-cart/releases/tag/v1.0.0';
   const latestApkUrl =
-    'https://github.com/slixx2000/campus-cart-mobile/releases/latest/download/campus-cart-mobile.apk';
+    'https://github.com/slixx2000/campus-cart/releases/download/v1.0.0/campus-cart-mobile.apk';
 
   const [isAndroid, setIsAndroid] = useState(false);
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
@@ -154,6 +155,15 @@ export default function DownloadsPage() {
                 className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
               >
                 View Mobile Releases (GitHub)
+              </a>
+
+              <a
+                href={qaReleaseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
+              >
+                Open Current QA Release (v1.0.0)
               </a>
 
               <a

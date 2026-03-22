@@ -109,12 +109,6 @@ export function AccountScreen(props: Props) {
         contentContainerStyle={styles.screenContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
       >
-        <SectionHeader
-          eyebrow="Your Campus Cart"
-          title="Account"
-          body="Keep your seller details clean so buyers trust the person behind the listing."
-        />
-
         <View style={styles.profileCard}>
           <View style={styles.profileTopRow}>
             <Image
@@ -221,11 +215,6 @@ export function AccountScreen(props: Props) {
       contentContainerStyle={styles.screenContent}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
     >
-      <SectionHeader
-        eyebrow="Welcome"
-        title={authMode === 'sign-in' ? 'Sign In' : 'Create Account'}
-        body="Browse with any email. Seller access unlocks after student verification."
-      />
       {authMode === 'sign-up' && (
         <>
           <TextInput style={styles.input} placeholder="Full name" placeholderTextColor="#64748b" value={fullName} onChangeText={setFullName} />

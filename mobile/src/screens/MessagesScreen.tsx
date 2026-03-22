@@ -28,11 +28,6 @@ export function MessagesScreen({
         contentContainerStyle={styles.screenContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
       >
-        <SectionHeader
-          eyebrow="Messages"
-          title="Chat"
-          body="Sign in to message sellers and keep your deal conversations in one place."
-        />
         <View style={styles.noticeCard}>
           <Text style={styles.noticeTitle}>You need an account to chat</Text>
           <Text style={styles.noticeBody}>Once you sign in, this tab will show your conversations with buyers and sellers.</Text>
@@ -46,13 +41,6 @@ export function MessagesScreen({
       contentContainerStyle={styles.screenContent}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
     >
-      <SectionHeader
-        eyebrow="Messages"
-        title="Conversations"
-        body="Keep deal talk tidy. Open a thread and continue from where you left off."
-        rightLabel={`${conversations.length} threads`}
-      />
-
       <Pressable style={styles.secondaryButton} onPress={onRefresh} disabled={loading || refreshing}>
         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Refresh conversations</Text>}
       </Pressable>

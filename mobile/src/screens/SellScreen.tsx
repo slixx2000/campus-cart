@@ -74,12 +74,6 @@ export function SellScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.screenContent}>
-      <SectionHeader
-        eyebrow="Seller studio"
-        title="Post a Listing"
-        body="Keep it clear, honest, and photo-first. Better listings usually convert much faster."
-      />
-
       <View style={styles.helperCard}>
         <Text style={styles.helperCardTitle}>Before you publish</Text>
         <Text style={styles.helperText}>Use a specific title, mention condition, and lead with your best image. Students scan fast.</Text>
