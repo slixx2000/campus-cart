@@ -50,18 +50,18 @@ export function BrowseScreen({
   refreshing,
   onRefresh,
 }: Props) {
-  return (
-    <View style={styles.screenContent}>
+  const header = (
+    <View style={styles.browseHeaderSection}>
       <TextInput
         style={styles.input}
-        placeholder="Search textbooks, phones, services…"
+        placeholder="Search textbooks, phones, services..."
         placeholderTextColor="#64748b"
         value={query}
         onChangeText={setQuery}
       />
       <View style={styles.formSection}>
         <Text style={styles.fieldLabel}>Listing type</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStripContent}>
           <Pressable onPress={() => setListingType('all')} style={[styles.chip, listingType === 'all' && styles.chipActive]}>
             <Text style={[styles.chipText, listingType === 'all' && styles.chipTextActive]}>All</Text>
           </Pressable>
@@ -83,7 +83,7 @@ export function BrowseScreen({
         />
 
         <Text style={styles.fieldLabel}>Sort by</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStripContent}>
           <Pressable onPress={() => setSortBy('newest')} style={[styles.chip, sortBy === 'newest' && styles.chipActive]}>
             <Text style={[styles.chipText, sortBy === 'newest' && styles.chipTextActive]}>Newest</Text>
           </Pressable>
@@ -95,9 +95,12 @@ export function BrowseScreen({
           </Pressable>
         </ScrollView>
       </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalStrip}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStripContent}>
         <Pressable
-          onPress={() => setFavoritesOnly(false)}
+          onPress={() => {
+            setFavoritesOnly(false);
+            setSelectedCategory('All');
+          }}
           style={[styles.chip, !favoritesOnly && selectedCategory === 'All' && styles.chipActive]}
         >
           <Text style={[styles.chipText, !favoritesOnly && selectedCategory === 'All' && styles.chipTextActive]}>All</Text>
@@ -121,21 +124,31 @@ export function BrowseScreen({
           </Pressable>
         ))}
       </ScrollView>
+    </View>
+  );
 
+  return (
+    <View style={styles.screenContent}>
       <FlatList
         data={listings}
+        ListHeaderComponent={header}
         keyExtractor={(item) => item.id}
+        numColumns={2}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
-        contentContainerStyle={{ paddingBottom: 120, gap: 14 }}
+        columnWrapperStyle={styles.browseGridRow}
+        contentContainerStyle={styles.browseListContent}
         renderItem={({ item }) => (
-          <ListingCard
-            listing={item}
-            onPress={() => onOpenListing(item)}
-            canFavorite={canFavorite}
-            isFavorite={favoriteIds.includes(item.id)}
-            onToggleFavorite={() => onToggleFavorite(item.id)}
-          />
+          <View style={styles.browseGridItem}>
+            <ListingCard
+              listing={item}
+              compact
+              onPress={() => onOpenListing(item)}
+              canFavorite={canFavorite}
+              isFavorite={favoriteIds.includes(item.id)}
+              onToggleFavorite={() => onToggleFavorite(item.id)}
+            />
+          </View>
         )}
         ListEmptyComponent={
           <View style={styles.emptyState}>

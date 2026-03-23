@@ -1,6 +1,6 @@
-import { Image } from 'expo-image';
 import React from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
+import { FallbackImage } from '../components/FallbackImage';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { formatPrice, relativeDate } from '../lib/format';
@@ -39,12 +39,16 @@ type Props = {
   universities: UniversityRow[];
   saveLoading: boolean;
   avatarLoading: boolean;
+  defaultAvatarUrls: string[];
+  selectedDefaultAvatar: string | null;
   onEditFullName: (value: string) => void;
   onEditPhone: (value: string) => void;
   onEditStudentEmail: (value: string) => void;
   onEditUniversityId: (value: string) => void;
   onSaveProfile: () => void;
   onPickAvatar: () => void;
+  onSelectDefaultAvatar: (url: string) => void;
+  onApplyDefaultAvatar: () => void;
   onMarkSold: (listingId: string) => void;
   onArchiveListing: (listingId: string) => void;
   onBumpListing: (listingId: string) => void;
@@ -84,12 +88,16 @@ export function AccountScreen(props: Props) {
     universities,
     saveLoading,
     avatarLoading,
+    defaultAvatarUrls,
+    selectedDefaultAvatar,
     onEditFullName,
     onEditPhone,
     onEditStudentEmail,
     onEditUniversityId,
     onSaveProfile,
     onPickAvatar,
+    onSelectDefaultAvatar,
+    onApplyDefaultAvatar,
     onMarkSold,
     onArchiveListing,
     onBumpListing,
@@ -111,8 +119,9 @@ export function AccountScreen(props: Props) {
       >
         <View style={styles.profileCard}>
           <View style={styles.profileTopRow}>
-            <Image
-              source={{ uri: profile?.avatar_url || PLACEHOLDER_IMAGE }}
+            <FallbackImage
+              uri={profile?.avatar_url}
+              fallbackUri={PLACEHOLDER_IMAGE}
               style={styles.avatarLarge}
               contentFit="cover"
             />
@@ -198,6 +207,38 @@ export function AccountScreen(props: Props) {
           </ScrollView>
           <Pressable style={styles.secondaryButton} onPress={onPickAvatar} disabled={avatarLoading}>
             {avatarLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Update avatar</Text>}
+          </Pressable>
+          <Text style={styles.fieldLabel}>Or choose a default avatar</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {defaultAvatarUrls.map((avatarUrl, index) => {
+              const isSelected = selectedDefaultAvatar === avatarUrl;
+              return (
+                <Pressable
+                  key={avatarUrl}
+                  onPress={() => onSelectDefaultAvatar(avatarUrl)}
+                  style={[styles.avatarOption, isSelected && styles.avatarOptionSelected]}
+                  accessibilityLabel={`Select avatar ${index + 1}`}
+                >
+                  <FallbackImage
+                    uri={avatarUrl}
+                    fallbackUri={PLACEHOLDER_IMAGE}
+                    style={styles.avatarOptionImage}
+                    contentFit="cover"
+                  />
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={onApplyDefaultAvatar}
+            disabled={avatarLoading || !selectedDefaultAvatar}
+          >
+            {avatarLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.secondaryButtonText}>Use selected avatar</Text>
+            )}
           </Pressable>
           <Pressable style={styles.primaryButton} onPress={onSaveProfile} disabled={saveLoading}>
             {saveLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Save profile</Text>}

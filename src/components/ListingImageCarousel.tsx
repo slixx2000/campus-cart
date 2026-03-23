@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
-import Image from "next/image";
+import ListingImage from "./ListingImage";
 
 const PLACEHOLDER = "/images/placeholder-electronics.svg";
 
@@ -113,12 +113,12 @@ export default function ListingImageCarousel({
                 onClick={() => setIsFullscreenOpen(true)}
                 aria-label={`Open image ${imageIndex + 1} in fullscreen`}
               >
-                <Image
+                <ListingImage
                   src={src}
                   alt={alt}
+                  fallbackSrc={PLACEHOLDER}
                   fill
                   className="object-contain"
-                  unoptimized
                 />
               </button>
             ))}
@@ -186,12 +186,12 @@ export default function ListingImageCarousel({
                   aria-label={`Preview image ${thumbIndex + 1}`}
                   aria-current={isActive}
                 >
-                  <Image
+                  <ListingImage
                     src={src}
                     alt={`${alt} thumbnail ${thumbIndex + 1}`}
+                    fallbackSrc={PLACEHOLDER}
                     fill
                     className="object-contain bg-slate-50 dark:bg-[#0d1a2b]"
-                    unoptimized
                   />
                 </button>
               );
@@ -234,12 +234,12 @@ export default function ListingImageCarousel({
             >
               {normalizedImages.map((src, imageIndex) => (
                 <div key={`full-${src}-${imageIndex}`} className="relative h-full w-full shrink-0 bg-slate-950">
-                  <Image
+                  <ListingImage
                     src={src}
                     alt={alt}
+                    fallbackSrc={PLACEHOLDER}
                     fill
                     className="object-contain"
-                    unoptimized
                   />
                 </div>
               ))}

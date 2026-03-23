@@ -3,8 +3,7 @@ import React from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { styles } from '../lib/styles';
 import type { Listing } from '../types';
-import { ListingSection } from '../components/ListingSection';
-import { SectionHeader } from '../components/SectionHeader';
+import { HomeListingGrid } from '../components/HomeListingGrid';
 
 type Props = {
   featuredListings: Listing[];
@@ -33,7 +32,7 @@ export function HomeScreen({
       showsVerticalScrollIndicator={false}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
     >
-      <View style={styles.heroCard}>
+      <View style={styles.heroCardCompact}>
         <View style={styles.heroBrandRow}>
           <Image source={require('../../assets/icon.png')} style={styles.heroLogo} contentFit="cover" />
           <View>
@@ -41,11 +40,6 @@ export function HomeScreen({
             <Text style={styles.heroBrandSubtitle}>Student marketplace</Text>
           </View>
         </View>
-        <Text style={styles.heroEyebrow}>Your campus marketplace</Text>
-        <Text style={styles.heroTitle}>Buy, sell, and discover trusted student deals.</Text>
-        <Text style={styles.heroBody}>
-          Browse with any email. Selling stays locked to verified students so the marketplace feels safer from day one.
-        </Text>
         <View style={styles.heroButtonRow}>
           <Pressable style={styles.primaryButton} onPress={onBrowsePress}>
             <Text style={styles.primaryButtonText}>Browse listings</Text>
@@ -56,21 +50,26 @@ export function HomeScreen({
         </View>
       </View>
 
-      <SectionHeader
-        eyebrow="Quick explore"
-        title="Featured Categories"
-        body="Jump into the parts of Campus Cart students are most likely to browse first."
+      <HomeListingGrid 
+        title="Featured Listings" 
+        listings={featuredListings} 
+        onOpenListing={onOpenListing}
+        onViewMore={onBrowsePress}
       />
+      <HomeListingGrid 
+        title="Fresh on Campus" 
+        listings={nearbyListings} 
+        onOpenListing={onOpenListing}
+        onViewMore={onBrowsePress}
+      />
+
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalStrip}>
         {['Electronics', 'Books & Stationery', 'Food & Drinks', 'Services', 'Tutoring', 'Home & Dorm'].map((item) => (
-          <Pressable key={item} onPress={() => onCategoryPress(item)} style={styles.chip}>
-            <Text style={styles.chipText}>{item}</Text>
+          <Pressable key={item} onPress={() => onCategoryPress(item)} style={styles.homeCategoryChip}>
+            <Text style={styles.homeCategoryChipText}>{item}</Text>
           </Pressable>
         ))}
       </ScrollView>
-
-      <ListingSection title="Featured Listings" listings={featuredListings} onOpenListing={onOpenListing} />
-      <ListingSection title="Fresh on Campus" listings={nearbyListings} onOpenListing={onOpenListing} />
     </ScrollView>
   );
 }

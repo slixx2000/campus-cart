@@ -126,7 +126,7 @@ export default async function ProfilePage({ params }: Props) {
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Link
                     href="/sell"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 px-6 py-2.5 text-sm font-bold text-white transition hover:opacity-90 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/45 bg-gradient-to-r from-primary to-sky-400 px-6 py-2.5 text-sm font-bold text-sky-950 shadow-lg shadow-primary/25 transition hover:opacity-90 dark:text-white"
                   >
                     <span className="material-symbols-outlined text-sm">add_circle</span>
                     New Listing

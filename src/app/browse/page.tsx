@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import BrowseScrollRestorer from "@/components/BrowseScrollRestorer";
 import ProgressiveListingGrid from "@/components/ProgressiveListingGrid";
-import { getListings } from "@/lib/repositories/listings";
+import { getFeaturedListings, getListings } from "@/lib/repositories/listings";
 import { getAllCategories } from "@/lib/repositories/universities";
 import { dbListingToUi } from "@/lib/mappers";
 import { createClient } from "@/lib/supabase/server";
@@ -52,6 +52,7 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
     sortBy: (sp.sort as SortBy) || "newest",
     disablePagination: true,
   });
+  const featuredRows = await getFeaturedListings(8);
 
   const categories = await getAllCategories();
 
@@ -65,7 +66,11 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
     return { ...listing, isNearby } as Listing;
   });
 
-  const featuredListings = allListings.filter((listing) => listing.featured);
+  const featuredListings = featuredRows.map((row) => {
+    const listing = dbListingToUi(row);
+    const isNearby = Boolean(userUniversityId && row.university_id === userUniversityId);
+    return { ...listing, isNearby } as Listing;
+  });
   const nearbyListings = allListings.filter((listing) => listing.isNearby);
   const browseStateKey = JSON.stringify({
     q: sp.q ?? "",

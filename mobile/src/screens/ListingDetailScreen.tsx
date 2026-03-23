@@ -1,9 +1,10 @@
-import { Image } from 'expo-image';
 import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { formatPrice, relativeDate } from '../lib/format';
+import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { styles } from '../lib/styles';
 import type { Listing } from '../types';
+import { FallbackImage } from '../components/FallbackImage';
 
 export function ListingDetailScreen({
   listing,
@@ -39,12 +40,22 @@ export function ListingDetailScreen({
           </Pressable>
         ) : null}
       </View>
-      <Image source={{ uri: images[activeImage] || listing.images[0] }} style={styles.detailImage} contentFit="cover" />
+      <FallbackImage
+        uri={images[activeImage] || listing.images[0]}
+        fallbackUri={PLACEHOLDER_IMAGE}
+        style={styles.detailImage}
+        contentFit="cover"
+      />
       {images.length > 1 ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.detailThumbRow}>
           {images.map((image, index) => (
             <Pressable key={`${image}-${index}`} onPress={() => setActiveImage(index)}>
-              <Image source={{ uri: image }} style={styles.detailThumb} contentFit="cover" />
+              <FallbackImage
+                uri={image}
+                fallbackUri={PLACEHOLDER_IMAGE}
+                style={styles.detailThumb}
+                contentFit="cover"
+              />
             </Pressable>
           ))}
         </ScrollView>

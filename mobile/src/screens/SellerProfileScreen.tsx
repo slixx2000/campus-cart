@@ -1,7 +1,7 @@
-import { Image } from 'expo-image';
 import React from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import { ListingCard } from '../components/ListingCard';
+import { FallbackImage } from '../components/FallbackImage';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { styles } from '../lib/styles';
@@ -51,7 +51,12 @@ export function SellerProfileScreen({
 
       <View style={styles.profileCard}>
         <View style={styles.profileTopRow}>
-          <Image source={{ uri: seller?.avatar_url || PLACEHOLDER_IMAGE }} style={styles.avatarLarge} contentFit="cover" />
+          <FallbackImage
+            uri={seller?.avatar_url}
+            fallbackUri={PLACEHOLDER_IMAGE}
+            style={styles.avatarLarge}
+            contentFit="cover"
+          />
           <View style={{ flex: 1 }}>
             <Text style={styles.profileName}>{seller?.full_name || 'Seller'}</Text>
             <Text style={styles.profileMeta}>{universityName || 'University not linked'}</Text>

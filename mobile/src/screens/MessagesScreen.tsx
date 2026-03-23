@@ -1,6 +1,6 @@
-import { Image } from 'expo-image';
 import React from 'react';
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { FallbackImage } from '../components/FallbackImage';
 import { SectionHeader } from '../components/SectionHeader';
 import { relativeDate } from '../lib/format';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
@@ -54,7 +54,12 @@ export function MessagesScreen({
         conversations.map((conversation) => (
           <Pressable key={conversation.id} style={styles.profileCard} onPress={() => onOpenConversation(conversation)}>
             <View style={styles.profileTopRow}>
-              <Image source={{ uri: conversation.other_participant_avatar || PLACEHOLDER_IMAGE }} style={styles.avatarLarge} contentFit="cover" />
+              <FallbackImage
+                uri={conversation.other_participant_avatar}
+                fallbackUri={PLACEHOLDER_IMAGE}
+                style={styles.avatarLarge}
+                contentFit="cover"
+              />
               <View style={{ flex: 1 }}>
                 <View style={styles.rowBetween}>
                   <Text style={styles.profileName}>{conversation.other_participant_name}</Text>

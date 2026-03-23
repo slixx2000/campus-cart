@@ -111,7 +111,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/sell"
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-white/30 bg-primary/20 px-8 py-4 font-bold text-white backdrop-blur-sm transition-all hover:bg-primary/30 sm:w-auto"
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-primary/35 bg-primary/15 px-8 py-4 font-bold text-sky-900 backdrop-blur-sm transition-all hover:bg-primary/25 sm:w-auto dark:text-white"
               >
                 <span className="material-symbols-outlined">add_circle</span>
                 Sell Item

@@ -4,8 +4,8 @@ import { Session, User } from '@supabase/supabase-js';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, SafeAreaView, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Alert, Animated, Easing, SafeAreaView, Text, View } from 'react-native';
 import { AccountScreen } from './src/screens/AccountScreen';
 import { AboutScreen } from './src/screens/AboutScreen';
 import { BrowseScreen } from './src/screens/BrowseScreen';
@@ -16,7 +16,7 @@ import { ChatDetailScreen } from './src/screens/ChatDetailScreen';
 import { SellerProfileScreen } from './src/screens/SellerProfileScreen';
 import { SellScreen } from './src/screens/SellScreen';
 import { pickImages, uploadListingImages, type PickedImage } from './src/lib/imageUpload';
-import { pickSingleProfileImage, uploadProfileAvatar } from './src/lib/profileUpload';
+import { fetchDefaultAvatars, pickSingleProfileImage, uploadProfileAvatar } from './src/lib/profileUpload';
 import { registerPushToken } from './src/lib/pushNotifications';
 import { findOrCreateConversation, getConversationsForUser, getMessages, markConversationRead, sendMessage } from './src/lib/conversations';
 import { getFavoriteIds, toggleFavorite } from './src/lib/favorites';
@@ -109,12 +109,16 @@ function MainTabsNavigator(props: any) {
     universities,
     saveLoading,
     avatarLoading,
+    defaultAvatarUrls,
+    selectedDefaultAvatar,
     setEditFullName,
     setEditPhone,
     setEditStudentEmail,
     setEditUniversityId,
     handleSaveProfile,
     handlePickAvatar,
+    setSelectedDefaultAvatar,
+    handleApplyDefaultAvatar,
     updateListingStatus,
     refreshingFeed,
     refreshingMessages,
@@ -272,12 +276,16 @@ function MainTabsNavigator(props: any) {
             universities={universities}
             saveLoading={saveLoading}
             avatarLoading={avatarLoading}
+            defaultAvatarUrls={defaultAvatarUrls}
+            selectedDefaultAvatar={selectedDefaultAvatar}
             onEditFullName={setEditFullName}
             onEditPhone={setEditPhone}
             onEditStudentEmail={setEditStudentEmail}
             onEditUniversityId={setEditUniversityId}
             onSaveProfile={handleSaveProfile}
             onPickAvatar={handlePickAvatar}
+            onSelectDefaultAvatar={setSelectedDefaultAvatar}
+            onApplyDefaultAvatar={handleApplyDefaultAvatar}
             onMarkSold={(listingId: string) => updateListingStatus(listingId, { status: 'sold' }, 'Marked as sold.')}
             onArchiveListing={(listingId: string) => updateListingStatus(listingId, { deleted_at: new Date().toISOString() }, 'Listing archived.')}
             onBumpListing={(listingId: string) => updateListingStatus(listingId, { last_bumped_at: new Date().toISOString() }, 'Listing bumped to the top.')}
@@ -295,6 +303,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
+  const [featuredHomeListings, setFeaturedHomeListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -330,6 +339,8 @@ export default function App() {
   const [conversationLoading, setConversationLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
+  const [defaultAvatarUrls, setDefaultAvatarUrls] = useState<string[]>([]);
+  const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState<string | null>(null);
   const [refreshingFeed, setRefreshingFeed] = useState(false);
   const [refreshingMessages, setRefreshingMessages] = useState(false);
   const [refreshingAccount, setRefreshingAccount] = useState(false);
@@ -337,6 +348,8 @@ export default function App() {
   const [editPhone, setEditPhone] = useState('');
   const [editStudentEmail, setEditStudentEmail] = useState('');
   const [editUniversityId, setEditUniversityId] = useState('');
+  const [signedInToastVisible, setSignedInToastVisible] = useState(false);
+  const loadingCartProgress = useRef(new Animated.Value(0)).current;
 
   const loadProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
@@ -389,6 +402,18 @@ export default function App() {
     if (listingsError) throw new Error(listingsError.message);
     setPublicSellerListings(((listingRows ?? []) as any[]).map(mapListing));
   }, []);
+
+  const loadDefaultAvatars = useCallback(async () => {
+    try {
+      const urls = await fetchDefaultAvatars();
+      setDefaultAvatarUrls(urls);
+      if (!selectedDefaultAvatar && urls[0]) {
+        setSelectedDefaultAvatar(urls[0]);
+      }
+    } catch (error) {
+      console.warn('default-avatar-load-error', error);
+    }
+  }, [selectedDefaultAvatar]);
 
   const loadFavorites = useCallback(async (userId?: string) => {
     if (!userId) {
@@ -453,6 +478,24 @@ export default function App() {
     setListings(((data ?? []) as any[]).map(mapListing));
   }, []);
 
+  const loadFeaturedHomeListings = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('listings')
+      .select(LISTING_SELECT)
+      .eq('status', 'active')
+      .eq('featured', true)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(16);
+
+    if (error) {
+      console.warn('featured-listing-load-error', error.message);
+      return;
+    }
+
+    setFeaturedHomeListings(((data ?? []) as any[]).map(mapListing));
+  }, []);
+
   useEffect(() => {
     let mounted = true;
 
@@ -483,15 +526,49 @@ export default function App() {
       }
     });
 
-    Promise.all([loadListings(), loadCategories(), loadUniversities()]).finally(() => setLoading(false));
+    Promise.all([loadListings(), loadFeaturedHomeListings(), loadCategories(), loadUniversities(), loadDefaultAvatars()]).finally(() => setLoading(false));
 
     return () => {
       mounted = false;
       listener.subscription.unsubscribe();
     };
-  }, [loadCategories, loadConversations, loadFavorites, loadListings, loadProfile, loadUniversities]);
+  }, [loadCategories, loadConversations, loadDefaultAvatars, loadFavorites, loadFeaturedHomeListings, loadListings, loadProfile, loadUniversities]);
 
-  const featuredListings = useMemo(() => listings.filter((listing) => listing.featured).slice(0, 6), [listings]);
+  useEffect(() => {
+    if (!loading) return;
+
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(loadingCartProgress, {
+          toValue: 1,
+          duration: 900,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true,
+        }),
+        Animated.timing(loadingCartProgress, {
+          toValue: 0,
+          duration: 900,
+          easing: Easing.inOut(Easing.cubic),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    animation.start();
+    return () => animation.stop();
+  }, [loading, loadingCartProgress]);
+
+  useEffect(() => {
+    if (!signedInToastVisible) return;
+
+    const timer = setTimeout(() => {
+      setSignedInToastVisible(false);
+    }, 2600);
+
+    return () => clearTimeout(timer);
+  }, [signedInToastVisible]);
+
+  const featuredListings = useMemo(() => featuredHomeListings, [featuredHomeListings]);
   const nearbyListings = useMemo(() => listings.slice(0, 6), [listings]);
   const userListings = useMemo(() => listings.filter((listing) => listing.sellerId === user?.id), [listings, user?.id]);
   const activeCount = useMemo(() => userListings.filter((listing) => listing.status !== 'sold').length, [userListings]);
@@ -537,33 +614,54 @@ export default function App() {
       return;
     }
 
+    if (authMode === 'sign-up' && !fullName) {
+      Alert.alert('Missing name', 'Please enter your full name to create an account.');
+      return;
+    }
+
     setAuthLoading(true);
 
-    if (authMode === 'sign-in') {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      if (authMode === 'sign-in') {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          const errorMessage = error?.message || 'Could not sign in. Please check your email and password.';
+          Alert.alert('Sign in failed', errorMessage);
+          return;
+        }
+        setSignedInToastVisible(true);
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: fullName, phone } },
+      });
+
+      if (error) {
+        const errorMessage = error?.message || 'Could not create account. Please try again.';
+        Alert.alert('Sign up failed', errorMessage);
+        return;
+      }
+
+      if (data.user?.id) {
+        try {
+          await supabase.from('profiles').upsert({ id: data.user.id, full_name: fullName, phone });
+        } catch (profileError) {
+          console.warn('[AUTH] Profile creation error:', profileError);
+          // Don't fail the signup if profile creation fails - user can update later
+        }
+      }
+
+      setAuthMode('sign-in');
+      Alert.alert('Account created', 'Check your email if confirmation is enabled, then sign in.');
+    } catch (err) {
+      console.error('[AUTH ERROR]', err);
+      Alert.alert('Authentication error', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+    } finally {
       setAuthLoading(false);
-      if (error) return Alert.alert('Sign in failed', error.message);
-      return Alert.alert('Welcome back', 'You are now signed in.');
     }
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName, phone } },
-    });
-
-    if (error) {
-      setAuthLoading(false);
-      return Alert.alert('Sign up failed', error.message);
-    }
-
-    if (data.user?.id) {
-      await supabase.from('profiles').upsert({ id: data.user.id, full_name: fullName, phone });
-    }
-
-    setAuthLoading(false);
-    setAuthMode('sign-in');
-    Alert.alert('Account created', 'Check your email if confirmation is enabled, then sign in.');
   }, [authMode, email, fullName, password, phone]);
 
   const signOut = useCallback(async () => {
@@ -586,50 +684,82 @@ export default function App() {
     }
 
     setResetLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail);
-    setResetLoading(false);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail);
+      
+      if (error) {
+        const errorMessage = error?.message || 'Could not send reset email. Please check your email and try again.';
+        Alert.alert('Reset failed', errorMessage);
+        return;
+      }
 
-    if (error) {
-      Alert.alert('Could not send reset email', error.message);
-      return;
+      Alert.alert('Reset email sent', 'Check your inbox for password reset instructions. It may take a few minutes to arrive.');
+      setResetEmail('');
+    } catch (err) {
+      console.error('[PASSWORD RESET ERROR]', err);
+      Alert.alert('Error sending reset email', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+    } finally {
+      setResetLoading(false);
     }
-
-    Alert.alert('Reset email sent', 'Check your inbox for password reset instructions.');
   }, [resetEmail]);
 
   const handleSaveProfile = useCallback(async () => {
     if (!user) return;
     setSaveLoading(true);
 
-    const payload = {
-      id: user.id,
-      full_name: editFullName || user.email?.split('@')[0] || 'CampusCart User',
-      phone: editPhone || null,
-      student_email: editStudentEmail || null,
-      university_id: editUniversityId || null,
-      updated_at: new Date().toISOString(),
-    };
+    try {
+      const payload = {
+        id: user.id,
+        full_name: editFullName || user.email?.split('@')[0] || 'CampusCart User',
+        phone: editPhone || null,
+        student_email: editStudentEmail || null,
+        university_id: editUniversityId || null,
+        updated_at: new Date().toISOString(),
+      };
 
-    const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' });
-    setSaveLoading(false);
+      console.log('[PROFILE SAVE] Updating profile:', payload);
+      const { error } = await supabase.from('profiles').upsert(payload, { onConflict: 'id' });
+      
+      if (error) {
+        console.error('[PROFILE SAVE ERROR]', error);
+        Alert.alert('Could not save profile', error.message || 'An unknown error occurred');
+        return;
+      }
 
-    if (error) return Alert.alert('Could not save profile', error.message);
-
-    await loadProfile(user.id);
-    Alert.alert('Profile updated', 'Your account details were saved.');
+      console.log('[PROFILE SAVE] Success');
+      await loadProfile(user.id);
+      Alert.alert('Profile updated', 'Your account details were saved.');
+    } catch (err) {
+      console.error('[PROFILE SAVE EXCEPTION]', err);
+      Alert.alert('Error saving profile', err instanceof Error ? err.message : 'An unexpected error occurred');
+    } finally {
+      setSaveLoading(false);
+    }
   }, [editFullName, editPhone, editStudentEmail, editUniversityId, loadProfile, user]);
 
   const handlePickAvatar = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      Alert.alert('Sign in required', 'Please sign in before updating your avatar.');
+      return;
+    }
+    
     try {
       setAvatarLoading(true);
+      console.log('[AVATAR PICK] Starting avatar selection');
+      
       const asset = await pickSingleProfileImage();
       if (!asset) {
+        console.log('[AVATAR PICK] User cancelled');
         setAvatarLoading(false);
         return;
       }
+
+      console.log('[AVATAR UPLOAD] Uploading:', { fileName: asset.fileName, size: asset.fileSize });
       const avatarUrl = await uploadProfileAvatar(user.id, asset.uri, asset.mimeType ?? undefined, asset.fileName ?? undefined);
-      const { error } = await supabase.from('profiles').upsert({
+      console.log('[AVATAR UPLOAD] Got URL:', avatarUrl);
+
+      console.log('[AVATAR DB UPDATE] Updating profile with avatar URL');
+      const { error, data: updateData } = await supabase.from('profiles').upsert({
         id: user.id,
         avatar_url: avatarUrl,
         full_name: editFullName || profile?.full_name || user.email?.split('@')[0] || 'CampusCart User',
@@ -637,16 +767,62 @@ export default function App() {
         university_id: editUniversityId || profile?.university_id || null,
         student_email: editStudentEmail || profile?.student_email || null,
         updated_at: new Date().toISOString(),
-      }, { onConflict: 'id' });
-      setAvatarLoading(false);
-      if (error) return Alert.alert('Could not update avatar', error.message);
+      }, { onConflict: 'id' }).select();
+      
+      console.log('[AVATAR DB UPDATE] Result:', { error, updated: !!updateData });
+
+      if (error) {
+        console.error('[AVATAR DB ERROR]', error);
+        Alert.alert('Could not update avatar', error.message || 'Failed to save avatar to profile');
+        return;
+      }
+
       await loadProfile(user.id);
       Alert.alert('Avatar updated', 'Your profile photo looks better already.');
     } catch (error) {
+      console.error('[AVATAR ERROR]', error);
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
+      Alert.alert('Could not update avatar', errorMessage);
+    } finally {
       setAvatarLoading(false);
-      Alert.alert('Could not update avatar', error instanceof Error ? error.message : 'Unknown error');
     }
   }, [editFullName, editPhone, editStudentEmail, editUniversityId, loadProfile, profile?.full_name, profile?.phone, profile?.student_email, profile?.university_id, user]);
+
+  const handleApplyDefaultAvatar = useCallback(async () => {
+    if (!user) {
+      Alert.alert('Sign in required', 'Please sign in before updating your avatar.');
+      return;
+    }
+    if (!selectedDefaultAvatar) {
+      Alert.alert('Select an avatar', 'Choose one of the default avatars first.');
+      return;
+    }
+
+    try {
+      setAvatarLoading(true);
+      const { error } = await supabase.from('profiles').upsert({
+        id: user.id,
+        avatar_url: selectedDefaultAvatar,
+        full_name: editFullName || profile?.full_name || user.email?.split('@')[0] || 'CampusCart User',
+        phone: editPhone || profile?.phone || null,
+        university_id: editUniversityId || profile?.university_id || null,
+        student_email: editStudentEmail || profile?.student_email || null,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'id' });
+
+      if (error) {
+        Alert.alert('Could not update avatar', error.message || 'Failed to save avatar to profile');
+        return;
+      }
+
+      await loadProfile(user.id);
+      Alert.alert('Avatar updated', 'Default avatar applied successfully.');
+    } catch (error) {
+      Alert.alert('Could not update avatar', error instanceof Error ? error.message : 'An unexpected error occurred');
+    } finally {
+      setAvatarLoading(false);
+    }
+  }, [editFullName, editPhone, editStudentEmail, editUniversityId, loadProfile, profile?.full_name, profile?.phone, profile?.student_email, profile?.university_id, selectedDefaultAvatar, user]);
 
   const handlePickImages = useCallback(async () => {
     try {
@@ -666,14 +842,15 @@ export default function App() {
       const next = await toggleFavorite(user.id, listingId, favoriteIds.includes(listingId));
       setFavoriteIds((current) => next ? [...current, listingId] : current.filter((id) => id !== listingId));
     } catch (error) {
-      Alert.alert('Could not update favorite', error instanceof Error ? error.message : 'Unknown error');
+      const errorMessage = error instanceof Error ? error.message : 'Could not update favorite. Please try again.';
+      Alert.alert('Could not update favorite', errorMessage);
     }
   }, [favoriteIds, user]);
 
   const handleStartConversation = useCallback(async (listing: Listing, navigation: any) => {
     if (!user) return Alert.alert('Sign in required', 'Please sign in before messaging a seller.');
-    if (!listing.sellerId) return Alert.alert('Seller unavailable', 'This listing has no seller attached.');
-    if (listing.sellerId === user.id) return Alert.alert('That is your listing', 'You cannot message yourself.');
+    if (!listing.sellerId) return Alert.alert('Seller unavailable', 'This listing has no seller attached. Contact support if this persists.');
+    if (listing.sellerId === user.id) return Alert.alert('Your listing', 'You cannot message yourself on your own listing.');
 
     try {
       const conversationId = await findOrCreateConversation(listing.id, user.id, listing.sellerId);
@@ -681,7 +858,8 @@ export default function App() {
       await loadMessages(conversationId, user.id);
       navigation.navigate('ChatDetail', { conversationId, title: listing.sellerName, currentUserId: user.id });
     } catch (error) {
-      Alert.alert('Could not start chat', error instanceof Error ? error.message : 'Unknown error');
+      const errorMessage = error instanceof Error ? error.message : 'Could not start chat. Please try again.';
+      Alert.alert('Could not start chat', errorMessage);
     }
   }, [loadConversations, loadMessages, user]);
 
@@ -693,17 +871,27 @@ export default function App() {
       await loadMessages(conversationId, user.id);
       await loadConversations(user.id);
     } catch (error) {
-      Alert.alert('Could not send message', error instanceof Error ? error.message : 'Unknown error');
+      const errorMessage = error instanceof Error ? error.message : 'Could not send message. Please try again.';
+      Alert.alert('Message failed', errorMessage);
     } finally {
       setChatSending(false);
     }
   }, [loadConversations, loadMessages, user]);
 
   const updateListingStatus = useCallback(async (listingId: string, patch: Record<string, any>, successMessage: string) => {
-    const { error } = await supabase.from('listings').update(patch).eq('id', listingId);
-    if (error) return Alert.alert('Could not update listing', error.message);
-    await loadListings();
-    Alert.alert('Listing updated', successMessage);
+    try {
+      const { error } = await supabase.from('listings').update(patch).eq('id', listingId);
+      if (error) {
+        const errorMessage = error?.message || 'Could not update listing. Please try again.';
+        Alert.alert('Update failed', errorMessage);
+        return;
+      }
+      await loadListings();
+      Alert.alert('Listing updated', successMessage);
+    } catch (err) {
+      console.error('[LISTING UPDATE ERROR]', err);
+      Alert.alert('Error updating listing', err instanceof Error ? err.message : 'An unexpected error occurred');
+    }
   }, [loadListings]);
 
   const handleCreateListing = useCallback(async () => {
@@ -742,18 +930,24 @@ export default function App() {
 
     if (listingImages.length > 0) {
       try {
+        console.log('[MOBILE DEBUG] Uploading', listingImages.length, 'images for listing', inserted.id);
         const uploaded = await uploadListingImages(user.id, inserted.id, listingImages);
-        const { error: imageInsertError } = await supabase.from('listing_images').insert(
-          uploaded.map((image) => ({
-            listing_id: inserted.id,
-            public_url: image.public_url,
-            storage_path: image.storage_path,
-            sort_order: image.sort_order,
-          }))
-        );
+        console.log('[MOBILE DEBUG] Upload returned:', uploaded);
+        
+        const imagesToInsert = uploaded.map((image) => ({
+          listing_id: inserted.id,
+          public_url: image.public_url,
+          storage_path: image.storage_path,
+          sort_order: image.sort_order,
+        }));
+        console.log('[MOBILE DEBUG] Inserting into listing_images:', imagesToInsert);
+        
+        const { error: imageInsertError, data: insertData } = await supabase.from('listing_images').insert(imagesToInsert).select();
+        console.log('[MOBILE DEBUG] Insert result:', { imageInsertError, insertData });
+        
         if (imageInsertError) throw imageInsertError;
       } catch (uploadError) {
-        console.warn('listing-image-upload-error', uploadError);
+        console.warn('[MOBILE ERROR] listing-image-upload-error', uploadError);
         Alert.alert('Listing posted, but image upload failed', uploadError instanceof Error ? uploadError.message : 'Unknown image upload error');
       }
     }
@@ -787,12 +981,13 @@ export default function App() {
     try {
       await Promise.all([
         loadListings(),
+        loadFeaturedHomeListings(),
         user?.id ? loadFavorites(user.id) : Promise.resolve(),
       ]);
     } finally {
       setRefreshingFeed(false);
     }
-  }, [loadFavorites, loadListings, user?.id]);
+  }, [loadFavorites, loadFeaturedHomeListings, loadListings, user?.id]);
 
   const handleRefreshMessages = useCallback(async () => {
     setRefreshingMessages(true);
@@ -811,20 +1006,57 @@ export default function App() {
     try {
       await Promise.all([
         loadListings(),
+        loadFeaturedHomeListings(),
         user?.id ? loadProfile(user.id) : Promise.resolve(),
         user?.id ? loadFavorites(user.id) : Promise.resolve(),
       ]);
     } finally {
       setRefreshingAccount(false);
     }
-  }, [loadFavorites, loadListings, loadProfile, user?.id]);
+  }, [loadFavorites, loadFeaturedHomeListings, loadListings, loadProfile, user?.id]);
 
   if (loading) {
+    const loadingCartTranslateX = loadingCartProgress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-20, 20],
+    });
+
+    const loadingCartRotate = loadingCartProgress.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['-8deg', '8deg'],
+    });
+
+    const loadingTrackTranslateX = loadingCartProgress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 90],
+    });
+
     return (
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={styles.loadingText}>Loading Campus Cart…</Text>
+          <View style={styles.loadingCard}>
+            <Animated.View
+              style={[
+                styles.loadingCartWrap,
+                {
+                  transform: [{ translateX: loadingCartTranslateX }, { rotate: loadingCartRotate }],
+                },
+              ]}
+            >
+              <MaterialIcons name="shopping-cart" size={42} color={colors.secondary} />
+            </Animated.View>
+            <View style={styles.loadingTrack}>
+              <Animated.View
+                style={[
+                  styles.loadingTrackGlow,
+                  {
+                    transform: [{ translateX: loadingTrackTranslateX }],
+                  },
+                ]}
+              />
+            </View>
+            <Text style={styles.loadingText}>Loading Campus Cart...</Text>
+          </View>
         </View>
       </SafeAreaView>
     );
@@ -912,12 +1144,16 @@ export default function App() {
                 universities={universities}
                 saveLoading={saveLoading}
                 avatarLoading={avatarLoading}
+                defaultAvatarUrls={defaultAvatarUrls}
+                selectedDefaultAvatar={selectedDefaultAvatar}
                 setEditFullName={setEditFullName}
                 setEditPhone={setEditPhone}
                 setEditStudentEmail={setEditStudentEmail}
                 setEditUniversityId={setEditUniversityId}
                 handleSaveProfile={handleSaveProfile}
                 handlePickAvatar={handlePickAvatar}
+                setSelectedDefaultAvatar={setSelectedDefaultAvatar}
+                handleApplyDefaultAvatar={handleApplyDefaultAvatar}
                 updateListingStatus={updateListingStatus}
                 refreshingFeed={refreshingFeed}
                 refreshingMessages={refreshingMessages}
@@ -980,6 +1216,17 @@ export default function App() {
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
+      {signedInToastVisible ? (
+        <View style={styles.authToastContainer} pointerEvents="none">
+          <View style={styles.authToastCard}>
+            <MaterialIcons name="check-circle" size={20} color={colors.success} />
+            <View style={styles.authToastCopy}>
+              <Text style={styles.authToastTitle}>Signed in</Text>
+              <Text style={styles.authToastBody}>Welcome back to Campus Cart.</Text>
+            </View>
+          </View>
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 }

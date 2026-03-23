@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Listing } from "@/types";
 import { formatPrice } from "@/lib/data";
 import AvatarImage from "@/components/AvatarImage";
+import ListingImage from "@/components/ListingImage";
 
 interface ProductCardProps {
   listing: Listing;
@@ -19,12 +19,12 @@ export default function ProductCard({ listing }: ProductCardProps) {
       <article className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-300/90 bg-slate-50/95 shadow-lg shadow-slate-900/10 ring-1 ring-slate-200/70 transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:bg-white hover:shadow-xl hover:ring-black/10 dark:border-white/10 dark:bg-white/5 dark:shadow-none dark:ring-0 dark:hover:border-primary/40 dark:hover:ring-white/10">
         {/* Image */}
         <div className="relative aspect-[4/3] overflow-hidden rounded-lg sm:aspect-square">
-          <Image
+          <ListingImage
             src={listing.images[0]}
             alt={listing.title}
+            fallbackSrc="/images/placeholder-electronics.svg"
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-110"
-            unoptimized
           />
           <button
             className="absolute top-3 right-3 rounded-full bg-white/90 p-2 text-slate-400 backdrop-blur-sm transition-colors hover:text-red-500 active:scale-95 dark:bg-background-dark/90 dark:text-slate-300"

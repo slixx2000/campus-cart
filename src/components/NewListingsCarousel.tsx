@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import type { Listing } from "@/types";
 
@@ -9,56 +9,33 @@ type NewListingsCarouselProps = {
 };
 
 const GAP_PX = 24;
-const AUTO_SCROLL_PX_PER_SEC = 28;
+const AUTO_SCROLL_PX_PER_SEC = 34;
 const RESUME_COOLDOWN_MS = 3000;
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(max, Math.max(min, value));
+const RESUME_RAMP_MS = 650;
 
 export default function NewListingsCarousel({ listings }: NewListingsCarouselProps) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
-  const listRef = useRef<HTMLDivElement | null>(null);
   const measureCardRef = useRef<HTMLDivElement | null>(null);
 
   const [cardWidth, setCardWidth] = useState(300);
-  const [viewportWidth, setViewportWidth] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [cursorNearLeft, setCursorNearLeft] = useState(false);
   const [cursorNearRight, setCursorNearRight] = useState(false);
 
   const pausedUntilRef = useRef(0);
   const isPointerInteractingRef = useRef(false);
-  const isHoveringRef = useRef(false);
   const scrollLeftRef = useRef(0);
+  const autoScrollLeftRef = useRef(0);
 
   const stride = cardWidth + GAP_PX;
-  const maxScrollableLeft = useMemo(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return 0;
-    return Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-  }, [listings.length, cardWidth, viewportWidth]);
-
   const total = listings.length;
-  const visibleStart = clamp(Math.floor(scrollLeft / stride) - 1, 0, Math.max(0, total - 1));
-  const visibleEnd = clamp(
-    Math.ceil((scrollLeft + viewportWidth) / stride) + 1,
-    0,
-    Math.max(0, total - 1)
-  );
-
-  const leadingSpacer = visibleStart * stride;
-  const trailingSpacer = Math.max(0, (total - visibleEnd - 1) * stride);
-  const visibleListings = listings.slice(visibleStart, visibleEnd + 1);
+  const loopPoint = Math.max(0, stride * total);
   const canUseCarousel = total > 1;
+  const renderedListings = canUseCarousel ? [...listings, ...listings, ...listings] : listings;
 
   const pauseWithCooldown = () => {
     pausedUntilRef.current = Date.now() + RESUME_COOLDOWN_MS;
   };
-
-  useEffect(() => {
-    isHoveringRef.current = isHovering;
-  }, [isHovering]);
 
   useEffect(() => {
     const viewport = viewportRef.current;
@@ -68,9 +45,8 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
     const updateMeasurements = () => {
       const nextWidth = Math.round(measureCard.getBoundingClientRect().width);
       if (nextWidth > 0) setCardWidth(nextWidth);
-      setViewportWidth(viewport.clientWidth);
-      setScrollLeft(viewport.scrollLeft);
       scrollLeftRef.current = viewport.scrollLeft;
+      autoScrollLeftRef.current = viewport.scrollLeft;
     };
 
     updateMeasurements();
@@ -85,24 +61,30 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
   useEffect(() => {
     const viewport = viewportRef.current;
     if (!viewport) return;
-
-    let frame = 0;
     const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        const next = viewport.scrollLeft;
-        scrollLeftRef.current = next;
-        setScrollLeft((prev) => (Math.abs(prev - next) > 1 ? next : prev));
-      });
+      const next = viewport.scrollLeft;
+      scrollLeftRef.current = next;
+      autoScrollLeftRef.current = next;
     };
 
     viewport.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       viewport.removeEventListener("scroll", onScroll);
-      if (frame) cancelAnimationFrame(frame);
     };
   }, []);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || !canUseCarousel || loopPoint <= 0) return;
+
+    const minBand = loopPoint * 0.6;
+    const maxBand = loopPoint * 1.4;
+    if (viewport.scrollLeft < minBand || viewport.scrollLeft > maxBand) {
+      viewport.scrollLeft = loopPoint;
+      scrollLeftRef.current = loopPoint;
+      autoScrollLeftRef.current = loopPoint;
+    }
+  }, [canUseCarousel, loopPoint]);
 
   useEffect(() => {
     if (!canUseCarousel) return;
@@ -119,24 +101,29 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
       if (lastTs === 0) {
         lastTs = ts;
       }
-      const delta = ts - lastTs;
+      const delta = Math.min(ts - lastTs, 34);
       lastTs = ts;
 
       const isPausedForInteraction =
         isPointerInteractingRef.current ||
-        isHoveringRef.current ||
         Date.now() < pausedUntilRef.current;
 
       if (!isPausedForInteraction) {
-        const px = (AUTO_SCROLL_PX_PER_SEC * delta) / 1000;
-        const maxLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-        const nextLeft = viewport.scrollLeft + px;
+        const now = Date.now();
+        const timeSinceResume = Math.max(0, now - pausedUntilRef.current);
+        const resumeProgress = Math.min(1, timeSinceResume / RESUME_RAMP_MS);
+        const easedResume = 1 - Math.pow(1 - resumeProgress, 3);
+        const px = (AUTO_SCROLL_PX_PER_SEC * easedResume * delta) / 1000;
+        let nextLeft = autoScrollLeftRef.current + px;
 
-        if (nextLeft >= maxLeft - 1) {
-          viewport.scrollLeft = 0;
-        } else {
-          viewport.scrollLeft = nextLeft;
+        if (loopPoint > 0) {
+          if (nextLeft >= loopPoint * 2) nextLeft -= loopPoint;
+          if (nextLeft < loopPoint) nextLeft += loopPoint;
         }
+
+        autoScrollLeftRef.current = nextLeft;
+        scrollLeftRef.current = nextLeft;
+        viewport.scrollLeft = nextLeft;
       }
 
       rafId = requestAnimationFrame(tick);
@@ -144,23 +131,23 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [canUseCarousel]);
+  }, [canUseCarousel, loopPoint]);
 
   const scrollByDirection = (direction: "left" | "right") => {
     const viewport = viewportRef.current;
     if (!viewport) return;
     if (!canUseCarousel) return;
 
-    // Snap logic: compute a card-aligned target index so arrow clicks always
-    // land on exact card boundaries across breakpoints.
-    const maxLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
-    const cardsPerViewport = Math.max(1, Math.floor(viewport.clientWidth / stride));
-    const currentIndex = Math.round(scrollLeftRef.current / stride);
-    const delta = direction === "right" ? cardsPerViewport : -cardsPerViewport;
-    const maxIndex = Math.round(maxLeft / stride);
-    const targetIndex = clamp(currentIndex + delta, 0, maxIndex);
-    const targetLeft = clamp(targetIndex * stride, 0, maxLeft);
+    const delta = direction === "right" ? viewport.clientWidth * 0.8 : -viewport.clientWidth * 0.8;
+    let targetLeft = scrollLeftRef.current + delta;
 
+    if (loopPoint > 0) {
+      if (targetLeft < loopPoint) targetLeft += loopPoint;
+      if (targetLeft >= loopPoint * 2) targetLeft -= loopPoint;
+    }
+
+    autoScrollLeftRef.current = targetLeft;
+    scrollLeftRef.current = targetLeft;
     viewport.scrollTo({ left: targetLeft, behavior: "smooth" });
 
     pauseWithCooldown();
@@ -185,9 +172,8 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
     setCursorNearRight(localX >= rect.width - edgeZone);
   };
 
-  const showLeftButton = canUseCarousel && (isHovering || cursorNearLeft) && scrollLeft > 2;
-  const showRightButton =
-    canUseCarousel && (isHovering || cursorNearRight) && scrollLeft < maxScrollableLeft - 2;
+  const showLeftButton = canUseCarousel && (isHovering || cursorNearLeft);
+  const showRightButton = canUseCarousel && (isHovering || cursorNearRight);
 
   return (
     <div
@@ -197,32 +183,29 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
         setIsHovering(false);
         setCursorNearLeft(false);
         setCursorNearRight(false);
-        pauseWithCooldown();
       }}
       onMouseMove={onMouseMove}
     >
       <div
         ref={viewportRef}
-        className="overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
-        <div ref={listRef} className="flex items-stretch">
-          <div style={{ width: leadingSpacer }} aria-hidden="true" />
-          {visibleListings.map((listing, idx) => {
-            const absoluteIndex = visibleStart + idx;
+        <div className="flex items-stretch">
+          {renderedListings.map((listing, idx) => {
             return (
               <div
-                key={listing.id}
+                key={`${listing.id}-${idx}`}
+                ref={idx === 0 ? measureCardRef : undefined}
                 className="w-[78vw] shrink-0 pr-6 sm:w-[320px] lg:w-[300px]"
-                data-index={absoluteIndex}
+                data-index={idx}
               >
                 <ProductCard listing={listing} />
               </div>
             );
           })}
-          <div style={{ width: trailingSpacer }} aria-hidden="true" />
         </div>
       </div>
 
@@ -254,15 +237,12 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
       </button>
 
       <div className="sr-only" aria-live="polite">
-        Showing {visibleStart + 1} to {visibleEnd + 1} of {total} listings.
+        Showing a continuously scrolling feed of {total} new listings.
       </div>
 
       <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-background-light to-transparent dark:from-background-dark" />
       <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-background-light to-transparent dark:from-background-dark" />
 
-      <div className="absolute -z-10 opacity-0 pointer-events-none">
-        <div ref={measureCardRef} className="w-[78vw] sm:w-[320px] lg:w-[300px]" />
-      </div>
     </div>
   );
 }

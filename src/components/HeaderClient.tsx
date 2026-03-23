@@ -188,7 +188,7 @@ export default function HeaderClient({
           )}
           <Link
             href="/sell"
-            className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-primary to-blue-500 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:opacity-95 active:scale-[0.98] relative"
+            className="flex items-center gap-1.5 rounded-full border border-primary/45 dark:border-primary/60 bg-gradient-to-r from-primary to-sky-400 px-4 py-2 text-sm font-bold text-sky-950 dark:text-white shadow-lg shadow-primary/25 dark:shadow-primary/45 transition-all hover:opacity-95 active:scale-[0.98] relative"
           >
             <span className="material-symbols-outlined text-lg leading-none">
               add_circle
@@ -199,7 +199,7 @@ export default function HeaderClient({
                 className={`absolute top-0 right-0 w-3 h-3 rounded-full ${
                   isVerifiedStudent
                     ? "bg-emerald-400"
-                    : "bg-amber-400"
+                    : "bg-red-400"
                 }`}
                 title={isVerifiedStudent ? "Verified - Ready to sell" : "Not verified - Link student email to sell"}
               />
@@ -314,7 +314,7 @@ export default function HeaderClient({
             <Link
               href="/sell"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-full font-bold text-sm mt-1 justify-center"
+              className="flex items-center gap-2 px-4 py-2.5 border border-primary/45 dark:border-primary/60 bg-gradient-to-r from-primary to-sky-400 text-sky-950 dark:text-white rounded-full font-bold text-sm mt-1 justify-center shadow-lg shadow-primary/25 dark:shadow-primary/45"
             >
               <span className="material-symbols-outlined text-lg leading-none">
                 add_circle
