@@ -23,10 +23,36 @@ export async function findOrCreateConversation(listingId: string, buyerId: strin
     .from('conversations')
     .insert({ listing_id: listingId, buyer_id: buyerId, seller_id: sellerId })
     .select('id')
-    .single();
+    .maybeSingle();
+
+  if (!error && data?.id) {
+    return data.id as string;
+  }
+
+  // Another request may have created the same row in parallel.
+  if (error && /duplicate key value|unique constraint/i.test(error.message)) {
+    const { data: afterDuplicate, error: afterDuplicateError } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('listing_id', listingId)
+      .eq('buyer_id', buyerId)
+      .single();
+
+    if (afterDuplicateError) throw new Error(afterDuplicateError.message);
+    return afterDuplicate.id as string;
+  }
 
   if (error) throw new Error(error.message);
-  return data.id as string;
+
+  const { data: fallback, error: fallbackError } = await supabase
+    .from('conversations')
+    .select('id')
+    .eq('listing_id', listingId)
+    .eq('buyer_id', buyerId)
+    .single();
+
+  if (fallbackError) throw new Error(fallbackError.message);
+  return fallback.id as string;
 }
 
 export async function getConversationsForUser(userId: string): Promise<ConversationPreview[]> {
@@ -127,4 +153,21 @@ export async function sendMessage(conversationId: string, senderId: string, cont
     const readField = conversation.buyer_id === senderId ? 'buyer_last_read_at' : 'seller_last_read_at';
     await supabase.from('conversations').update({ updated_at: now, [readField]: now }).eq('id', conversationId);
   }
+}
+
+export async function getHiddenConversationIds(userId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('hidden_conversations')
+    .select('conversation_id')
+    .eq('user_id', userId);
+
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((row: any) => row.conversation_id);
+}
+
+export async function hideConversationForUser(userId: string, conversationId: string) {
+  const { error } = await supabase
+    .from('hidden_conversations')
+    .upsert({ user_id: userId, conversation_id: conversationId }, { onConflict: 'user_id,conversation_id' });
+  if (error) throw new Error(error.message);
 }
