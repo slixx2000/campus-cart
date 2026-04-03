@@ -47,6 +47,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const googleLockRef = useRef(false);
 
   const passwordStrength = useMemo(() => getPasswordStrength(password), [password]);
@@ -100,11 +101,12 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
     if (googleLockRef.current || googleLoading) return;
     googleLockRef.current = true;
     setGoogleLoading(true);
+    setGoogleError(null);
 
     try {
       await signInWithGoogle(redirectTo ?? "/");
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Could not continue with Google.");
+      setGoogleError(error instanceof Error ? error.message : "Could not continue with Google.");
       setGoogleLoading(false);
       googleLockRef.current = false;
     }
@@ -117,6 +119,12 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
       {state.message && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
           {state.message}
+        </div>
+      )}
+
+      {googleError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
+          {googleError}
         </div>
       )}
 

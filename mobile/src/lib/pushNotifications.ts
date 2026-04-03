@@ -24,6 +24,10 @@ function getProjectId(): string | null {
 }
 
 export async function registerPushToken(userId: string): Promise<void> {
+  if (Platform.OS === 'web') {
+    return;
+  }
+
   if (!Device.isDevice) {
     return;
   }

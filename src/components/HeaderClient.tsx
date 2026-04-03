@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { signOutAction } from "@/app/auth/actions";
 import { fetchUnreadCountAction } from "@/app/messages/actions";
 import { createClient } from "@/lib/supabase/client";
 import MarketplaceSearchBar from "@/components/MarketplaceSearchBar";
@@ -27,7 +26,6 @@ export default function HeaderClient({
   isAdmin = false,
   unreadMessages = 0,
 }: HeaderClientProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [liveUnread, setLiveUnread] = useState(unreadMessages);
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [isAndroid, setIsAndroid] = useState(false);
@@ -68,10 +66,7 @@ export default function HeaderClient({
     if (!installEvent) return;
     await installEvent.prompt();
     const choice = await installEvent.userChoice;
-    if (choice.outcome === "accepted") {
-      setInstallEvent(null);
-      setMenuOpen(false);
-    }
+    if (choice.outcome === "accepted") setInstallEvent(null);
   };
 
   // Subscribe to conversation changes via Realtime to keep the badge live.
@@ -111,36 +106,33 @@ export default function HeaderClient({
   }, [user]);
 
   return (
-    <header className="sticky top-0 z-50 w-full px-4 py-3 md:px-8 backdrop-blur-md bg-white/70 dark:bg-neutral-900/70 border border-white/20 shadow-lg">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        {/* Logo + search */}
-        <div className="flex items-center gap-6">
+    <header className="sticky top-0 z-50 w-full border border-white/20 bg-white/70 px-3 py-2.5 shadow-lg backdrop-blur-md md:px-6 dark:bg-neutral-900/70">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-2">
+        <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2 text-primary shrink-0">
-            <span className="material-symbols-outlined text-3xl font-bold">
+            <span className="material-symbols-outlined text-2xl font-bold">
               shopping_cart_checkout
             </span>
-            <h2 className="text-slate-900 text-xl font-bold leading-tight tracking-tight dark:text-white">
+            <h2 className="text-slate-900 text-[clamp(0.82rem,1vw,1.1rem)] font-bold leading-tight tracking-tight dark:text-white">
               CampusCart
             </h2>
           </Link>
 
-          {/* Desktop search */}
           <MarketplaceSearchBar
-            className="hidden md:flex flex-1 min-w-[280px] xl:min-w-[380px]"
+            className="flex min-w-[150px] w-[min(34vw,340px)]"
             placeholder="Search textbooks, electronics, services..."
-            inputClassName="block w-full rounded-full border-none bg-slate-200/60 py-2 pl-10 pr-3 text-sm text-slate-900 placeholder-slate-500 outline-none transition-all focus:bg-white focus:ring-2 focus:ring-primary dark:bg-primary/10 dark:text-white dark:placeholder:text-slate-400 dark:focus:bg-white/10"
+            inputClassName="block w-full rounded-full border-none bg-slate-200/60 py-1.5 pl-9 pr-3 text-[clamp(0.68rem,0.88vw,0.84rem)] text-slate-900 placeholder-slate-500 outline-none transition-all focus:bg-white focus:ring-2 focus:ring-primary dark:bg-primary/10 dark:text-white dark:placeholder:text-slate-400 dark:focus:bg-white/10"
           />
         </div>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-3 md:gap-5">
+        <nav className="no-scrollbar flex max-w-[54%] min-w-0 items-center gap-1.5 overflow-x-auto pl-1">
           {isAndroid && !isInstalled && installEvent ? (
             <button
               type="button"
               onClick={() => {
                 void handleInstallClick();
               }}
-              className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-900/40"
+              className="shrink-0 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-900/40"
             >
               Install
             </button>
@@ -151,7 +143,7 @@ export default function HeaderClient({
               {isAdmin ? (
                 <Link
                   href="/admin/student-verifications"
-                  className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+                  className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
                 >
                   Admin
                 </Link>
@@ -162,25 +154,25 @@ export default function HeaderClient({
             <>
               <Link
                 href="/browse"
-                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+                className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
               >
                 Browse
               </Link>
               <Link
                 href="/downloads"
-                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+                className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
               >
                 Mobile App
               </Link>
               <Link
                 href="/about"
-                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+                className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
               >
                 About
               </Link>
               <Link
                 href="/auth/sign-in"
-                className="text-sm font-semibold text-slate-600 hover:text-primary transition-colors dark:text-slate-300"
+                className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
               >
                 Sign In
               </Link>
@@ -188,15 +180,15 @@ export default function HeaderClient({
           )}
           <Link
             href="/sell"
-            className="flex items-center gap-1.5 rounded-full border border-primary/45 dark:border-primary/60 bg-gradient-to-r from-primary to-sky-400 px-4 py-2 text-sm font-bold text-sky-950 dark:text-white shadow-lg shadow-primary/25 dark:shadow-primary/45 transition-all hover:opacity-95 active:scale-[0.98] relative"
+            className="relative inline-flex shrink-0 items-center gap-1 rounded-full border border-primary/45 bg-gradient-to-r from-primary to-sky-400 px-2.5 py-1 text-[clamp(0.68rem,0.85vw,0.8rem)] font-bold text-sky-950 shadow-lg shadow-primary/25 transition-all hover:opacity-95 active:scale-[0.98] dark:border-primary/60 dark:text-white dark:shadow-primary/45"
           >
-            <span className="material-symbols-outlined text-lg leading-none">
+            <span className="material-symbols-outlined text-sm leading-none">
               add_circle
             </span>
             Sell Item
             {user && (
               <span
-                className={`absolute top-0 right-0 w-3 h-3 rounded-full ${
+                className={`absolute top-0 right-0 h-2.5 w-2.5 rounded-full ${
                   isVerifiedStudent
                     ? "bg-emerald-400"
                     : "bg-red-400"
@@ -205,125 +197,8 @@ export default function HeaderClient({
               />
             )}
           </Link>
-        </div>
-
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2 rounded-full hover:bg-slate-100 text-slate-600 transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-          aria-label="Toggle menu"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          <span className="material-symbols-outlined">
-            {menuOpen ? "close" : "menu"}
-          </span>
-        </button>
+        </nav>
       </div>
-
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 px-4 pb-4 mt-3 dark:bg-background-dark dark:border-primary/10">
-          <MarketplaceSearchBar
-            className="mt-3 mb-4 flex"
-            placeholder="Search..."
-            inputClassName="w-full rounded-full border-none bg-slate-100 py-2 pl-10 pr-4 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:bg-primary/10 dark:text-white dark:placeholder:text-slate-400"
-          />
-          <div className="mb-3 flex justify-end">
-            <ThemeToggle />
-          </div>
-          <nav className="flex flex-col gap-1">
-            {isAndroid && !isInstalled && installEvent ? (
-              <button
-                type="button"
-                onClick={() => {
-                  void handleInstallClick();
-                }}
-                className="px-4 py-2.5 text-sm font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-full transition-colors hover:bg-blue-100 dark:text-blue-300 dark:bg-blue-950/40 dark:border-blue-900 dark:hover:bg-blue-900/40"
-              >
-                Install App
-              </button>
-            ) : null}
-            <Link
-              href="/browse"
-              onClick={() => setMenuOpen(false)}
-              className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-            >
-              Browse
-            </Link>
-            <Link
-              href="/downloads"
-              onClick={() => setMenuOpen(false)}
-              className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-            >
-              Mobile App
-            </Link>
-            <Link
-              href="/about"
-              onClick={() => setMenuOpen(false)}
-              className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-            >
-              About
-            </Link>
-            {user ? (
-              <>
-                <Link
-                  href="/messages"
-                  onClick={() => setMenuOpen(false)}
-                  className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-                >
-                  Messages
-                </Link>
-                <Link
-                  href="/profile"
-                  onClick={() => setMenuOpen(false)}
-                  className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10 flex items-center justify-between"
-                >
-                  My Profile
-                  {isVerifiedStudent && (
-                    <span className="material-symbols-outlined text-sm text-emerald-500">
-                      verified
-                    </span>
-                  )}
-                </Link>
-                {isAdmin ? (
-                  <Link
-                    href="/admin/student-verifications"
-                    onClick={() => setMenuOpen(false)}
-                    className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-                  >
-                    Admin
-                  </Link>
-                ) : null}
-                <form action={signOutAction}>
-                  <button
-                    type="submit"
-                    className="w-full text-left px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-                  >
-                    Sign Out
-                  </button>
-                </form>
-              </>
-            ) : (
-              <Link
-                href="/auth/sign-in"
-                onClick={() => setMenuOpen(false)}
-                className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 rounded-full transition-colors dark:text-slate-200 dark:hover:bg-white/10"
-              >
-                Sign In
-              </Link>
-            )}
-            <Link
-              href="/sell"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 px-4 py-2.5 border border-primary/45 dark:border-primary/60 bg-gradient-to-r from-primary to-sky-400 text-sky-950 dark:text-white rounded-full font-bold text-sm mt-1 justify-center shadow-lg shadow-primary/25 dark:shadow-primary/45"
-            >
-              <span className="material-symbols-outlined text-lg leading-none">
-                add_circle
-              </span>
-              Sell Item
-            </Link>
-          </nav>
-        </div>
-      )}
     </header>
   );
 }

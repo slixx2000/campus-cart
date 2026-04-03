@@ -109,7 +109,7 @@ export default function ProgressiveListingGrid({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-4 gap-[clamp(0.45rem,0.8vw,1.25rem)]">
         {visibleItems.map((listing) => (
           <ProductCard key={listing.id} listing={listing} />
         ))}

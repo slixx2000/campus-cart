@@ -10,6 +10,27 @@ type BumpEvent = {
   listingTitle: string | null;
 };
 
+async function readJsonPayload(response: Response): Promise<{ error?: string; events?: BumpEvent[] }> {
+  const contentType = response.headers.get("content-type") ?? "";
+  const raw = await response.text();
+
+  if (!raw.trim()) {
+    return {};
+  }
+
+  if (!contentType.includes("application/json")) {
+    return {
+      error: response.ok ? "Unexpected response format." : `Request failed with status ${response.status}`,
+    };
+  }
+
+  try {
+    return JSON.parse(raw) as { error?: string; events?: BumpEvent[] };
+  } catch {
+    return { error: "Could not parse server response." };
+  }
+}
+
 export default function BumpEventsPage() {
   const [events, setEvents] = useState<BumpEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,12 +45,12 @@ export default function BumpEventsPage() {
         cache: "no-store",
       });
 
+      const payload = await readJsonPayload(response);
+
       if (!response.ok) {
-        const payload = (await response.json()) as { error?: string };
         throw new Error(payload.error ?? "Failed to load bump events.");
       }
 
-      const payload = (await response.json()) as { events?: BumpEvent[] };
       setEvents(payload.events ?? []);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Failed to load bump events.");

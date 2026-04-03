@@ -1,7 +1,7 @@
 import Link from "next/link";
-import CategoryCard from "@/components/CategoryCard";
 import UniversityLinksGrid from "@/components/UniversityLinksGrid";
 import HomeFeedSections from "@/components/HomeFeedSections";
+import FeaturedCategoriesSection from "@/components/FeaturedCategoriesSection";
 import { CATEGORIES } from "@/lib/data";
 import {
   getNewListingsPage,
@@ -67,8 +67,8 @@ export default async function HomePage() {
       <section className="mx-auto max-w-[1200px] px-4 pb-6 pt-6 sm:px-6 sm:pt-10">
         <div className="relative flex min-h-[460px] flex-col items-center justify-center overflow-hidden rounded-2xl bg-slate-900 p-5 text-center sm:min-h-[520px] sm:p-8 md:p-20 dark:glass-card-dark dark:bg-background-dark">
           {/* Gradient overlay */}
-          <div className="absolute inset-0 opacity-40 fluid-gradient dark:hidden" />
-          <div className="absolute inset-0 hidden fluid-gradient-dark dark:block" />
+          <div className="pointer-events-none absolute inset-0 opacity-40 fluid-gradient dark:hidden" />
+          <div className="pointer-events-none absolute inset-0 hidden fluid-gradient-dark dark:block" />
           <div className="absolute -left-24 -top-24 hidden h-72 w-72 rounded-full bg-primary/10 blur-[100px] dark:block" />
           <div className="absolute -bottom-16 -right-16 hidden h-64 w-64 rounded-full bg-blue-400/10 blur-[100px] dark:block" />
 
@@ -122,25 +122,7 @@ export default async function HomePage() {
       </section>
 
       {/* Featured Categories */}
-      <section className="mx-auto mt-10 max-w-[1200px] px-4 sm:mt-16 sm:px-6">
-        <h2 className="mb-5 flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:mb-8 sm:text-2xl dark:text-white">
-          <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
-            category
-          </span>
-          Featured Categories
-        </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
-          {CATEGORIES.slice(0, 10).map((cat) => (
-            <CategoryCard
-              key={cat.label}
-              label={cat.label}
-              icon={cat.icon}
-              materialIcon={cat.materialIcon}
-              color={cat.color}
-            />
-          ))}
-        </div>
-      </section>
+      <FeaturedCategoriesSection />
 
       <HomeFeedSections
         initialNewListings={newListings}

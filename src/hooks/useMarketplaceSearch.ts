@@ -21,6 +21,25 @@ type UseMarketplaceSearchResult = {
   error: string | null;
 };
 
+async function parseSearchPayload(response: Response): Promise<SearchPayload> {
+  const contentType = response.headers.get("content-type") ?? "";
+  const raw = await response.text();
+
+  if (!raw.trim()) {
+    throw new Error("Search response was empty");
+  }
+
+  if (!contentType.includes("application/json")) {
+    throw new Error("Search response was not JSON");
+  }
+
+  try {
+    return JSON.parse(raw) as SearchPayload;
+  } catch {
+    throw new Error("Search response could not be parsed");
+  }
+}
+
 const DEBOUNCE_MS = 300;
 
 export function useMarketplaceSearch(query: string): UseMarketplaceSearchResult {
@@ -56,7 +75,7 @@ export function useMarketplaceSearch(query: string): UseMarketplaceSearchResult 
           throw new Error(`Search request failed with status ${response.status}`);
         }
 
-        const payload = (await response.json()) as SearchPayload;
+        const payload = await parseSearchPayload(response);
         setResults(payload.results ?? []);
         setTotalCount(payload.totalCount ?? 0);
       } catch (fetchError) {

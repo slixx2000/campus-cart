@@ -14,6 +14,17 @@ export type ListingCondition = "new" | "like_new" | "good" | "fair";
 export type ListingStatus = "draft" | "active" | "sold" | "archived" | "removed";
 export type ReportType = "user" | "listing" | "conversation";
 
+export type SellerReviewRow = {
+  id: string;
+  seller_id: string;
+  reviewer_id: string;
+  listing_id: string | null;
+  rating: number;
+  review_text: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type UniversityRow = {
   id: string;
   code: string;
@@ -244,6 +255,16 @@ export type Database = {
         Row: ReportRow;
         Insert: Omit<ReportRow, "id" | "created_at"> & { id?: string; created_at?: string };
         Update: Partial<ReportRow>;
+        Relationships: [];
+      };
+      seller_reviews: {
+        Row: SellerReviewRow;
+        Insert: Omit<SellerReviewRow, "id" | "created_at" | "updated_at"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<SellerReviewRow>;
         Relationships: [];
       };
       blocked_users: {

@@ -14,6 +14,7 @@ export function ListingCard({
   canFavorite,
   isFavorite,
   onToggleFavorite,
+  onMessagePress,
 }: {
   listing: Listing;
   onPress: () => void;
@@ -22,8 +23,9 @@ export function ListingCard({
   canFavorite?: boolean;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  onMessagePress?: () => void;
 }) {
-  const titleLines = compact ? 2 : 3;
+  const titleLines = compact ? 1 : 2;
   const useHomeTight = compact && homeTight;
 
   return (
@@ -45,6 +47,11 @@ export function ListingCard({
             </Pressable>
           ) : null}
         </View>
+        {onMessagePress ? (
+          <Pressable style={styles.cardImageMessageButton} onPress={onMessagePress}>
+            <Text style={styles.cardImageMessageButtonText}>Message</Text>
+          </Pressable>
+        ) : null}
         {listing.images.length > 1 ? (
           <View style={styles.imageCountBadge}>
             <Text style={styles.imageCountBadgeText}>{listing.images.length} photos</Text>
@@ -53,35 +60,21 @@ export function ListingCard({
       </View>
       <View style={[styles.cardContent, useHomeTight && styles.cardContentHomeTight]}>
         <View style={styles.rowBetween}>
-          <Text style={styles.cardCategory}>{listing.category}</Text>
+          <Text style={styles.cardConditionLabel}>{listing.isService ? 'Service' : (listing.condition || 'Used')}</Text>
           <Text style={[styles.cardPrice, compact && styles.cardPriceCompact, useHomeTight && styles.cardPriceHomeTight]}>{formatPrice(listing.price)}</Text>
         </View>
-        <Text style={[styles.cardTitle, compact && styles.cardTitleCompact, useHomeTight && styles.cardTitleHomeTight]} numberOfLines={titleLines}>{listing.title}</Text>
-        <Text style={[styles.cardMeta, useHomeTight && styles.cardMetaHomeTight]}>{listing.university}</Text>
-        <View style={[styles.trustRow, compact && styles.trustRowCompact, useHomeTight && styles.trustRowHomeTight]}>
-          {listing.sellerVerified ? (
-            <View style={[styles.trustPill, useHomeTight && styles.trustPillHomeTight]}>
-              <Text style={[styles.trustPillText, useHomeTight && styles.trustPillTextHomeTight]}>Verified Student</Text>
-            </View>
-          ) : null}
-          {listing.sellerPioneer ? (
-            <View style={[styles.trustPill, useHomeTight && styles.trustPillHomeTight]}>
-              <Text style={[styles.trustPillText, useHomeTight && styles.trustPillTextHomeTight]}>Pioneer Seller</Text>
-            </View>
-          ) : null}
-          {listing.isService ? (
-            <View style={[styles.trustPill, useHomeTight && styles.trustPillHomeTight]}>
-              <Text style={[styles.trustPillText, useHomeTight && styles.trustPillTextHomeTight]}>Service</Text>
-            </View>
-          ) : listing.condition ? (
-            <View style={[styles.trustPill, useHomeTight && styles.trustPillHomeTight]}>
-              <Text style={[styles.trustPillText, useHomeTight && styles.trustPillTextHomeTight]}>{listing.condition}</Text>
-            </View>
-          ) : null}
-        </View>
-        {!compact ? <Text style={styles.cardDescription} numberOfLines={2}>{listing.description}</Text> : null}
-        <View style={[styles.rowBetween, compact && styles.cardFooterCompact]}>
-          <Text style={[styles.cardSeller, useHomeTight && styles.cardSellerHomeTight]}>{listing.sellerName}</Text>
+        <Text style={[styles.cardTitle, compact && styles.cardTitleCompact, useHomeTight && styles.cardTitleHomeTight]} numberOfLines={titleLines}>
+          {listing.title}
+        </Text>
+        <View style={styles.cardMetaLine}>
+          <View style={styles.cardMetaLineLeft}>
+            {listing.sellerVerified ? (
+              <View style={styles.cardVerifiedBadge}>
+                <Text style={styles.cardVerifiedBadgeText}>✓</Text>
+              </View>
+            ) : null}
+            <Text style={[styles.cardSeller, useHomeTight && styles.cardSellerHomeTight]} numberOfLines={1}>{listing.sellerName}</Text>
+          </View>
           <Text style={[styles.cardDate, useHomeTight && styles.cardDateHomeTight]}>{relativeDate(listing.lastBumpedAt || listing.createdAt)}</Text>
         </View>
       </View>

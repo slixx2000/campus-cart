@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FlatList, Pressable, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { ListingCard } from '../components/ListingCard';
+import { NoConnectionScreen } from '../components/NoConnectionScreen';
 import { CATEGORY_OPTIONS } from '../lib/constants';
 import { styles } from '../lib/styles';
 import type { Listing } from '../types';
@@ -24,8 +25,10 @@ type Props = {
   canFavorite: boolean;
   onToggleFavorite: (listingId: string) => void;
   onOpenListing: (listing: Listing) => void;
+  onMessagePress?: (listing: Listing) => void;
   refreshing: boolean;
   onRefresh: () => void;
+  error?: string | null;
 };
 
 export function BrowseScreen({
@@ -47,9 +50,13 @@ export function BrowseScreen({
   canFavorite,
   onToggleFavorite,
   onOpenListing,
+  onMessagePress,
   refreshing,
   onRefresh,
+  error,
 }: Props) {
+  const favoriteIdSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
+
   const header = (
     <View style={styles.browseHeaderSection}>
       <TextInput
@@ -70,28 +77,6 @@ export function BrowseScreen({
           </Pressable>
           <Pressable onPress={() => setListingType('services')} style={[styles.chip, listingType === 'services' && styles.chipActive]}>
             <Text style={[styles.chipText, listingType === 'services' && styles.chipTextActive]}>Services</Text>
-          </Pressable>
-        </ScrollView>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Max price (ZMW)"
-          placeholderTextColor="#64748b"
-          keyboardType="numeric"
-          value={maxPrice}
-          onChangeText={setMaxPrice}
-        />
-
-        <Text style={styles.fieldLabel}>Sort by</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterStripContent}>
-          <Pressable onPress={() => setSortBy('newest')} style={[styles.chip, sortBy === 'newest' && styles.chipActive]}>
-            <Text style={[styles.chipText, sortBy === 'newest' && styles.chipTextActive]}>Newest</Text>
-          </Pressable>
-          <Pressable onPress={() => setSortBy('price-asc')} style={[styles.chip, sortBy === 'price-asc' && styles.chipActive]}>
-            <Text style={[styles.chipText, sortBy === 'price-asc' && styles.chipTextActive]}>Price: Low to High</Text>
-          </Pressable>
-          <Pressable onPress={() => setSortBy('price-desc')} style={[styles.chip, sortBy === 'price-desc' && styles.chipActive]}>
-            <Text style={[styles.chipText, sortBy === 'price-desc' && styles.chipTextActive]}>Price: High to Low</Text>
           </Pressable>
         </ScrollView>
       </View>
@@ -129,34 +114,39 @@ export function BrowseScreen({
 
   return (
     <View style={styles.screenContent}>
-      <FlatList
-        data={listings}
-        ListHeaderComponent={header}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
-        columnWrapperStyle={styles.browseGridRow}
-        contentContainerStyle={styles.browseListContent}
-        renderItem={({ item }) => (
-          <View style={styles.browseGridItem}>
-            <ListingCard
-              listing={item}
-              compact
-              onPress={() => onOpenListing(item)}
-              canFavorite={canFavorite}
-              isFavorite={favoriteIds.includes(item.id)}
-              onToggleFavorite={() => onToggleFavorite(item.id)}
-            />
-          </View>
-        )}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyTitle}>{favoritesOnly ? 'No saved listings yet' : 'No listings found'}</Text>
-            <Text style={styles.emptyBody}>{favoritesOnly ? 'Tap the heart on listings you want to revisit later.' : 'Try a different search or category.'}</Text>
-          </View>
-        }
-      />
+      {error && listings.length === 0 ? (
+        <NoConnectionScreen onRetry={onRefresh} />
+      ) : (
+        <FlatList
+          data={listings}
+          ListHeaderComponent={header}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+          columnWrapperStyle={styles.browseGridRow}
+          contentContainerStyle={styles.browseListContent}
+          renderItem={({ item }) => (
+            <View style={styles.browseGridItem}>
+              <ListingCard
+                listing={item}
+                compact
+                onPress={() => onOpenListing(item)}
+                canFavorite={canFavorite}
+                isFavorite={favoriteIdSet.has(item.id)}
+                onToggleFavorite={() => onToggleFavorite(item.id)}
+                onMessagePress={() => onMessagePress?.(item)}
+              />
+            </View>
+          )}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyTitle}>{favoritesOnly ? 'No saved listings yet' : 'No listings found'}</Text>
+              <Text style={styles.emptyBody}>{favoritesOnly ? 'Tap the heart on listings you want to revisit later.' : 'Try a different search or category.'}</Text>
+            </View>
+          }
+        />
+      )}
     </View>
   );
 }

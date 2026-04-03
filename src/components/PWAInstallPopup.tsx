@@ -15,6 +15,7 @@ export default function PWAInstallPopup() {
   const [isAndroid, setIsAndroid] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
 
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase();
@@ -50,9 +51,22 @@ export default function PWAInstallPopup() {
     };
   }, []);
 
+  useEffect(() => {
+    const updateViewport = () => {
+      setIsMobileViewport(window.innerWidth < 768);
+    };
+
+    updateViewport();
+    window.addEventListener("resize", updateViewport, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", updateViewport);
+    };
+  }, []);
+
   const visible = useMemo(() => {
-    return isAndroid && !isInstalled && !isDismissed && !!installEvent;
-  }, [isAndroid, isInstalled, isDismissed, installEvent]);
+    return isAndroid && !isInstalled && !isDismissed && !!installEvent && !isMobileViewport;
+  }, [isAndroid, isInstalled, isDismissed, installEvent, isMobileViewport]);
 
   const dismiss = () => {
     window.localStorage.setItem(DISMISS_KEY, String(Date.now()));

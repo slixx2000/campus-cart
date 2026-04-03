@@ -1,11 +1,12 @@
-import React from 'react';
-import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { ListingCard } from '../components/ListingCard';
 import { FallbackImage } from '../components/FallbackImage';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
+import { relativeDate } from '../lib/format';
 import { styles } from '../lib/styles';
-import type { Listing, Profile } from '../types';
+import type { Listing, Profile, SellerRatingSummary, SellerReview } from '../types';
 
 export function SellerProfileScreen({
   seller,
@@ -13,32 +14,46 @@ export function SellerProfileScreen({
   listings,
   canFavorite,
   favoriteIds,
+  currentUserId,
+  canReview,
+  reviewSubmitting,
+  reviews,
+  ratingSummary,
+  onSubmitReview,
   onOpenListing,
   onToggleFavorite,
+  onShowFeedback,
 }: {
   seller: Profile | null;
   universityName?: string;
   listings: Listing[];
   canFavorite: boolean;
   favoriteIds: string[];
+  currentUserId?: string;
+  canReview: boolean;
+  reviewSubmitting: boolean;
+  reviews: SellerReview[];
+  ratingSummary: SellerRatingSummary;
+  onSubmitReview: (payload: { rating: number; reviewText: string }) => Promise<void>;
   onOpenListing: (listing: Listing) => void;
   onToggleFavorite: (listingId: string) => void;
+  onShowFeedback: (title: string, message: string) => void;
 }) {
   const activeListings = listings.filter((listing) => listing.status !== 'sold');
   const soldCount = listings.filter((listing) => listing.status === 'sold').length;
+  const [draftRating, setDraftRating] = useState(5);
+  const [draftReview, setDraftReview] = useState('');
 
-  // Calculate response rate based on active listings (higher activity = faster response)
-  const responseRate = Math.min(95, 60 + Math.floor(activeListings.length * 7));
-  
-  // Calculate member months (estimate based on seller tier)
-  const memberMonths = seller?.is_pioneer_seller ? Math.floor(Math.random() * 12) + 6 : Math.floor(Math.random() * 4) + 1;
+  const ratingStars = ratingSummary.averageRating
+    ? `${'★'.repeat(Math.round(ratingSummary.averageRating))}${'☆'.repeat(5 - Math.round(ratingSummary.averageRating))}`
+    : '☆☆☆☆☆';
   
   const handleContactSeller = () => {
     if (!seller?.phone) {
-      Alert.alert('Phone not available', 'This seller has not shared their phone number publicly yet. Use in-app chat to contact them.');
+      onShowFeedback('Phone not available', 'This seller has not shared their phone number publicly yet. Use in-app chat to contact them.');
       return;
     }
-    Alert.alert('Contact seller', `You can reach this seller at ${seller.phone} or use in-app chat.`);
+    onShowFeedback('Contact seller', `You can reach this seller at ${seller.phone} or use in-app chat.`);
   };
 
   return (
@@ -99,16 +114,16 @@ export function SellerProfileScreen({
         {/* Response & Member Metrics */}
         <View style={styles.profileMetricsRow}>
           <View style={styles.profileMetricItem}>
-            <Text style={styles.profileMetricValue}>{responseRate}%</Text>
-            <Text style={styles.profileMetricLabel}>Response rate</Text>
+            <Text style={styles.profileMetricValue}>{ratingSummary.averageRating ? ratingSummary.averageRating.toFixed(1) : '--'}</Text>
+            <Text style={styles.profileMetricLabel}>Avg rating</Text>
           </View>
           <View style={styles.profileMetricItem}>
-            <Text style={styles.profileMetricValue}>{memberMonths}mo</Text>
-            <Text style={styles.profileMetricLabel}>Member since</Text>
+            <Text style={styles.profileMetricValue}>{ratingSummary.totalReviews}</Text>
+            <Text style={styles.profileMetricLabel}>Reviews</Text>
           </View>
           <View style={styles.profileMetricItem}>
-            <Text style={styles.profileMetricValue}>⭐ 4.8</Text>
-            <Text style={styles.profileMetricLabel}>Rating</Text>
+            <Text style={styles.profileMetricValue}>{ratingStars}</Text>
+            <Text style={styles.profileMetricLabel}>Stars</Text>
           </View>
         </View>
 
@@ -124,10 +139,72 @@ export function SellerProfileScreen({
       </View>
 
       <View style={styles.statusCard}>
-        <Text style={styles.statusTitle}>Seller note</Text>
+        <Text style={styles.statusTitle}>Ratings overview</Text>
         <Text style={styles.statusBody}>
-          Check their other listings, use in-app chat, and meet in a safe public campus spot before completing a deal.
+          {ratingSummary.totalReviews > 0
+            ? `Based on ${ratingSummary.totalReviews} review${ratingSummary.totalReviews === 1 ? '' : 's'}: ${ratingSummary.averageRating.toFixed(1)}/5.`
+            : 'No ratings yet. Be the first to leave feedback after your interaction.'}
         </Text>
+      </View>
+
+      {canReview ? (
+        <View style={styles.helperCard}>
+          <Text style={styles.helperCardTitle}>Leave a review</Text>
+          <View style={{ flexDirection: 'row', gap: 6, marginTop: 6 }}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Pressable
+                key={star}
+                onPress={() => setDraftRating(star)}
+                style={{ paddingVertical: 6, paddingHorizontal: 2 }}
+              >
+                <Text style={{ fontSize: 24, color: star <= draftRating ? '#fbbf24' : '#475569' }}>★</Text>
+              </Pressable>
+            ))}
+          </View>
+          <TextInput
+            style={[styles.input, styles.multilineInput]}
+            multiline
+            placeholder="Share your experience with this seller"
+            placeholderTextColor="#64748b"
+            value={draftReview}
+            onChangeText={setDraftReview}
+          />
+          <Pressable
+            style={styles.primaryButton}
+            disabled={reviewSubmitting}
+            onPress={async () => {
+              try {
+                await onSubmitReview({ rating: draftRating, reviewText: draftReview });
+                setDraftReview('');
+              } catch (error) {
+                onShowFeedback('Could not submit review', error instanceof Error ? error.message : 'Please try again.');
+              }
+            }}
+          >
+            {reviewSubmitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Submit review</Text>}
+          </Pressable>
+        </View>
+      ) : null}
+
+      <View style={styles.helperCard}>
+        <Text style={styles.helperCardTitle}>Recent reviews</Text>
+        {reviews.length === 0 ? (
+          <Text style={styles.helperText}>No reviews yet.</Text>
+        ) : (
+          reviews.map((review) => {
+            const isMine = review.reviewerId === currentUserId;
+            return (
+              <View key={review.id} style={[styles.sellerListingCard, { marginTop: 8 }]}>
+                <View style={styles.rowBetween}>
+                  <Text style={styles.sellerListingTitle}>{review.reviewerName}{isMine ? ' (You)' : ''}</Text>
+                  <Text style={styles.cardDate}>{relativeDate(review.createdAt)}</Text>
+                </View>
+                <Text style={{ color: '#fbbf24', fontSize: 16 }}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</Text>
+                {review.reviewText ? <Text style={styles.helperText}>{review.reviewText}</Text> : null}
+              </View>
+            );
+          })
+        )}
       </View>
 
       <SectionHeader

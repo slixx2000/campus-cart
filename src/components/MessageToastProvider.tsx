@@ -127,7 +127,7 @@ export default function MessageToastProvider({ userId }: { userId: string }) {
   return (
     <div
       aria-live="polite"
-      className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 w-[min(22rem,calc(100vw-2rem))]"
+      className="fixed bottom-4 right-4 z-[100] hidden w-[min(22rem,calc(100vw-2rem))] flex-col gap-2 md:flex"
     >
       {toasts.map((toast) => (
         <div

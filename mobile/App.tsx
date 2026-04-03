@@ -1,28 +1,26 @@
 import { StatusBar } from 'expo-status-bar';
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Session, User } from '@supabase/supabase-js';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Animated, Easing, Linking, SafeAreaView, Text, View } from 'react-native';
+import { Animated, Easing, Linking, SafeAreaView, Text, View } from 'react-native';
 import { AccountScreen } from './src/screens/AccountScreen';
 import { AboutScreen } from './src/screens/AboutScreen';
 import { BrowseScreen } from './src/screens/BrowseScreen';
 import { AppErrorBoundary } from './src/components/AppErrorBoundary';
+import { FeedbackModal } from './src/components/FeedbackModal';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { AccountSettingsScreen } from './src/screens/AccountSettingsScreen';
 import { ListingDetailScreen } from './src/screens/ListingDetailScreen';
-import { MessagesScreen } from './src/screens/MessagesScreen';
-import { ChatDetailScreen } from './src/screens/ChatDetailScreen';
 import { SellerProfileScreen } from './src/screens/SellerProfileScreen';
 import { SellScreen } from './src/screens/SellScreen';
 import { pickImages, uploadListingImages, type PickedImage } from './src/lib/imageUpload';
 import { fetchDefaultAvatars, pickSingleProfileImage, uploadProfileAvatar } from './src/lib/profileUpload';
 import { registerPushToken } from './src/lib/pushNotifications';
-import { findOrCreateConversation, getConversationsForUser, getHiddenConversationIds, getMessages, hideConversationForUser, markConversationRead, sendMessage } from './src/lib/conversations';
 import { sendPasswordResetEmail, signInWithGoogle, signInWithPassword, signUpWithEmail } from './src/lib/authService';
+import { generateWhatsAppLink, normalizeZambiaPhoneForStorage } from './src/lib/whatsapp';
 import { useOtpCooldown } from './src/hooks/useOtpCooldown';
 import { getFavoriteIds, toggleFavorite } from './src/lib/favorites';
 import { CATEGORY_OPTIONS, LISTING_SELECT } from './src/lib/constants';
@@ -30,7 +28,7 @@ import { mapListing } from './src/lib/mappers';
 import { getSellerReviews, upsertSellerReview } from './src/lib/reviews';
 import { colors, styles } from './src/lib/styles';
 import { supabase } from './src/lib/supabase';
-import type { CategoryRow, ConversationPreview, Listing, MainTabParamList, MessageItem, Profile, RootStackParamList, SellerRatingSummary, SellerReview, UniversityRow } from './src/types';
+import type { CategoryRow, Listing, MainTabParamList, Profile, RootStackParamList, SellerRatingSummary, SellerReview, UniversityRow } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -46,6 +44,8 @@ const navTheme = {
     primary: colors.primary,
   },
 };
+
+const MAX_LISTING_IMAGES = 5;
 
 function MainTabsNavigator(props: any) {
   const {
@@ -80,11 +80,6 @@ function MainTabsNavigator(props: any) {
     sellSubmitting,
     handlePickImages,
     handleCreateListing,
-    unreadCount,
-    conversations,
-    conversationLoading,
-    loadConversations,
-    loadMessages,
     AboutScreen,
     AccountScreen,
     universityName,
@@ -132,14 +127,12 @@ function MainTabsNavigator(props: any) {
     updateListingStatus,
     handleUpdateListing,
     refreshingFeed,
-    refreshingMessages,
     refreshingAccount,
     handleRefreshFeed,
-    handleRefreshMessages,
     handleRefreshAccount,
-    handleStartConversation,
-    handleDeleteConversation,
+    handleContactSeller,
     listingLoadError,
+    showFeedbackModal,
   } = props;
 
   return (
@@ -177,7 +170,6 @@ function MainTabsNavigator(props: any) {
           let iconName: any = 'home';
           if (route.name === 'Browse') iconName = 'search';
           if (route.name === 'Sell') iconName = 'add-circle-outline';
-          if (route.name === 'Messages') iconName = 'chat-bubble-outline';
           if (route.name === 'About') iconName = 'info-outline';
           if (route.name === 'Account') iconName = 'person-outline';
           return (
@@ -205,6 +197,7 @@ function MainTabsNavigator(props: any) {
             nearbyListings={nearbyListings}
             refreshing={refreshingFeed}
             onRefresh={handleRefreshFeed}
+            onFilterPress={() => showFeedbackModal('Filters', 'Advanced filters are currently disabled.', 'tune')}
             onOpenListing={(listing) => navigation.getParent()?.navigate('ListingDetail', { listing })}
             onBrowsePress={() => navigation.navigate('Browse')}
             onSellPress={() => navigation.navigate('Sell')}
@@ -239,7 +232,7 @@ function MainTabsNavigator(props: any) {
             onRefresh={handleRefreshFeed}
             onToggleFavorite={handleToggleFavorite}
             onOpenListing={(listing) => navigation.getParent()?.navigate('ListingDetail', { listing })}
-            onMessagePress={(listing) => handleStartConversation(listing, navigation.getParent?.())}
+            onMessagePress={(listing) => handleContactSeller(listing)}
             error={listingLoadError}
           />
         )}
@@ -262,26 +255,6 @@ function MainTabsNavigator(props: any) {
             submitting={sellSubmitting}
             onPickImages={handlePickImages}
             onSubmit={handleCreateListing}
-          />
-        )}
-      </Tab.Screen>
-      <Tab.Screen name="Messages" options={{ tabBarBadge: unreadCount > 0 ? unreadCount : undefined }}>
-        {({ navigation }) => (
-          <MessagesScreen
-            signedIn={!!user}
-            conversations={conversations}
-            loading={conversationLoading}
-            refreshing={refreshingMessages}
-            onRefresh={handleRefreshMessages}
-            onDeleteConversation={(conversation) => handleDeleteConversation(conversation.id)}
-            onOpenConversation={async (conversation) => {
-              await loadMessages(conversation.id, user?.id);
-              navigation.getParent()?.navigate('ChatDetail', {
-                conversationId: conversation.id,
-                title: conversation.other_participant_name,
-                currentUserId: user?.id || '',
-              });
-            }}
           />
         )}
       </Tab.Screen>
@@ -389,19 +362,11 @@ export default function App() {
     distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
   });
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
-  const [conversations, setConversations] = useState<ConversationPreview[]>([]);
-  const [hiddenConversationIds, setHiddenConversationIds] = useState<string[]>([]);
-  const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
-  const [chatSending, setChatSending] = useState(false);
-  const [chatLoading, setChatLoading] = useState(false);
-  const [conversationLoading, setConversationLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [defaultAvatarUrls, setDefaultAvatarUrls] = useState<string[]>([]);
   const [selectedDefaultAvatar, setSelectedDefaultAvatar] = useState<string | null>(null);
   const [refreshingFeed, setRefreshingFeed] = useState(false);
-  const [refreshingMessages, setRefreshingMessages] = useState(false);
   const [refreshingAccount, setRefreshingAccount] = useState(false);
   const [editFullName, setEditFullName] = useState('');
   const [editPhone, setEditPhone] = useState('');
@@ -409,7 +374,11 @@ export default function App() {
   const [editUniversityId, setEditUniversityId] = useState('');
   const [signedInToastVisible, setSignedInToastVisible] = useState(false);
   const [listingLoadError, setListingLoadError] = useState<string | null>(null);
-  const startingConversationRef = useRef<Set<string>>(new Set());
+  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [feedbackModalTitle, setFeedbackModalTitle] = useState('Notice');
+  const [feedbackModalMessage, setFeedbackModalMessage] = useState('');
+  const [feedbackModalIcon, setFeedbackModalIcon] = useState<keyof typeof MaterialIcons.glyphMap>('info-outline');
+  const processedOAuthCodesRef = useRef<Set<string>>(new Set());
   const loadingCartProgress = useRef(new Animated.Value(0)).current;
   const { canResend: canSendAuthEmail, timeLeft: authEmailCooldownLeft, startCooldown: startAuthEmailCooldown } = useOtpCooldown({
     storageKey: 'auth_signup_email_cooldown',
@@ -420,44 +389,19 @@ export default function App() {
     cooldownSeconds: 60,
   });
 
-  const getHiddenConversationKey = useCallback((userId: string) => `hidden_conversations_${userId}`, []);
+  const showFeedbackModal = useCallback((title: string, message: string, icon: keyof typeof MaterialIcons.glyphMap = 'info-outline') => {
+    setFeedbackModalTitle(title);
+    setFeedbackModalMessage(message);
+    setFeedbackModalIcon(icon);
+    setFeedbackModalVisible(true);
+  }, []);
 
-  const loadHiddenConversations = useCallback(async (userId?: string) => {
-    if (!userId) {
-      setHiddenConversationIds([]);
-      return;
-    }
-
-    try {
-      try {
-        const idsFromDb = await getHiddenConversationIds(userId);
-        setHiddenConversationIds(idsFromDb);
-      } catch (dbError) {
-        console.warn('hidden-conversations-db-load-error', dbError);
-      }
-
-      const raw = await AsyncStorage.getItem(getHiddenConversationKey(userId));
-      if (!raw) {
-        setHiddenConversationIds((current) => current);
-        return;
-      }
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        setHiddenConversationIds((current) => Array.from(new Set([...current, ...parsed])));
-      }
-    } catch (error) {
-      console.warn('hidden-conversations-load-error', error);
-      setHiddenConversationIds((current) => current);
-    }
-  }, [getHiddenConversationKey]);
-
-  const persistHiddenConversations = useCallback(async (userId: string, ids: string[]) => {
-    try {
-      await AsyncStorage.setItem(getHiddenConversationKey(userId), JSON.stringify(ids));
-    } catch (error) {
-      console.warn('hidden-conversations-save-error', error);
-    }
-  }, [getHiddenConversationKey]);
+  const openThemedAlert = useCallback(
+    (title: string, message: string, icon: keyof typeof MaterialIcons.glyphMap = 'info-outline') => {
+      showFeedbackModal(title, message, icon);
+    },
+    [showFeedbackModal]
+  );
 
   const loadProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
@@ -549,7 +493,7 @@ export default function App() {
 
   const handleSubmitSellerReview = useCallback(async (payload: { rating: number; reviewText: string }) => {
     if (!user?.id || !publicSeller?.id) {
-      Alert.alert('Sign in required', 'Please sign in before leaving a review.');
+      openThemedAlert('Sign in required', 'Please sign in before leaving a review.');
       return;
     }
 
@@ -565,9 +509,9 @@ export default function App() {
       const updated = await getSellerReviews(publicSeller.id);
       setPublicSellerReviews(updated.reviews);
       setPublicSellerRatingSummary(updated.summary);
-      Alert.alert('Review saved', 'Thanks for sharing your feedback.');
+      openThemedAlert('Review saved', 'Thanks for sharing your feedback.');
     } catch (error) {
-      Alert.alert('Could not save review', error instanceof Error ? error.message : 'Please try again.');
+      openThemedAlert('Could not save review', error instanceof Error ? error.message : 'Please try again.');
     } finally {
       setReviewSubmitting(false);
     }
@@ -598,36 +542,11 @@ export default function App() {
     }
   }, []);
 
-  const loadConversations = useCallback(async (userId?: string) => {
-    if (!userId) {
-      setConversations([]);
-      return;
-    }
-    try {
-      setConversationLoading(true);
-      const data = await getConversationsForUser(userId);
-      setConversations(data.filter((conversation) => !hiddenConversationIds.includes(conversation.id)));
-    } catch (error) {
-      console.warn('conversation-load-error', error);
-    } finally {
-      setConversationLoading(false);
-    }
-  }, [hiddenConversationIds]);
-
-  const loadMessages = useCallback(async (conversationId: string, markReadUserId?: string) => {
-    try {
-      setChatLoading(true);
-      const data = await getMessages(conversationId);
-      setMessages(data);
-      setActiveConversationId(conversationId);
-      if (markReadUserId) {
-        await markConversationRead(conversationId, markReadUserId);
-      }
-    } catch (error) {
-      console.warn('message-load-error', error);
-    } finally {
-      setChatLoading(false);
-    }
+  const setSignupPhoneInput = useCallback((value: string) => {
+    const digits = value.replace(/\D/g, '');
+    const withoutCountry = digits.startsWith('260') ? digits.slice(3) : digits;
+    const withoutLeadingZero = withoutCountry.startsWith('0') ? withoutCountry.slice(1) : withoutCountry;
+    setPhone(withoutLeadingZero.slice(0, 9));
   }, []);
 
   const loadListings = useCallback(async () => {
@@ -667,7 +586,14 @@ export default function App() {
       return;
     }
 
-    setMyListings(((data ?? []) as any[]).map(mapListing));
+    const fetchedListings = ((data ?? []) as any[]).map(mapListing);
+    setMyListings((current) => {
+      const fetchedIds = new Set(fetchedListings.map((listing) => listing.id));
+      const retainedNonActive = current.filter((listing) => listing.status !== 'active' && !fetchedIds.has(listing.id));
+      return [...fetchedListings, ...retainedNonActive].sort(
+        (a, b) => new Date(b.lastBumpedAt || b.createdAt).getTime() - new Date(a.lastBumpedAt || a.createdAt).getTime()
+      );
+    });
   }, []);
 
   const loadFeaturedHomeListings = useCallback(async () => {
@@ -697,8 +623,6 @@ export default function App() {
       setUser(data.session?.user ?? null);
       if (data.session?.user) {
         loadProfile(data.session.user.id);
-        loadHiddenConversations(data.session.user.id);
-        loadConversations(data.session.user.id);
         loadMyListings(data.session.user.id);
         loadFavorites(data.session.user.id);
         registerPushToken(data.session.user.id).catch(() => undefined);
@@ -710,16 +634,12 @@ export default function App() {
       setUser(nextSession?.user ?? null);
       if (nextSession?.user) {
         loadProfile(nextSession.user.id);
-        loadHiddenConversations(nextSession.user.id);
-        loadConversations(nextSession.user.id);
         loadMyListings(nextSession.user.id);
         loadFavorites(nextSession.user.id);
         registerPushToken(nextSession.user.id).catch(() => undefined);
       } else {
         setProfile(null);
         setMyListings([]);
-        setConversations([]);
-        setHiddenConversationIds([]);
         setFavoriteIds([]);
       }
     });
@@ -730,12 +650,7 @@ export default function App() {
       mounted = false;
       listener.subscription.unsubscribe();
     };
-  }, [loadCategories, loadConversations, loadDefaultAvatars, loadFavorites, loadFeaturedHomeListings, loadHiddenConversations, loadListings, loadMyListings, loadProfile, loadUniversities]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    loadConversations(user.id);
-  }, [hiddenConversationIds, loadConversations, user?.id]);
+  }, [loadCategories, loadDefaultAvatars, loadFavorites, loadFeaturedHomeListings, loadListings, loadMyListings, loadProfile, loadUniversities]);
 
   useEffect(() => {
     const completeOAuthFromLink = async (url: string) => {
@@ -744,9 +659,15 @@ export default function App() {
         const code = parsed.searchParams.get('code');
         if (!code) return;
 
+        if (processedOAuthCodesRef.current.has(code)) {
+          return;
+        }
+        processedOAuthCodesRef.current.add(code);
+
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) {
-          Alert.alert('Google sign-in failed', error.message);
+          processedOAuthCodesRef.current.delete(code);
+          openThemedAlert('Google sign-in failed', error.message);
         }
       } catch (error) {
         console.warn('oauth-link-parse-error', error);
@@ -806,9 +727,10 @@ export default function App() {
   const featuredListings = useMemo(() => featuredHomeListings, [featuredHomeListings]);
   const nearbyListings = useMemo(() => listings.slice(0, 6), [listings]);
   const userListings = useMemo(() => myListings, [myListings]);
+  const favoriteIdSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
   const activeCount = useMemo(() => userListings.filter((listing) => listing.status === 'active').length, [userListings]);
   const soldCount = useMemo(() => userListings.filter((listing) => listing.status === 'sold').length, [userListings]);
-  const savedListings = useMemo(() => listings.filter((listing) => favoriteIds.includes(listing.id)), [favoriteIds, listings]);
+  const savedListings = useMemo(() => listings.filter((listing) => favoriteIdSet.has(listing.id)), [favoriteIdSet, listings]);
   const universityName = useMemo(() => universities.find((uni) => uni.id === profile?.university_id)?.name, [universities, profile?.university_id]);
 
   const filteredListings = useMemo(
@@ -827,7 +749,7 @@ export default function App() {
           (listingType === 'products' && !listing.isService) ||
           (listingType === 'services' && listing.isService);
         const matchesPrice = !maxPrice || Number.isNaN(maxPriceValue) || listing.price <= maxPriceValue;
-        const matchesFavorites = !favoritesOnly || favoriteIds.includes(listing.id);
+        const matchesFavorites = !favoritesOnly || favoriteIdSet.has(listing.id);
         return matchesQuery && matchesCategory && matchesType && matchesPrice && matchesFavorites;
       });
 
@@ -841,24 +763,32 @@ export default function App() {
         (a, b) => new Date(b.lastBumpedAt || b.createdAt).getTime() - new Date(a.lastBumpedAt || a.createdAt).getTime()
       );
     },
-    [favoriteIds, favoritesOnly, listingType, listings, maxPrice, query, selectedCategory, sortBy]
+    [favoriteIdSet, favoritesOnly, listingType, listings, maxPrice, query, selectedCategory, sortBy]
   );
 
   const handleAuth = useCallback(async () => {
     if (authLoading) return;
 
     if (!email || !password) {
-      Alert.alert('Missing details', 'Please enter your email and password.');
+      openThemedAlert('Missing details', 'Please enter your email and password.');
       return;
     }
 
     if (authMode === 'sign-up' && !fullName) {
-      Alert.alert('Missing name', 'Please enter your full name to create an account.');
+      openThemedAlert('Missing name', 'Please enter your full name to create an account.');
       return;
     }
 
+    if (authMode === 'sign-up') {
+      const normalizedPhone = normalizeZambiaPhoneForStorage(phone);
+      if (!normalizedPhone) {
+        openThemedAlert('Phone required', 'Enter a valid local Zambia number like 97xxxxxxx.');
+        return;
+      }
+    }
+
     if (authMode === 'sign-up' && !canSendAuthEmail) {
-      Alert.alert('Please wait', `Too many requests. Please wait ${authEmailCooldownLeft}s before trying again.`);
+      openThemedAlert('Please wait', `Too many requests. Please wait ${authEmailCooldownLeft}s before trying again.`);
       return;
     }
 
@@ -871,12 +801,13 @@ export default function App() {
         return;
       }
 
-      const data = await signUpWithEmail(email.trim(), password, fullName, phone);
+      const normalizedPhone = normalizeZambiaPhoneForStorage(phone);
+      const data = await signUpWithEmail(email.trim(), password, fullName, normalizedPhone ?? undefined);
       await startAuthEmailCooldown();
 
       if (data.user?.id) {
         try {
-          await supabase.from('profiles').upsert({ id: data.user.id, full_name: fullName, phone });
+          await supabase.from('profiles').upsert({ id: data.user.id, full_name: fullName, phone: normalizedPhone ?? null });
         } catch (profileError) {
           console.warn('[AUTH] Profile creation error:', profileError);
           // Don't fail the signup if profile creation fails - user can update later
@@ -884,10 +815,10 @@ export default function App() {
       }
 
       setAuthMode('sign-in');
-      Alert.alert('Check your email', 'Check your email for the login code or confirmation link, then sign in.');
+      openThemedAlert('Check your email', 'Check your email for the login code or confirmation link, then sign in.');
     } catch (err) {
       console.error('[AUTH ERROR]', err);
-      Alert.alert('Authentication error', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      openThemedAlert('Authentication error', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
     } finally {
       setAuthLoading(false);
     }
@@ -900,7 +831,7 @@ export default function App() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      Alert.alert('Google sign-in failed', err instanceof Error ? err.message : 'Could not continue with Google.');
+      openThemedAlert('Google sign-in failed', err instanceof Error ? err.message : 'Could not continue with Google.');
     } finally {
       setAuthLoading(false);
     }
@@ -915,7 +846,7 @@ export default function App() {
     }
     await supabase.auth.signOut();
     setSession(null);
-    Alert.alert('Signed out', 'You have been signed out.');
+    openThemedAlert('Signed out', 'You have been signed out.');
   }, [user?.id]);
 
   const handlePasswordReset = useCallback(async () => {
@@ -923,12 +854,12 @@ export default function App() {
 
     const normalizedEmail = resetEmail.trim();
     if (!normalizedEmail) {
-      Alert.alert('Missing email', 'Enter the email you use to sign in.');
+      openThemedAlert('Missing email', 'Enter the email you use to sign in.');
       return;
     }
 
     if (!canSendResetEmail) {
-      Alert.alert('Please wait', `Resend available in ${resetEmailCooldownLeft}s`);
+      openThemedAlert('Please wait', `Resend available in ${resetEmailCooldownLeft}s`);
       return;
     }
 
@@ -937,11 +868,11 @@ export default function App() {
       await sendPasswordResetEmail(normalizedEmail);
       await startResetEmailCooldown();
 
-      Alert.alert('Reset email sent', 'Check your email for the login code or reset link. It may take a few minutes to arrive.');
+      openThemedAlert('Reset email sent', 'Check your email for the login code or reset link. It may take a few minutes to arrive.');
       setResetEmail('');
     } catch (err) {
       console.error('[PASSWORD RESET ERROR]', err);
-      Alert.alert('Error sending reset email', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      openThemedAlert('Error sending reset email', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
     } finally {
       setResetLoading(false);
     }
@@ -966,19 +897,21 @@ export default function App() {
       
       if (error) {
         if (!silent) {
-          Alert.alert('Could not save profile', error.message || 'An unknown error occurred');
+          openThemedAlert('Could not save profile', error.message || 'An unknown error occurred');
         }
         return false;
       }
 
-      await loadProfile(user.id);
       if (!silent) {
-        Alert.alert('Profile updated', 'Your account details were saved.');
+        await loadProfile(user.id);
+      }
+      if (!silent) {
+        openThemedAlert('Profile updated', 'Your account details were saved.');
       }
       return true;
     } catch (err) {
       if (!silent) {
-        Alert.alert('Error saving profile', err instanceof Error ? err.message : 'An unexpected error occurred');
+        openThemedAlert('Error saving profile', err instanceof Error ? err.message : 'An unexpected error occurred');
       }
       return false;
     } finally {
@@ -988,26 +921,20 @@ export default function App() {
 
   const handlePickAvatar = useCallback(async () => {
     if (!user) {
-      Alert.alert('Sign in required', 'Please sign in before updating your avatar.');
+      openThemedAlert('Sign in required', 'Please sign in before updating your avatar.');
       return;
     }
     
     try {
       setAvatarLoading(true);
-      console.log('[AVATAR PICK] Starting avatar selection');
       
       const asset = await pickSingleProfileImage();
       if (!asset) {
-        console.log('[AVATAR PICK] User cancelled');
         setAvatarLoading(false);
         return;
       }
 
-      console.log('[AVATAR UPLOAD] Uploading:', { fileName: asset.fileName, size: asset.fileSize });
       const avatarUrl = await uploadProfileAvatar(user.id, asset.uri, asset.mimeType ?? undefined, asset.fileName ?? undefined);
-      console.log('[AVATAR UPLOAD] Got URL:', avatarUrl);
-
-      console.log('[AVATAR DB UPDATE] Updating profile with avatar URL');
       const { error, data: updateData } = await supabase.from('profiles').upsert({
         id: user.id,
         avatar_url: avatarUrl,
@@ -1017,21 +944,19 @@ export default function App() {
         student_email: editStudentEmail || profile?.student_email || null,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'id' }).select();
-      
-      console.log('[AVATAR DB UPDATE] Result:', { error, updated: !!updateData });
 
       if (error) {
         console.error('[AVATAR DB ERROR]', error);
-        Alert.alert('Could not update avatar', error.message || 'Failed to save avatar to profile');
+        openThemedAlert('Could not update avatar', error.message || 'Failed to save avatar to profile');
         return;
       }
 
       await loadProfile(user.id);
-      Alert.alert('Avatar updated', 'Your profile photo looks better already.');
+      openThemedAlert('Avatar updated', 'Your profile photo looks better already.');
     } catch (error) {
       console.error('[AVATAR ERROR]', error);
       const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred';
-      Alert.alert('Could not update avatar', errorMessage);
+      openThemedAlert('Could not update avatar', errorMessage);
     } finally {
       setAvatarLoading(false);
     }
@@ -1039,11 +964,11 @@ export default function App() {
 
   const handleApplyDefaultAvatar = useCallback(async () => {
     if (!user) {
-      Alert.alert('Sign in required', 'Please sign in before updating your avatar.');
+      openThemedAlert('Sign in required', 'Please sign in before updating your avatar.');
       return;
     }
     if (!selectedDefaultAvatar) {
-      Alert.alert('Select an avatar', 'Choose one of the default avatars first.');
+      openThemedAlert('Select an avatar', 'Choose one of the default avatars first.');
       return;
     }
 
@@ -1060,14 +985,14 @@ export default function App() {
       }, { onConflict: 'id' });
 
       if (error) {
-        Alert.alert('Could not update avatar', error.message || 'Failed to save avatar to profile');
+        openThemedAlert('Could not update avatar', error.message || 'Failed to save avatar to profile');
         return;
       }
 
       await loadProfile(user.id);
-      Alert.alert('Avatar updated', 'Default avatar applied successfully.');
+      openThemedAlert('Avatar updated', 'Default avatar applied successfully.');
     } catch (error) {
-      Alert.alert('Could not update avatar', error instanceof Error ? error.message : 'An unexpected error occurred');
+      openThemedAlert('Could not update avatar', error instanceof Error ? error.message : 'An unexpected error occurred');
     } finally {
       setAvatarLoading(false);
     }
@@ -1077,85 +1002,67 @@ export default function App() {
     try {
       setPickingImages(true);
       const picked = await pickImages();
+      if (picked.length > MAX_LISTING_IMAGES) {
+        setListingImages(picked.slice(0, MAX_LISTING_IMAGES));
+        showFeedbackModal(
+          'Too many images selected',
+          `You selected ${picked.length} images. A listing can have up to ${MAX_LISTING_IMAGES}. Please keep only your best photos.`,
+          'photo-library'
+        );
+        return;
+      }
       setListingImages(picked);
     } catch (error) {
-      Alert.alert('Could not pick images', error instanceof Error ? error.message : 'Unknown error');
+      openThemedAlert('Could not pick images', error instanceof Error ? error.message : 'Unknown error');
     } finally {
       setPickingImages(false);
     }
-  }, []);
+  }, [showFeedbackModal]);
 
   const handleToggleFavorite = useCallback(async (listingId: string) => {
-    if (!user) return Alert.alert('Sign in required', 'Please sign in to save favorites.');
+    if (!user) return openThemedAlert('Sign in required', 'Please sign in to save favorites.');
     try {
-      const next = await toggleFavorite(user.id, listingId, favoriteIds.includes(listingId));
+      const next = await toggleFavorite(user.id, listingId, favoriteIdSet.has(listingId));
       setFavoriteIds((current) => next ? [...current, listingId] : current.filter((id) => id !== listingId));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Could not update favorite. Please try again.';
-      Alert.alert('Could not update favorite', errorMessage);
+      openThemedAlert('Could not update favorite', errorMessage);
     }
-  }, [favoriteIds, user]);
+  }, [favoriteIdSet, user]);
 
-  const handleStartConversation = useCallback(async (listing: Listing, navigation: any) => {
-    if (!user) return Alert.alert('Sign in required', 'Please sign in before messaging a seller.');
-    if (!listing.sellerId) return Alert.alert('Seller unavailable', 'This listing has no seller attached. Contact support if this persists.');
-    if (listing.sellerId === user.id) return Alert.alert('Your listing', 'You cannot message yourself on your own listing.');
-
-    const requestKey = `${listing.id}:${user.id}`;
-    if (startingConversationRef.current.has(requestKey)) {
+  const handleContactSeller = useCallback(async (listing: Listing) => {
+    if (!user) {
+      openThemedAlert('Sign in required', 'Please sign in before contacting a seller.');
       return;
     }
 
-    startingConversationRef.current.add(requestKey);
+    if (listing.sellerId === user.id) {
+      showFeedbackModal('This is your listing', 'Messaging yourself is disabled. View your listing from Account if you want to edit or relist it.', 'person-off');
+      return;
+    }
+
+    const waLink = generateWhatsAppLink(listing.sellerPhone || '', listing);
+    if (!waLink) {
+      showFeedbackModal('Seller contact unavailable', 'This seller does not have a valid WhatsApp number yet. Try another listing or check back later.', 'error-outline');
+      return;
+    }
 
     try {
-      const conversationId = await findOrCreateConversation(listing.id, user.id, listing.sellerId);
-      await loadConversations(user.id);
-      await loadMessages(conversationId, user.id);
-      navigation.navigate('ChatDetail', { conversationId, title: listing.sellerName, currentUserId: user.id });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Could not start chat. Please try again.';
-      Alert.alert('Could not start chat', errorMessage);
-    } finally {
-      startingConversationRef.current.delete(requestKey);
+      const appUri = waLink.replace('https://wa.me/', 'whatsapp://send?phone=').replace('?text=', '&text=');
+      const canOpenApp = await Linking.canOpenURL(appUri);
+      if (canOpenApp) {
+        await Linking.openURL(appUri);
+        return;
+      }
+      await Linking.openURL(waLink);
+    } catch {
+      await Linking.openURL(waLink);
     }
-  }, [loadConversations, loadMessages, user]);
-
-  const handleSendMessage = useCallback(async (conversationId: string, content: string) => {
-    if (!user) return;
-    setChatSending(true);
-    try {
-      await sendMessage(conversationId, user.id, content);
-      await loadMessages(conversationId, user.id);
-      await loadConversations(user.id);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Could not send message. Please try again.';
-      Alert.alert('Message failed', errorMessage);
-    } finally {
-      setChatSending(false);
-    }
-  }, [loadConversations, loadMessages, user]);
-
-  const handleDeleteConversation = useCallback(async (conversationId: string) => {
-    if (!user?.id) return;
-
-    const nextIds = hiddenConversationIds.includes(conversationId)
-      ? hiddenConversationIds
-      : [...hiddenConversationIds, conversationId];
-
-    setHiddenConversationIds(nextIds);
-    setConversations((current) => current.filter((conversation) => conversation.id !== conversationId));
-    await persistHiddenConversations(user.id, nextIds);
-    try {
-      await hideConversationForUser(user.id, conversationId);
-    } catch (error) {
-      console.warn('hidden-conversations-db-save-error', error);
-    }
-  }, [hiddenConversationIds, persistHiddenConversations, user?.id]);
+  }, [showFeedbackModal, user]);
 
   const updateListingStatus = useCallback(async (listingId: string, patch: Record<string, any>, successMessage: string) => {
     if (!user?.id) {
-      Alert.alert('Sign in required', 'Please sign in before updating a listing.');
+      openThemedAlert('Sign in required', 'Please sign in before updating a listing.');
       return;
     }
 
@@ -1177,32 +1084,48 @@ export default function App() {
 
         if (error) {
           const errorMessage = error?.message || 'Could not update listing. Please try again.';
-          Alert.alert('Update failed', errorMessage);
+          openThemedAlert('Update failed', errorMessage);
           return;
         }
 
         if (!data || data.length === 0) {
-          Alert.alert('Update failed', 'You can only update your own active listings.');
+          openThemedAlert('Update failed', 'You can only update your own active listings.');
           return;
         }
       }
 
-      await Promise.all([loadListings(), loadMyListings(user.id)]);
-      Alert.alert('Listing updated', successMessage);
+      setMyListings((current) =>
+        current.map((listing) =>
+          listing.id === listingId
+            ? {
+                ...listing,
+                status: typeof patch.status === 'string' ? patch.status : listing.status,
+                lastBumpedAt: patch.last_bumped_at ?? listing.lastBumpedAt,
+              }
+            : listing
+        )
+      );
+
+      if (typeof patch.status === 'string' && patch.status !== 'active') {
+        await loadListings();
+      } else {
+        await Promise.all([loadListings(), loadMyListings(user.id)]);
+      }
+      openThemedAlert('Listing updated', successMessage);
     } catch (err) {
       console.error('[LISTING UPDATE ERROR]', err);
-      Alert.alert('Error updating listing', err instanceof Error ? err.message : 'An unexpected error occurred');
+      openThemedAlert('Error updating listing', err instanceof Error ? err.message : 'An unexpected error occurred');
     }
-  }, [loadListings, loadMyListings, user?.id]);
+  }, [loadListings, loadMyListings, openThemedAlert, user?.id]);
 
   const handleUpdateListing = useCallback(async (listingId: string, payload: { title: string; description: string; price: number }) => {
     if (!user?.id) {
-      Alert.alert('Sign in required', 'Please sign in before updating a listing.');
+      openThemedAlert('Sign in required', 'Please sign in before updating a listing.');
       return;
     }
 
     if (!payload.title || !payload.description || !Number.isFinite(payload.price) || payload.price <= 0) {
-      Alert.alert('Invalid details', 'Please provide a title, description, and valid price.');
+      openThemedAlert('Invalid details', 'Please provide a title, description, and valid price.');
       return;
     }
 
@@ -1228,34 +1151,34 @@ export default function App() {
           .select('id');
 
         if (error) {
-          Alert.alert('Update failed', error.message || 'Could not update listing.');
+          openThemedAlert('Update failed', error.message || 'Could not update listing.');
           return;
         }
 
         if (!data || data.length === 0) {
-          Alert.alert('Update failed', 'Only the seller can edit this listing.');
+          openThemedAlert('Update failed', 'Only the seller can edit this listing.');
           return;
         }
       }
 
       await Promise.all([loadListings(), loadMyListings(user.id)]);
-      Alert.alert('Listing updated', 'Your listing changes were saved.');
+      openThemedAlert('Listing updated', 'Your listing changes were saved.');
     } catch (error) {
-      Alert.alert('Update failed', error instanceof Error ? error.message : 'An unexpected error occurred.');
+      openThemedAlert('Update failed', error instanceof Error ? error.message : 'An unexpected error occurred.');
     }
   }, [loadListings, loadMyListings, user?.id]);
 
   const handleCreateListing = useCallback(async () => {
-    if (!user) return Alert.alert('Sign in required', 'Please sign in before posting a listing.');
+    if (!user) return openThemedAlert('Sign in required', 'Please sign in before posting a listing.');
     if (!profile?.is_verified_student) {
-      return Alert.alert('Verified seller access required', 'Only verified students can create listings.');
+      return openThemedAlert('Verified seller access required', 'Only verified students can create listings.');
     }
     if (!sellTitle || !sellDescription || !sellPrice) {
-      return Alert.alert('Missing details', 'Please complete title, description, and price.');
+      return openThemedAlert('Missing details', 'Please complete title, description, and price.');
     }
 
     const matchedCategory = dbCategories.find((item) => item.name === sellCategory);
-    if (!matchedCategory) return Alert.alert('Category missing', 'Could not match the selected category in the database.');
+    if (!matchedCategory) return openThemedAlert('Category missing', 'Could not match the selected category in the database.');
 
     setSellSubmitting(true);
 
@@ -1276,7 +1199,7 @@ export default function App() {
 
     if (error || !inserted?.id) {
       setSellSubmitting(false);
-      return Alert.alert('Could not post listing', error?.message ?? 'No listing id returned');
+      return openThemedAlert('Could not post listing', error?.message ?? 'No listing id returned');
     }
 
     if (listingImages.length > 0) {
@@ -1299,7 +1222,7 @@ export default function App() {
         if (imageInsertError) throw imageInsertError;
       } catch (uploadError) {
         console.warn('[MOBILE ERROR] listing-image-upload-error', uploadError);
-        Alert.alert('Listing posted, but image upload failed', uploadError instanceof Error ? uploadError.message : 'Unknown image upload error');
+        openThemedAlert('Listing posted, but image upload failed', uploadError instanceof Error ? uploadError.message : 'Unknown image upload error');
       }
     }
 
@@ -1309,23 +1232,8 @@ export default function App() {
     setSellPrice('');
     setListingImages([]);
     await Promise.all([loadListings(), loadMyListings(user.id)]);
-    Alert.alert('Listing posted', 'Your listing is now live on Campus Cart.');
+    openThemedAlert('Listing posted', 'Your listing is now live on Campus Cart.');
   }, [dbCategories, listingImages, loadListings, loadMyListings, profile?.is_verified_student, profile?.university_id, sellCategory, sellDescription, sellPrice, sellTitle, user]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-
-    const interval = setInterval(() => {
-      loadConversations(user.id);
-      if (activeConversationId) {
-        loadMessages(activeConversationId, user.id);
-      }
-    }, 15000);
-
-    return () => clearInterval(interval);
-  }, [activeConversationId, loadConversations, loadMessages, user?.id]);
-
-  const unreadCount = useMemo(() => conversations.filter((conversation) => conversation.unread).length, [conversations]);
 
   const handleRefreshFeed = useCallback(async () => {
     setRefreshingFeed(true);
@@ -1340,18 +1248,6 @@ export default function App() {
       setRefreshingFeed(false);
     }
   }, [loadFavorites, loadFeaturedHomeListings, loadListings, loadMyListings, user?.id]);
-
-  const handleRefreshMessages = useCallback(async () => {
-    setRefreshingMessages(true);
-    try {
-      await loadConversations(user?.id);
-      if (activeConversationId && user?.id) {
-        await loadMessages(activeConversationId, user.id);
-      }
-    } finally {
-      setRefreshingMessages(false);
-    }
-  }, [activeConversationId, loadConversations, loadMessages, user?.id]);
 
   const handleRefreshAccount = useCallback(async () => {
     setRefreshingAccount(true);
@@ -1463,11 +1359,6 @@ export default function App() {
                 sellSubmitting={sellSubmitting}
                 handlePickImages={handlePickImages}
                 handleCreateListing={handleCreateListing}
-                unreadCount={unreadCount}
-                conversations={conversations}
-                conversationLoading={conversationLoading}
-                loadConversations={loadConversations}
-                loadMessages={loadMessages}
                 AboutScreen={AboutScreen}
                 AccountScreen={AccountScreen}
                 universityName={universityName}
@@ -1482,7 +1373,7 @@ export default function App() {
                 setEmail={setEmail}
                 setPassword={setPassword}
                 setFullName={setFullName}
-                setPhone={setPhone}
+                setPhone={setSignupPhoneInput}
                 authMode={authMode}
                 setAuthMode={setAuthMode}
                 authLoading={authLoading}
@@ -1515,14 +1406,12 @@ export default function App() {
                 updateListingStatus={updateListingStatus}
                 handleUpdateListing={handleUpdateListing}
                 refreshingFeed={refreshingFeed}
-                refreshingMessages={refreshingMessages}
                 refreshingAccount={refreshingAccount}
                 handleRefreshFeed={handleRefreshFeed}
-                handleRefreshMessages={handleRefreshMessages}
                 handleRefreshAccount={handleRefreshAccount}
-                handleStartConversation={handleStartConversation}
-                handleDeleteConversation={handleDeleteConversation}
+                handleContactSeller={handleContactSeller}
                 listingLoadError={listingLoadError}
+                showFeedbackModal={showFeedbackModal}
               />
             )}
           </Stack.Screen>
@@ -1534,7 +1423,7 @@ export default function App() {
               <ListingDetailScreen
                 listing={route.params.listing}
                 canMessage={!!user && route.params.listing.sellerId !== user?.id}
-                onMessageSeller={() => handleStartConversation(route.params.listing, navigation)}
+                onMessageSeller={() => handleContactSeller(route.params.listing)}
                 canFavorite={!!user}
                 isFavorite={favoriteIds.includes(route.params.listing.id)}
                 onToggleFavorite={() => handleToggleFavorite(route.params.listing.id)}
@@ -1565,19 +1454,7 @@ export default function App() {
                 onSubmitReview={handleSubmitSellerReview}
                 onToggleFavorite={handleToggleFavorite}
                 onOpenListing={(listing) => navigation.navigate('ListingDetail', { listing })}
-              />
-            )}
-          </Stack.Screen>
-          <Stack.Screen name="ChatDetail" options={({ route }) => ({ title: route.params.title || 'Chat' })}>
-            {({ route }) => (
-              <ChatDetailScreen
-                title={route.params.title}
-                currentUserId={route.params.currentUserId}
-                messages={messages}
-                loading={chatLoading}
-                sending={chatSending}
-                onRefresh={() => loadMessages(route.params.conversationId, user?.id)}
-                onSend={(content) => handleSendMessage(route.params.conversationId, content)}
+                onShowFeedback={(title, message) => showFeedbackModal(title, message, 'info-outline')}
               />
             )}
           </Stack.Screen>
@@ -1623,6 +1500,13 @@ export default function App() {
           </View>
         </View>
       ) : null}
+      <FeedbackModal
+        visible={feedbackModalVisible}
+        title={feedbackModalTitle}
+        message={feedbackModalMessage}
+        icon={feedbackModalIcon}
+        onClose={() => setFeedbackModalVisible(false)}
+      />
       </SafeAreaView>
     </AppErrorBoundary>
   );

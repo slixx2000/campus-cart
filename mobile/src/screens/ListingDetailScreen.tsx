@@ -8,7 +8,6 @@ import { FallbackImage } from '../components/FallbackImage';
 
 export function ListingDetailScreen({
   listing,
-  onBack,
   onMessageSeller,
   canMessage,
   canFavorite,
@@ -17,7 +16,6 @@ export function ListingDetailScreen({
   onOpenSeller,
 }: {
   listing: Listing;
-  onBack: () => void;
   onMessageSeller?: () => void;
   canMessage?: boolean;
   canFavorite?: boolean;
@@ -30,16 +28,13 @@ export function ListingDetailScreen({
 
   return (
     <ScrollView contentContainerStyle={styles.screenContent}>
-      <View style={styles.rowBetween}>
-        <Pressable onPress={onBack} style={styles.backButton}>
-          <Text style={styles.backButtonText}>← Back to listings</Text>
-        </Pressable>
-        {canFavorite && onToggleFavorite ? (
+      {canFavorite && onToggleFavorite ? (
+        <View style={{ alignItems: 'flex-end' }}>
           <Pressable style={[styles.favoriteButton, isFavorite && styles.favoriteButtonActive]} onPress={onToggleFavorite}>
             <Text style={styles.favoriteButtonText}>{isFavorite ? '♥' : '♡'}</Text>
           </Pressable>
-        ) : null}
-      </View>
+        </View>
+      ) : null}
       <FallbackImage
         uri={images[activeImage] || listing.images[0]}
         fallbackUri={PLACEHOLDER_IMAGE}

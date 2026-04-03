@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import NotificationServer from "@/components/NotificationServer";
 import PWARegister from "@/components/PWARegister";
 import PWAInstallPopup from "@/components/PWAInstallPopup";
+import ScaledDesktopFrame from "@/components/ScaledDesktopFrame";
 
 export const metadata: Metadata = {
   title: "CampusCart – The Marketplace for Your Campus",
@@ -52,9 +53,11 @@ export default function RootLayout({
       <body className="font-display antialiased bg-background-light text-slate-900 min-h-screen transition-colors dark:bg-background-dark dark:text-slate-100">
         <PWARegister />
         <PWAInstallPopup />
-        <Header />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <ScaledDesktopFrame>
+          <Header />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </ScaledDesktopFrame>
         <NotificationServer />
       </body>
     </html>

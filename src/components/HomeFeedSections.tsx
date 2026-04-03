@@ -17,6 +17,25 @@ type FeedResponse = {
   };
 };
 
+async function parseFeedResponse(response: Response): Promise<FeedResponse> {
+  const contentType = response.headers.get("content-type") ?? "";
+  const raw = await response.text();
+
+  if (!raw.trim()) {
+    throw new Error("Feed response was empty");
+  }
+
+  if (!contentType.includes("application/json")) {
+    throw new Error("Feed response was not JSON");
+  }
+
+  try {
+    return JSON.parse(raw) as FeedResponse;
+  } catch {
+    throw new Error("Feed response could not be parsed");
+  }
+}
+
 type HomeFeedSectionsProps = {
   initialNewListings: Listing[];
   initialNearbyListings: Listing[];
@@ -57,6 +76,8 @@ export default function HomeFeedSections({
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const isFetchingRef = useRef(false);
   const requestedPagesRef = useRef<Set<number>>(new Set([0]));
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const mountedRef = useRef(true);
 
   const hasAnyMore = useMemo(
     () => hasMore.newListings || hasMore.nearbyListings || hasMore.recentlyActiveListings,
@@ -80,15 +101,20 @@ export default function HomeFeedSections({
     setIsLoadingMore(true);
     const startedAt = performance.now();
 
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     void fetch(`/api/home-feed?page=${nextPage}&pageSize=${PAGE_SIZE}`, {
       cache: "no-store",
+      signal: controller.signal,
     })
       .then(async (response) => {
+        if (!mountedRef.current) return;
         if (!response.ok) {
           throw new Error("Failed to fetch the next feed page");
         }
 
-        const payload = (await response.json()) as FeedResponse;
+        const payload = await parseFeedResponse(response);
         setNewListings((prev) => appendUnique(prev, payload.newListings));
         setNearbyListings((prev) => appendUnique(prev, payload.nearbyListings));
         setRecentlyActiveListings((prev) => appendUnique(prev, payload.recentlyActiveListings));
@@ -107,6 +133,10 @@ export default function HomeFeedSections({
         });
       })
       .catch((error) => {
+        if (!mountedRef.current) return;
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
         requestedPagesRef.current.delete(nextPage);
         setLoadMoreError("Could not load more listings.");
 
@@ -118,10 +148,18 @@ export default function HomeFeedSections({
         });
       })
       .finally(() => {
+        if (!mountedRef.current) return;
         isFetchingRef.current = false;
         setIsLoadingMore(false);
       });
   }, [hasAnyMore, page]);
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -195,7 +233,7 @@ export default function HomeFeedSections({
             </p>
           ) : (
             <>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-4 gap-[clamp(0.45rem,0.8vw,1.25rem)]">
                 {nearbyListings.map((listing) => (
                   <ProductCard key={listing.id} listing={{ ...listing, isNearby: true }} />
                 ))}
@@ -229,7 +267,7 @@ export default function HomeFeedSections({
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-4 gap-[clamp(0.45rem,0.8vw,1.25rem)]">
             {recentlyActiveListings.map((listing) => (
               <ProductCard key={listing.id} listing={listing} />
             ))}
@@ -244,7 +282,7 @@ export default function HomeFeedSections({
 
       <div ref={sentinelRef} className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
         {isLoadingMore ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+          <div className="grid grid-cols-3 gap-[clamp(0.45rem,0.8vw,1.1rem)]">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="animate-pulse space-y-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
                 <div className="h-40 rounded-lg bg-gray-200 dark:bg-slate-700" />

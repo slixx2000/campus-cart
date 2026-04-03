@@ -72,18 +72,41 @@ export type MessageItem = {
   created_at: string;
 };
 
+export type SellerReview = {
+  id: string;
+  sellerId: string;
+  reviewerId: string;
+  reviewerName: string;
+  reviewerAvatarUrl?: string | null;
+  listingId?: string | null;
+  rating: number;
+  reviewText?: string | null;
+  createdAt: string;
+};
+
+export type SellerRatingSummary = {
+  averageRating: number;
+  totalReviews: number;
+  distribution: {
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+  };
+};
+
 export type RootStackParamList = {
   MainTabs: undefined;
   ListingDetail: { listing: Listing };
-  ChatDetail: { conversationId: string; title: string; currentUserId: string };
   SellerProfile: { sellerId: string; sellerName: string };
+  AccountSettings: undefined;
 };
 
 export type MainTabParamList = {
   Home: undefined;
   Browse: undefined;
   Sell: undefined;
-  Messages: undefined;
   About: undefined;
   Account: undefined;
 };

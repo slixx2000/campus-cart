@@ -6,6 +6,12 @@
   color-scheme: light;
 }
 
+html,
+body {
+  width: 100%;
+  overflow-x: clip;
+}
+
 .dark {
   color-scheme: dark;
 }

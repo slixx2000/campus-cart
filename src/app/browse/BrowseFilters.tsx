@@ -182,11 +182,11 @@ export default function BrowseFilters({
   );
 
   return (
-    <div className="flex flex-col gap-5 md:gap-8 md:flex-row">
+    <div className="flex flex-col gap-5 md:flex-row md:gap-8">
       <aside className="w-full shrink-0 space-y-4 md:w-72 md:space-y-6">
         <details className="md:hidden">
           <summary className="cursor-pointer list-none rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 text-sm font-bold text-slate-800 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-100">
-            <span className="flex items-center justify-between">
+            <span className="flex items-center justify-between gap-4">
               <span>Filters</span>
               <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                 {hasFilters ? "active" : "show"}
@@ -209,69 +209,55 @@ export default function BrowseFilters({
         </div>
       </aside>
 
-      <div className="flex-1 space-y-4 sm:space-y-6">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-            <div className="hidden flex-wrap gap-2 sm:flex">
-              {(["newest", "price-asc", "price-desc"] as const).map((s) => (
-                <button
-                  key={s}
-                  onClick={() => push({ sort: s })}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                    sortBy === s
-                      ? "bg-primary text-white dark:bg-sky-400 dark:text-slate-950"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
-                  }`}
-                >
-                  {s === "newest"
-                    ? "Newest"
-                    : s === "price-asc"
-                    ? "Price: Low to High"
-                    : "Price: High to Low"}
-                </button>
-              ))}
-            </div>
-            <div className="sm:hidden">
-              <label className="mb-1 block text-xs font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
-                Sort
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => push({ sort: e.target.value })}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-white/5 dark:text-slate-100"
+      <div className="flex-1 space-y-6">
+        <div className="flex items-center justify-between gap-4">
+          <div className="no-scrollbar flex gap-2 overflow-x-auto pr-2">
+            {(["newest", "price-asc", "price-desc"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => push({ sort: s })}
+                className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                  sortBy === s
+                    ? "bg-primary text-white dark:bg-sky-400 dark:text-slate-950"
+                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
+                }`}
               >
-                <option value="newest">Newest</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
-            </div>
-            <p className="whitespace-nowrap text-sm font-medium text-slate-500 dark:text-slate-400">
-              Showing {count} {count === 1 ? "result" : "results"}
-            </p>
+                {s === "newest"
+                  ? "Newest"
+                  : s === "price-asc"
+                  ? "Price: Low to High"
+                  : "Price: High to Low"}
+              </button>
+            ))}
           </div>
+          <p className="whitespace-nowrap text-sm font-medium text-slate-500 dark:text-slate-400">
+            Showing {count} {count === 1 ? "result" : "results"}
+          </p>
+        </div>
 
-          {children}
+        {children}
 
-          {showPagination && count > 12 && (
-            <div className="flex justify-center gap-2 mt-6">
-              <button
-                onClick={() => push({ page: String(Math.max(1, currentPage - 1)) })}
-                disabled={currentPage <= 1}
-                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
-              >
-                ← Prev
-              </button>
-              <span className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">
-                Page {currentPage}
-              </span>
-              <button
-                onClick={() => push({ page: String(currentPage + 1) })}
-                disabled={currentPage * 12 >= count}
-                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
-              >
-                Next →
-              </button>
-            </div>
-          )}
+        {showPagination && count > 12 && (
+          <div className="mt-6 flex justify-center gap-2">
+            <button
+              onClick={() => push({ page: String(Math.max(1, currentPage - 1)) })}
+              disabled={currentPage <= 1}
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
+            >
+              ← Prev
+            </button>
+            <span className="px-4 py-2 text-sm text-slate-500 dark:text-slate-400">
+              Page {currentPage}
+            </span>
+            <button
+              onClick={() => push({ page: String(currentPage + 1) })}
+              disabled={currentPage * 12 >= count}
+              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

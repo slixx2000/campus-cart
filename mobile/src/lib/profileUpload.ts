@@ -30,8 +30,6 @@ export async function uploadProfileAvatar(userId: string, uri: string, mimeType?
   const extension = fileName?.split('.').pop() || 'jpg';
   const path = `${userId}/avatar-${Date.now()}.${extension}`;
 
-  console.log('[PROFILE UPLOAD] Starting avatar upload:', { path, userId });
-
   const { error } = await supabase.storage.from('profile-images').upload(path, decode(base64), {
     contentType: mimeType || 'image/jpeg',
     upsert: true,
@@ -44,8 +42,7 @@ export async function uploadProfileAvatar(userId: string, uri: string, mimeType?
 
   const { data } = supabase.storage.from('profile-images').getPublicUrl(path);
   const publicUrl = data.publicUrl;
-  console.log('[PROFILE UPLOAD] Success:', { publicUrl, path });
-  
+
   return publicUrl;
 }
 

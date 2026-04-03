@@ -115,9 +115,9 @@ export default function SlideTabs({
   };
 
   return (
-    <div className="hidden md:block">
+    <div className="block shrink-0">
       <div
-        className="relative rounded-full border border-slate-200 bg-white p-1 dark:border-white/10 dark:bg-white/5"
+        className="relative rounded-full border border-slate-200 bg-white p-0.5 dark:border-white/10 dark:bg-white/5"
         onMouseLeave={() => {
           setHoveredIndex(null);
           applyCursorForIndex(selectedIndex);
@@ -152,7 +152,7 @@ export default function SlideTabs({
           <motion.li
             animate={position}
             transition={{ type: "spring", stiffness: 420, damping: 38, mass: 0.7 }}
-            className="absolute inset-y-1 z-0 rounded-full bg-gradient-to-r from-primary to-blue-500 dark:from-sky-300 dark:to-cyan-300"
+            className="absolute inset-y-0.5 z-0 rounded-full bg-gradient-to-r from-primary to-blue-500 dark:from-sky-300 dark:to-cyan-300"
           />
         </ul>
       </div>
@@ -188,7 +188,7 @@ const TabButton = forwardRef(function TabButton(
       type="button"
       onMouseEnter={onMouseEnter}
       onClick={onClick}
-      className={`relative z-10 flex items-center gap-1 rounded-full px-4 py-2 text-sm font-semibold transition-colors active:scale-[0.98] ${
+      className={`relative z-10 flex items-center gap-1 rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors active:scale-[0.98] ${
         isActiveVisual
           ? "text-white dark:text-slate-950"
           : "text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
@@ -204,7 +204,7 @@ const TabButton = forwardRef(function TabButton(
         <ChevronRight className="h-3.5 w-3.5" />
       </motion.span>
       {typeof badgeCount === "number" && badgeCount > 0 ? (
-        <span className="rounded-full bg-rose-500 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
+        <span className="rounded-full bg-rose-500 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white">
           {badgeCount > 99 ? "99+" : badgeCount}
         </span>
       ) : null}

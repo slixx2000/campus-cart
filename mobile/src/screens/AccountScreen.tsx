@@ -339,7 +339,15 @@ export function AccountScreen(props: Props) {
       {authMode === 'sign-up' && (
         <>
           <TextInput style={styles.input} placeholder="Full name" placeholderTextColor="#64748b" value={fullName} onChangeText={setFullName} />
-          <TextInput style={styles.input} placeholder="Phone / WhatsApp" placeholderTextColor="#64748b" value={phone} onChangeText={setPhone} />
+          <TextInput
+            style={styles.input}
+            placeholder="Phone (local, e.g. 97xxxxxxx)"
+            placeholderTextColor="#64748b"
+            keyboardType="phone-pad"
+            value={phone}
+            onChangeText={setPhone}
+          />
+          <Text style={styles.helperText}>Stored as +260 automatically.</Text>
         </>
       )}
       <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#64748b" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />

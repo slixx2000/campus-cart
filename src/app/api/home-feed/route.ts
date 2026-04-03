@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/server";
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 40;
 const HOME_FEED_CACHE_TTL_MS = 30_000;
+const HOME_FEED_CACHE_MAX_ENTRIES = 300;
 const HOME_FEED_QUERY_TIMEOUT_MS = 4_500;
 
 type HomeFeedPayload = {
@@ -31,6 +32,20 @@ type CachedFeedEntry = {
 
 const feedCache = new Map<string, CachedFeedEntry>();
 
+function pruneFeedCache(now: number) {
+  for (const [key, entry] of feedCache.entries()) {
+    if (entry.expiresAt <= now) {
+      feedCache.delete(key);
+    }
+  }
+
+  while (feedCache.size > HOME_FEED_CACHE_MAX_ENTRIES) {
+    const oldestKey = feedCache.keys().next().value;
+    if (!oldestKey) break;
+    feedCache.delete(oldestKey);
+  }
+}
+
 function parsePositiveInt(value: string | null, fallback: number): number {
   if (!value) return fallback;
   const parsed = Number.parseInt(value, 10);
@@ -41,6 +56,8 @@ function parsePositiveInt(value: string | null, fallback: number): number {
 export async function GET(request: Request) {
   const startedAt = Date.now();
   try {
+    pruneFeedCache(startedAt);
+
     const { searchParams } = new URL(request.url);
     const page = parsePositiveInt(searchParams.get("page"), 0);
     const requestedPageSize = parsePositiveInt(searchParams.get("pageSize"), DEFAULT_PAGE_SIZE);
@@ -140,6 +157,7 @@ export async function GET(request: Request) {
       payload,
       expiresAt: Date.now() + HOME_FEED_CACHE_TTL_MS,
     });
+    pruneFeedCache(Date.now());
 
     console.info("home-feed-api", {
       event: "cache-miss",

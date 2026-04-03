@@ -53,3 +53,27 @@ export interface ListingFormData {
   sellerName: string;
   sellerPhone: string;
 }
+
+export interface SellerReview {
+  id: string;
+  sellerId: string;
+  reviewerId: string;
+  reviewerName: string;
+  reviewerAvatarUrl?: string | null;
+  listingId?: string | null;
+  rating: number;
+  reviewText?: string | null;
+  createdAt: string;
+}
+
+export interface SellerRatingSummary {
+  averageRating: number;
+  totalReviews: number;
+  distribution: {
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+  };
+}

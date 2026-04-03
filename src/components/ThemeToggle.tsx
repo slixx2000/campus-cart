@@ -37,9 +37,9 @@ export default function ThemeToggle() {
         setTheme(nextTheme);
         applyTheme(nextTheme);
       }}
-      className="flex items-center justify-center rounded-full size-10 bg-slate-200/60 text-slate-700 transition-colors hover:bg-primary/15 hover:text-primary dark:bg-primary/10 dark:text-white dark:hover:bg-primary/20"
+      className="flex size-8 items-center justify-center rounded-full bg-slate-200/60 text-slate-700 transition-colors hover:bg-primary/15 hover:text-primary dark:bg-primary/10 dark:text-white dark:hover:bg-primary/20"
     >
-      <span className="material-symbols-outlined text-[20px] leading-none">
+      <span className="material-symbols-outlined text-[16px] leading-none">
         {mounted && theme === "dark" ? "light_mode" : "dark_mode"}
       </span>
     </button>

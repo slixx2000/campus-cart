@@ -8,17 +8,19 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
   const [state, formAction, pending] = useActionState(signInAction, {});
   const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [googleError, setGoogleError] = useState<string | null>(null);
   const googleLockRef = useRef(false);
 
   const handleGoogle = async () => {
     if (googleLockRef.current || googleLoading) return;
     googleLockRef.current = true;
     setGoogleLoading(true);
+    setGoogleError(null);
 
     try {
       await signInWithGoogle(redirectTo ?? "/");
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : "Could not continue with Google.");
+      setGoogleError(error instanceof Error ? error.message : "Could not continue with Google.");
       setGoogleLoading(false);
       googleLockRef.current = false;
     }
@@ -31,6 +33,12 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
       {state.message && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
           {state.message}
+        </div>
+      )}
+
+      {googleError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-rose-300/20 dark:bg-rose-300/10 dark:text-rose-200">
+          {googleError}
         </div>
       )}
 

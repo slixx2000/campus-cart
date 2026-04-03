@@ -71,15 +71,12 @@ export async function createListingAction(
     isService: formData.get("isService") === "true",
     uploadedImages: (() => {
       const rawValue = formData.get("uploadedImages");
-      console.log("[DEBUG] Raw uploadedImages from formData:", rawValue);
       if (typeof rawValue !== "string") {
-        console.log("[DEBUG] uploadedImages is not a string, returning empty array");
         return [];
       }
 
       try {
         const parsedImages = JSON.parse(rawValue);
-        console.log("[DEBUG] Parsed uploadedImages:", parsedImages);
         return Array.isArray(parsedImages) ? parsedImages : [];
       } catch (e) {
         console.error("[ERROR] Failed to parse uploadedImages JSON:", e);
@@ -138,8 +135,6 @@ export async function createListingAction(
     .select("id")
     .single();
 
-  console.log("[DEBUG] Listing insert result:", { listingError, listingId: listing?.id });
-
   if (listingError) {
     if (uploadedImages.length > 0) {
       await supabase.storage
@@ -155,23 +150,17 @@ export async function createListingAction(
   }
 
   if (uploadedImages.length > 0) {
-    console.log(`[DEBUG] Inserting ${uploadedImages.length} images for listing ${listing.id}`);
-    
     const imagesToInsert = uploadedImages.map((image, index) => ({
       listing_id: listing.id,
       storage_path: image.storagePath,
       public_url: image.publicUrl,
       sort_order: index,
     }));
-    
-    console.log("[DEBUG] Image rows to insert:", JSON.stringify(imagesToInsert, null, 2));
-    
-    const { error: imageInsertError, data: imageInsertData } = await supabase
+
+    const { error: imageInsertError } = await supabase
       .from("listing_images")
       .insert(imagesToInsert)
       .select();
-
-    console.log("[DEBUG] Image insert result:", { error: imageInsertError, data: imageInsertData });
 
     if (imageInsertError) {
       console.error("[ERROR] Image insert failed:", imageInsertError);

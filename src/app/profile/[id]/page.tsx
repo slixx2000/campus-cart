@@ -164,7 +164,12 @@ export default async function ProfilePage({ params }: Props) {
         </div>
 
         {/* ── Tabs + content ── */}
-        <ProfileTabs activeListings={activeListings} isOwnProfile={isOwnProfile} />
+        <ProfileTabs
+          activeListings={activeListings}
+          isOwnProfile={isOwnProfile}
+          sellerId={id}
+          viewerId={user?.id}
+        />
 
         {isOwnProfile ? (
           <section className="mt-10 rounded-[1.5rem] border border-slate-200/70 bg-white/80 p-5 backdrop-blur dark:border-white/10 dark:bg-white/5">
