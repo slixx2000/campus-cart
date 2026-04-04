@@ -2,17 +2,18 @@ import { formatPrice } from './format';
 import type { Listing } from '../types';
 
 const ZAMBIA_COUNTRY_CODE = '+260';
+const ZAMBIA_MOBILE_PREFIX = '[79]';
 
 function digitsOnly(value: string): string {
   return value.replace(/\D/g, '');
 }
 
-// Accepts local input like 97xxxxxxx or 097xxxxxxx and returns +26097xxxxxxx.
+// Accepts local input like 97xxxxxxx, 77xxxxxxx, 097xxxxxxx, or 077xxxxxxx.
 export function normalizeZambiaPhoneForStorage(localInput: string): string | null {
   const digits = digitsOnly(localInput);
   const withoutLeadingZero = digits.startsWith('0') ? digits.slice(1) : digits;
 
-  if (/^9\d{8}$/.test(withoutLeadingZero)) {
+  if (new RegExp(`^${ZAMBIA_MOBILE_PREFIX}\\d{8}$`).test(withoutLeadingZero)) {
     return `${ZAMBIA_COUNTRY_CODE}${withoutLeadingZero}`;
   }
 
@@ -24,22 +25,12 @@ export function normalizeSellerPhoneToE164(phoneNumber: string): string | null {
   const trimmed = phoneNumber.trim();
   if (!trimmed) return null;
 
-  if (/^\+2609\d{8}$/.test(trimmed)) {
-    return trimmed;
-  }
-
   const digits = digitsOnly(trimmed);
+  const localCandidate = digits.startsWith('260') ? digits.slice(3) : digits;
+  const withoutLeadingZero = localCandidate.startsWith('0') ? localCandidate.slice(1) : localCandidate;
 
-  if (/^2609\d{8}$/.test(digits)) {
-    return `+${digits}`;
-  }
-
-  if (/^09\d{8}$/.test(digits)) {
-    return `${ZAMBIA_COUNTRY_CODE}${digits.slice(1)}`;
-  }
-
-  if (/^9\d{8}$/.test(digits)) {
-    return `${ZAMBIA_COUNTRY_CODE}${digits}`;
+  if (new RegExp(`^${ZAMBIA_MOBILE_PREFIX}\\d{8}$`).test(withoutLeadingZero)) {
+    return `${ZAMBIA_COUNTRY_CODE}${withoutLeadingZero}`;
   }
 
   return null;

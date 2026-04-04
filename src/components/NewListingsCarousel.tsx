@@ -8,7 +8,6 @@ type NewListingsCarouselProps = {
   listings: Listing[];
 };
 
-const GAP_PX = 24;
 const AUTO_SCROLL_PX_PER_SEC = 34;
 const RESUME_COOLDOWN_MS = 3000;
 const RESUME_RAMP_MS = 650;
@@ -27,7 +26,8 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
   const scrollLeftRef = useRef(0);
   const autoScrollLeftRef = useRef(0);
 
-  const stride = cardWidth + GAP_PX;
+  // Card wrappers already include right padding in measured width, so stride is the card width.
+  const stride = cardWidth;
   const total = listings.length;
   const loopPoint = Math.max(0, stride * total);
   const canUseCarousel = total > 1;
@@ -133,6 +133,26 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
     return () => cancelAnimationFrame(rafId);
   }, [canUseCarousel, loopPoint]);
 
+  useEffect(() => {
+    if (!canUseCarousel) return;
+
+    const clearInteraction = () => {
+      if (!isPointerInteractingRef.current) return;
+      isPointerInteractingRef.current = false;
+      pauseWithCooldown();
+    };
+
+    window.addEventListener("pointerup", clearInteraction);
+    window.addEventListener("pointercancel", clearInteraction);
+    window.addEventListener("blur", clearInteraction);
+
+    return () => {
+      window.removeEventListener("pointerup", clearInteraction);
+      window.removeEventListener("pointercancel", clearInteraction);
+      window.removeEventListener("blur", clearInteraction);
+    };
+  }, [canUseCarousel]);
+
   const scrollByDirection = (direction: "left" | "right") => {
     const viewport = viewportRef.current;
     if (!viewport) return;
@@ -153,12 +173,24 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
     pauseWithCooldown();
   };
 
-  const handlePointerDown = () => {
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     isPointerInteractingRef.current = true;
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // Ignore capture errors; global pointerup fallback still clears interaction.
+    }
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (event?: React.PointerEvent<HTMLDivElement>) => {
     isPointerInteractingRef.current = false;
+    if (event) {
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      } catch {
+        // Ignore release errors.
+      }
+    }
     pauseWithCooldown();
   };
 
@@ -192,6 +224,7 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
+        onPointerLeave={handlePointerUp}
       >
         <div className="flex items-stretch">
           {renderedListings.map((listing, idx) => {

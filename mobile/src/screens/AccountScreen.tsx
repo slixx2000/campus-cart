@@ -341,7 +341,7 @@ export function AccountScreen(props: Props) {
           <TextInput style={styles.input} placeholder="Full name" placeholderTextColor="#64748b" value={fullName} onChangeText={setFullName} />
           <TextInput
             style={styles.input}
-            placeholder="Phone (local, e.g. 97xxxxxxx)"
+            placeholder="Phone (local, e.g. 97xxxxxxx or 77xxxxxxx)"
             placeholderTextColor="#64748b"
             keyboardType="phone-pad"
             value={phone}

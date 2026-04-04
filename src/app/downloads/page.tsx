@@ -11,9 +11,9 @@ interface BeforeInstallPromptEvent extends Event {
 export default function DownloadsPage() {
   const mobileRepoUrl = 'https://github.com/slixx2000/campus-cart';
   const mobileReleasesUrl = 'https://github.com/slixx2000/campus-cart/releases';
-  const qaReleaseUrl = 'https://github.com/slixx2000/campus-cart/releases/tag/v1.0.0';
+  const qaReleaseUrl = 'https://github.com/slixx2000/campus-cart/releases/tag/v1.1.0';
   const latestApkUrl =
-    'https://github.com/slixx2000/campus-cart/releases/download/v1.0.0/campus-cart-mobile.apk';
+    'https://github.com/slixx2000/campus-cart/releases/download/v1.1.0/campuscart.apk';
 
   const [isAndroid, setIsAndroid] = useState(false);
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
@@ -55,7 +55,7 @@ export default function DownloadsPage() {
     }
   };
 
-  const packageVersion = '1.0.0'; // Match mobile/package.json version
+  const packageVersion = '1.1.0'; // Match mobile/package.json version
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background-light to-surface-light dark:from-background-dark dark:to-surface-dark transition-colors">
@@ -163,7 +163,7 @@ export default function DownloadsPage() {
                 rel="noopener noreferrer"
                 className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
               >
-                Open Current QA Release (v1.0.0)
+                Open Current QA Release (v1.1.0)
               </a>
 
               <a
@@ -186,7 +186,7 @@ export default function DownloadsPage() {
                     {mobileReleasesUrl}
                   </code>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Suggested asset name for auto-download link: <code className="bg-slate-800 text-slate-100 px-1">campus-cart-mobile.apk</code>
+                    Suggested asset name for auto-download link: <code className="bg-slate-800 text-slate-100 px-1">campuscart.apk</code>
                   </p>
                 </div>
               </details>

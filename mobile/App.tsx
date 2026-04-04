@@ -782,7 +782,7 @@ export default function App() {
     if (authMode === 'sign-up') {
       const normalizedPhone = normalizeZambiaPhoneForStorage(phone);
       if (!normalizedPhone) {
-        openThemedAlert('Phone required', 'Enter a valid local Zambia number like 97xxxxxxx.');
+        openThemedAlert('Phone required', 'Enter a valid local Zambia number like 97xxxxxxx or 77xxxxxxx.');
         return;
       }
     }
