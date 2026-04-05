@@ -2,11 +2,19 @@
   "build": {
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mtbpuhxyhreyjefvumtf.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10YnB1aHh5aHJleWplZnZ1bXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTA2MTMsImV4cCI6MjA5MDk2NjYxM30.Y_Q8shV0PFtqnMgybn4WQC4xlvErOcDVhcKMhtZD824"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://mtbpuhxyhreyjefvumtf.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10YnB1aHh5aHJleWplZnZ1bXRmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzOTA2MTMsImV4cCI6MjA5MDk2NjYxM30.Y_Q8shV0PFtqnMgybn4WQC4xlvErOcDVhcKMhtZD824"
+      },
       "android": {
         "buildType": "app-bundle"
       }

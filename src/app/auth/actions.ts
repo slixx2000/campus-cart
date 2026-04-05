@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { ensureProfileForUser } from "@/lib/repositories/profiles";
@@ -43,6 +44,21 @@ function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (explicit) return explicit.replace(/\/+$/, "");
 
+  const siteUrl = process.env.SITE_URL?.trim();
+  if (siteUrl) return siteUrl.replace(/\/+$/, "");
+
+  try {
+    const headerList = headers();
+    const host = headerList.get("x-forwarded-host") || headerList.get("host");
+    if (host) {
+      const forwardedProto = headerList.get("x-forwarded-proto");
+      const protocol = forwardedProto || (host.includes("localhost") ? "http" : "https");
+      return `${protocol}://${host}`.replace(/\/+$/, "");
+    }
+  } catch {
+    // headers() can be unavailable outside request context.
+  }
+
   const vercel = process.env.VERCEL_URL?.trim();
   if (vercel) {
     const normalized = vercel.startsWith("http") ? vercel : `https://${vercel}`;
@@ -50,6 +66,16 @@ function getSiteUrl(): string {
   }
 
   return "http://localhost:3000";
+}
+
+function normalizeRedirectPath(path?: string): string {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) return "/";
+  return path;
+}
+
+function buildAuthCallbackUrl(nextPath: string): string {
+  const safeNextPath = normalizeRedirectPath(nextPath);
+  return `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(safeNextPath)}`;
 }
 
 export async function signInAction(
@@ -75,7 +101,7 @@ export async function signInAction(
     await ensureProfileForUser(data.user, supabase);
   }
 
-  redirect(parsed.data.redirectTo ?? "/");
+  redirect(normalizeRedirectPath(parsed.data.redirectTo));
 }
 
 export async function signUpAction(
@@ -98,6 +124,7 @@ export async function signUpAction(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
+      emailRedirectTo: buildAuthCallbackUrl(parsed.data.redirectTo ?? "/"),
       data: {
         full_name: parsed.data.fullName,
         phone: parsed.data.phone ?? null,
@@ -156,8 +183,7 @@ export async function forgotPasswordAction(
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
 
   const supabase = await createClient();
-  const siteUrl = getSiteUrl();
-  const redirectTo = `${siteUrl}/auth/callback?next=/auth/reset-password`;
+  const redirectTo = buildAuthCallbackUrl("/auth/reset-password");
 
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo,

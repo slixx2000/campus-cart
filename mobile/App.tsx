@@ -5,12 +5,13 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, Linking, SafeAreaView, Text, View } from 'react-native';
+import { Animated, Easing, Linking, Platform, SafeAreaView, Text, View } from 'react-native';
 import { AccountScreen } from './src/screens/AccountScreen';
 import { AboutScreen } from './src/screens/AboutScreen';
 import { BrowseScreen } from './src/screens/BrowseScreen';
 import { AppErrorBoundary } from './src/components/AppErrorBoundary';
 import { FeedbackModal } from './src/components/FeedbackModal';
+import { UpdatePromptModal } from './src/components/UpdatePromptModal';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { AccountSettingsScreen } from './src/screens/AccountSettingsScreen';
 import { ListingDetailScreen } from './src/screens/ListingDetailScreen';
@@ -21,6 +22,7 @@ import { fetchDefaultAvatars, pickSingleProfileImage, uploadProfileAvatar } from
 import { registerPushToken } from './src/lib/pushNotifications';
 import { sendPasswordResetEmail, signInWithGoogle, signInWithPassword, signUpWithEmail } from './src/lib/authService';
 import { generateWhatsAppLink, normalizeZambiaPhoneForStorage } from './src/lib/whatsapp';
+import { checkForLatestAppUpdate, type AppUpdateInfo } from './src/lib/appUpdates';
 import { useOtpCooldown } from './src/hooks/useOtpCooldown';
 import { getFavoriteIds, toggleFavorite } from './src/lib/favorites';
 import { CATEGORY_OPTIONS, LISTING_SELECT } from './src/lib/constants';
@@ -378,7 +380,11 @@ export default function App() {
   const [feedbackModalTitle, setFeedbackModalTitle] = useState('Notice');
   const [feedbackModalMessage, setFeedbackModalMessage] = useState('');
   const [feedbackModalIcon, setFeedbackModalIcon] = useState<keyof typeof MaterialIcons.glyphMap>('info-outline');
+  const [updateInfo, setUpdateInfo] = useState<AppUpdateInfo | null>(null);
+  const [checkingForUpdates, setCheckingForUpdates] = useState(false);
   const processedOAuthCodesRef = useRef<Set<string>>(new Set());
+  const dismissedUpdateVersionRef = useRef<string | null>(null);
+  const updateCheckInFlightRef = useRef(false);
   const loadingCartProgress = useRef(new Animated.Value(0)).current;
   const { canResend: canSendAuthEmail, timeLeft: authEmailCooldownLeft, startCooldown: startAuthEmailCooldown } = useOtpCooldown({
     storageKey: 'auth_signup_email_cooldown',
@@ -401,6 +407,58 @@ export default function App() {
       showFeedbackModal(title, message, icon);
     },
     [showFeedbackModal]
+  );
+
+  const handleDismissUpdatePrompt = useCallback(() => {
+    if (updateInfo?.latestVersion) {
+      dismissedUpdateVersionRef.current = updateInfo.latestVersion;
+    }
+    setUpdateInfo(null);
+  }, [updateInfo?.latestVersion]);
+
+  const handleCheckForAppUpdates = useCallback(
+    async (options?: { silent?: boolean }) => {
+      if (Platform.OS !== 'android') {
+        if (!options?.silent) {
+          openThemedAlert('Updates unavailable', 'Update checks are only enabled for the Android APK build.');
+        }
+        return false;
+      }
+
+      if (updateCheckInFlightRef.current) {
+        return false;
+      }
+
+      updateCheckInFlightRef.current = true;
+      setCheckingForUpdates(true);
+
+      try {
+        const latestUpdate = await checkForLatestAppUpdate();
+        if (latestUpdate) {
+          if (dismissedUpdateVersionRef.current === latestUpdate.latestVersion) {
+            return false;
+          }
+
+          setUpdateInfo(latestUpdate);
+          return true;
+        }
+
+        setUpdateInfo(null);
+        if (!options?.silent) {
+          openThemedAlert('Up to date', 'You are already on the latest CampusCart release.');
+        }
+        return false;
+      } catch (error) {
+        if (!options?.silent) {
+          openThemedAlert('Update check failed', error instanceof Error ? error.message : 'Could not check for updates right now.');
+        }
+        return false;
+      } finally {
+        updateCheckInFlightRef.current = false;
+        setCheckingForUpdates(false);
+      }
+    },
+    [openThemedAlert]
   );
 
   const loadProfile = useCallback(async (userId: string) => {
@@ -617,6 +675,8 @@ export default function App() {
   useEffect(() => {
     let mounted = true;
 
+    void handleCheckForAppUpdates({ silent: true });
+
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setSession(data.session);
@@ -650,7 +710,7 @@ export default function App() {
       mounted = false;
       listener.subscription.unsubscribe();
     };
-  }, [loadCategories, loadDefaultAvatars, loadFavorites, loadFeaturedHomeListings, loadListings, loadMyListings, loadProfile, loadUniversities]);
+  }, [handleCheckForAppUpdates, loadCategories, loadDefaultAvatars, loadFavorites, loadFeaturedHomeListings, loadListings, loadMyListings, loadProfile, loadUniversities]);
 
   useEffect(() => {
     const completeOAuthFromLink = async (url: string) => {
@@ -1484,6 +1544,10 @@ export default function App() {
                 onApplyDefaultAvatar={handleApplyDefaultAvatar}
                 onSaveProfile={handleSaveProfile}
                 onSignOut={signOut}
+                onCheckForUpdates={() => {
+                  void handleCheckForAppUpdates({ silent: false });
+                }}
+                checkingForUpdates={checkingForUpdates}
               />
             )}
           </Stack.Screen>
@@ -1500,6 +1564,12 @@ export default function App() {
           </View>
         </View>
       ) : null}
+      <UpdatePromptModal
+        visible={!!updateInfo}
+        updateInfo={updateInfo}
+        onUpdateLater={handleDismissUpdatePrompt}
+        onRequestClose={handleDismissUpdatePrompt}
+      />
       <FeedbackModal
         visible={feedbackModalVisible}
         title={feedbackModalTitle}

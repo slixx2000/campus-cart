@@ -17,7 +17,10 @@ export async function signUpWithEmail(email: string, password: string, fullName:
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: fullName, phone: phone || null } },
+    options: {
+      emailRedirectTo: 'campuscart://auth/callback',
+      data: { full_name: fullName, phone: phone || null },
+    },
   });
 
   if (error) throw new Error(mapAuthErrorMessage(error.message || 'Could not create account.'));

@@ -55,15 +55,15 @@ export default async function ProfilePage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-background-dark dark:text-slate-100">
-      <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-7 md:px-8">
 
         {/* ── Profile header card ── */}
-        <div className="mb-8 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.45)] backdrop-blur md:p-10 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
-          <div className="flex flex-col items-center gap-8 md:flex-row md:items-start">
+        <div className="mb-8 rounded-[1.6rem] border border-slate-200/70 bg-white/85 p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.45)] backdrop-blur md:p-8 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
+          <div className="flex flex-col items-center gap-6 md:flex-row md:items-start">
 
             {/* Avatar */}
             <div className="relative shrink-0">
-              <div className="size-32 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-xl dark:border-slate-800 md:size-40">
+              <div className="size-28 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-xl dark:border-slate-800 md:size-36">
                 <AvatarImage
                   alt={profile.full_name}
                   src={profile.avatar_url}
@@ -77,17 +77,17 @@ export default async function ProfilePage({ params }: Props) {
             {/* Details */}
             <div className="flex-1 text-center md:text-left">
               <div className="mb-2 flex flex-col items-center gap-3 md:flex-row">
-                <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
+                <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white md:text-[2.1rem]">
                   {profile.full_name}
                 </h1>
                 {profile.is_pioneer_seller && (
-                  <span className="inline-flex items-center gap-1 self-center rounded-full border border-amber-300/60 bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700 dark:border-amber-300/30 dark:bg-amber-400/15 dark:text-amber-300">
+                  <span className="inline-flex items-center gap-1 self-center rounded-full border border-amber-300/60 bg-amber-100 px-2.5 py-1 text-[0.7rem] font-bold text-amber-700 dark:border-amber-300/30 dark:bg-amber-400/15 dark:text-amber-300">
                     <span className="material-symbols-outlined text-xs">verified</span>
                     Pioneer Seller
                   </span>
                 )}
                 {profile.is_verified_student && (
-                  <span className="inline-flex items-center gap-1 self-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold text-primary dark:border-sky-300/30 dark:bg-sky-300/10 dark:text-sky-300">
+                  <span className="inline-flex items-center gap-1 self-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[0.7rem] font-bold text-primary dark:border-sky-300/30 dark:bg-sky-300/10 dark:text-sky-300">
                     <span className="material-symbols-outlined text-xs">verified</span>
                     Verified Student
                   </span>
@@ -95,15 +95,15 @@ export default async function ProfilePage({ params }: Props) {
               </div>
 
               {university && (
-                <p className="mb-4 font-medium text-slate-500 dark:text-slate-400">
+                <p className="mb-3.5 font-medium text-slate-500 dark:text-slate-400">
                   {university.short_name} – {university.name}
                 </p>
               )}
 
               {/* Stats */}
-              <div className="mb-6 flex flex-wrap justify-center gap-6 md:justify-start">
+              <div className="mb-5 flex flex-wrap justify-center gap-5 md:justify-start">
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                  <span className="text-[1.55rem] font-bold text-slate-900 dark:text-white">
                     {activeListings.length}
                   </span>
                   <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -112,7 +112,7 @@ export default async function ProfilePage({ params }: Props) {
                 </div>
                 <div className="hidden h-10 w-px self-center bg-slate-200 dark:bg-slate-700 sm:block" />
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                  <span className="text-[1.55rem] font-bold text-slate-900 dark:text-white">
                     {soldCount}
                   </span>
                   <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
@@ -126,14 +126,14 @@ export default async function ProfilePage({ params }: Props) {
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Link
                     href="/sell"
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/45 bg-gradient-to-r from-primary to-sky-400 px-6 py-2.5 text-sm font-bold text-sky-950 shadow-lg shadow-primary/25 transition hover:opacity-90 dark:text-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/45 bg-gradient-to-r from-primary to-sky-400 px-5 py-2 text-sm font-bold text-sky-950 shadow-lg shadow-primary/25 transition hover:opacity-90 dark:text-white"
                   >
                     <span className="material-symbols-outlined text-sm">add_circle</span>
                     New Listing
                   </Link>
                   <Link
                     href="/profile/settings"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-100 px-6 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-100 px-5 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15"
                   >
                     <span className="material-symbols-outlined text-sm">photo_camera</span>
                     Profile Settings
@@ -141,11 +141,11 @@ export default async function ProfilePage({ params }: Props) {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-bold text-white transition hover:brightness-110 dark:bg-gradient-to-r dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950">
+                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-bold text-white transition hover:brightness-110 dark:bg-gradient-to-r dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950">
                     <span className="material-symbols-outlined text-sm">chat</span>
                     Message
                   </button>
-                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-100 px-6 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15">
+                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-100 px-5 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15">
                     <span className="material-symbols-outlined text-sm">share</span>
                     Share Profile
                   </button>
@@ -172,7 +172,7 @@ export default async function ProfilePage({ params }: Props) {
         />
 
         {isOwnProfile ? (
-          <section className="mt-10 rounded-[1.5rem] border border-slate-200/70 bg-white/80 p-5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+          <section className="mt-10 rounded-[1.4rem] border border-slate-200/70 bg-white/80 p-4.5 backdrop-blur dark:border-white/10 dark:bg-white/5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-bold text-slate-900 dark:text-white">Account Session</p>

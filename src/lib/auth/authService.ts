@@ -17,7 +17,18 @@ function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (explicit) return explicit.replace(/\/+$/, "");
 
+  const vercel = process.env.VERCEL_URL?.trim();
+  if (vercel) {
+    const normalized = vercel.startsWith("http") ? vercel : `https://${vercel}`;
+    return normalized.replace(/\/+$/, "");
+  }
+
   return "http://localhost:3000";
+}
+
+function normalizeNextPath(nextPath?: string): string {
+  if (!nextPath || !nextPath.startsWith("/") || nextPath.startsWith("//")) return "/";
+  return nextPath;
 }
 
 export async function sendPasswordResetEmail(email: string) {
@@ -30,7 +41,7 @@ export async function sendPasswordResetEmail(email: string) {
 
 export async function signInWithGoogle(nextPath = "/") {
   const supabase = createClient();
-  const redirectTo = `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(nextPath)}`;
+  const redirectTo = `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(normalizeNextPath(nextPath))}`;
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",

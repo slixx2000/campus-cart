@@ -40,6 +40,8 @@ type Props = {
   onApplyDefaultAvatar: () => void;
   onSaveProfile: (options?: { silent?: boolean }) => Promise<boolean>;
   onSignOut: () => void;
+  onCheckForUpdates: () => void;
+  checkingForUpdates: boolean;
 };
 
 export function AccountSettingsScreen({
@@ -66,6 +68,8 @@ export function AccountSettingsScreen({
   onApplyDefaultAvatar,
   onSaveProfile,
   onSignOut,
+  onCheckForUpdates,
+  checkingForUpdates,
 }: Props) {
   const [showUniversityModal, setShowUniversityModal] = useState(false);
   const [universitySearch, setUniversitySearch] = useState('');
@@ -208,6 +212,16 @@ export function AccountSettingsScreen({
         <Text style={[styles.helperCardTitle, { color: '#fca5a5' }]}>Danger Zone</Text>
         <Pressable style={[styles.secondaryButton, { borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.12)' }]} onPress={onSignOut}>
           <Text style={[styles.secondaryButtonText, { color: '#fca5a5' }]}>Sign out</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.helperCard}>
+        <Text style={styles.helperCardTitle}>App Updates</Text>
+        <Text style={styles.helperText}>
+          Checks GitHub releases for the latest APK and opens the download link if a newer build is available.
+        </Text>
+        <Pressable style={styles.secondaryButton} onPress={onCheckForUpdates} disabled={checkingForUpdates}>
+          {checkingForUpdates ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Check for updates</Text>}
         </Pressable>
       </View>
 

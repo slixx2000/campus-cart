@@ -25,6 +25,16 @@ alter table public.universities enable row level security;
 create policy "universities_public_read" on public.universities
   for select using (true);
 
+create table public.university_domains (
+  id            uuid primary key default gen_random_uuid(),
+  university_id uuid references public.universities(id) on delete cascade,
+  domain        text unique not null,
+  created_at    timestamptz default now()
+);
+alter table public.university_domains enable row level security;
+create policy "domains_public_read" on public.university_domains
+  for select using (true);
+
 create table public.categories (
   id            uuid primary key default gen_random_uuid(),
   slug          text unique not null,
@@ -58,12 +68,32 @@ create policy "profiles_owner_update"   on public.profiles for update using (aut
 -- Auto-create a profile row when a new user signs up
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  user_email text;
+  email_domain text;
+  verified boolean := false;
+  uni_id uuid;
 begin
-  insert into public.profiles (id, full_name, phone)
+  user_email := new.email;
+  email_domain := split_part(user_email, '@', 2);
+
+  select university_id
+  into uni_id
+  from public.university_domains
+  where domain = email_domain
+  limit 1;
+
+  if uni_id is not null then
+    verified := true;
+  end if;
+
+  insert into public.profiles (id, full_name, phone, university_id, is_verified_student)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', ''),
-    coalesce(new.raw_user_meta_data->>'phone', null)
+    coalesce(new.raw_user_meta_data->>'phone', null),
+    uni_id,
+    verified
   );
   return new;
 end;
@@ -123,6 +153,16 @@ create policy "listings_owner_update" on public.listings
   for update using (auth.uid() = seller_id);
 create policy "listings_owner_delete" on public.listings
   for delete using (auth.uid() = seller_id);
+create policy "verified_students_can_create_listings" on public.listings
+  for insert with check (
+    auth.uid() = seller_id
+    and exists (
+      select 1
+      from public.profiles
+      where profiles.id = auth.uid()
+        and profiles.is_verified_student = true
+    )
+  );
 
 -- Auto-update updated_at
 create or replace function public.set_updated_at()
@@ -617,6 +657,15 @@ create table public.messages (
 );
 
 create index idx_messages_conversation on public.messages(conversation_id, created_at desc);
+create index idx_messages_expiry on public.messages(expires_at);
+
+create or replace function public.set_message_expiry()
+returns trigger language plpgsql as $$
+begin
+  new.expires_at := now() + interval '24 hours';
+  return new;
+end;
+$$;
 
 alter table public.messages enable row level security;
 
@@ -629,6 +678,20 @@ create policy "messages_participant_select" on public.messages
         and (c.buyer_id = auth.uid() or c.seller_id = auth.uid())
     )
   );
+
+create or replace function public.users_are_blocked(user1 uuid, user2 uuid)
+returns boolean language sql stable as $$
+select exists (
+  select 1
+  from public.blocked_users
+  where (blocker_id = user1 and blocked_id = user2)
+     or (blocker_id = user2 and blocked_id = user1)
+);
+$$;
+
+create trigger message_expiry_trigger
+  before insert on public.messages
+  for each row execute procedure public.set_message_expiry();
 
 -- Only a participant who is also the sender can insert
 create policy "messages_participant_insert" on public.messages

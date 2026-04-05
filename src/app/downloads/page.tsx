@@ -11,9 +11,12 @@ interface BeforeInstallPromptEvent extends Event {
 export default function DownloadsPage() {
   const mobileRepoUrl = 'https://github.com/slixx2000/campus-cart';
   const mobileReleasesUrl = 'https://github.com/slixx2000/campus-cart/releases';
-  const qaReleaseUrl = 'https://github.com/slixx2000/campus-cart/releases/tag/v1.1.0';
-  const latestApkUrl =
-    'https://github.com/slixx2000/campus-cart/releases/download/v1.1.0/campuscart.apk';
+  const fallbackReleaseVersion = '1.1.0';
+  const fallbackApkUrl = 'https://github.com/slixx2000/campus-cart/releases/download/v1.1.0/campuscart.apk';
+
+  const [latestReleaseVersion, setLatestReleaseVersion] = useState(fallbackReleaseVersion);
+  const [latestApkUrl, setLatestApkUrl] = useState(fallbackApkUrl);
+  const [latestReleaseUrl, setLatestReleaseUrl] = useState(`https://github.com/slixx2000/campus-cart/releases/tag/v${fallbackReleaseVersion}`);
 
   const [isAndroid, setIsAndroid] = useState(false);
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
@@ -40,6 +43,42 @@ export default function DownloadsPage() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleInstalled);
 
+    const loadLatestRelease = async () => {
+      try {
+        const response = await fetch('https://api.github.com/repos/slixx2000/campus-cart/releases/latest', {
+          headers: {
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        });
+
+        if (!response.ok) return;
+
+        const release = await response.json();
+        const tagName = String(release?.tag_name ?? release?.name ?? '').replace(/^v/i, '');
+        const assets = Array.isArray(release?.assets) ? release.assets : [];
+        const apkAsset = assets.find((asset: any) => {
+          const name = typeof asset?.name === 'string' ? asset.name.toLowerCase() : '';
+          return typeof asset?.browser_download_url === 'string' && (name.endsWith('.apk') || asset?.content_type === 'application/vnd.android.package-archive');
+        });
+
+        if (tagName) {
+          setLatestReleaseVersion(tagName);
+          setLatestReleaseUrl(typeof release?.html_url === 'string' ? release.html_url : `https://github.com/slixx2000/campus-cart/releases/tag/v${tagName}`);
+        }
+
+        if (typeof apkAsset?.browser_download_url === 'string') {
+          setLatestApkUrl(apkAsset.browser_download_url);
+        } else if (typeof release?.html_url === 'string') {
+          setLatestApkUrl(release.html_url);
+        }
+      } catch {
+        // Keep the fallback release URLs when GitHub is unavailable.
+      }
+    };
+
+    void loadLatestRelease();
+
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
       window.removeEventListener('appinstalled', handleInstalled);
@@ -55,32 +94,30 @@ export default function DownloadsPage() {
     }
   };
 
-  const packageVersion = '1.1.0'; // Match mobile/package.json version
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-background-light to-surface-light dark:from-background-dark dark:to-surface-dark transition-colors">
       {/* Hero Section */}
-      <section className="max-w-4xl mx-auto px-4 py-16 md:py-24">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-50 mb-4">
+      <section className="max-w-3xl mx-auto px-4 py-10 md:py-16">
+        <div className="text-center mb-9">
+          <h1 className="text-3xl md:text-[2.1rem] font-bold text-slate-900 dark:text-slate-50 mb-3">
             Get CampusCart
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
+          <p className="text-base text-slate-600 dark:text-slate-300 mb-6 max-w-xl mx-auto leading-7">
             Install the web app instantly on Android from Chrome. APK is available as a fallback.
           </p>
 
           {/* Android Download Card */}
           <div
-            className={`bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 md:p-10 mb-8 border-2 ${
+            className={`bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-5 md:p-7 mb-7 border-2 ${
               isAndroid
                 ? 'border-primary-500 ring-2 ring-primary-100 dark:ring-primary-900'
                 : 'border-slate-200 dark:border-slate-700'
             } transition-all`}
           >
-            <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center justify-center mb-4">
               {/* Android Logo SVG */}
               <svg
-                className="w-16 h-16 text-primary-500"
+                className="w-12 h-12 text-primary-500"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -88,14 +125,14 @@ export default function DownloadsPage() {
               </svg>
             </div>
 
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">
+            <h2 className="text-[1.35rem] font-bold text-slate-900 dark:text-slate-50 mb-2">
               Android
             </h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
-              Version {packageVersion}
+            <p className="text-slate-600 dark:text-slate-300 mb-4">
+              Version {latestReleaseVersion}
             </p>
 
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded p-4 mb-6 text-left">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-3.5 mb-4 text-left">
               <p className="text-sm text-blue-800 dark:text-blue-200 font-semibold">
                 Recommended: Install as Web App (PWA)
               </p>
@@ -105,7 +142,7 @@ export default function DownloadsPage() {
             </div>
 
             {isInstalled ? (
-              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded p-4 mb-6">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-3.5 mb-4">
                 <p className="text-sm text-emerald-800 dark:text-emerald-200">
                   CampusCart is already installed on this device.
                 </p>
@@ -116,7 +153,7 @@ export default function DownloadsPage() {
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className={`w-full px-6 py-3 rounded-lg font-semibold transition-all mb-3 ${
+                className={`w-full px-5 py-2.5 rounded-xl font-semibold transition-all mb-3 text-sm ${
                   isAndroid
                     ? 'bg-primary-500 hover:bg-primary-600 text-white'
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600'
@@ -127,7 +164,7 @@ export default function DownloadsPage() {
             ) : null}
 
             {/* APK fallback notice */}
-            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded p-4 mb-6">
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3.5 mb-4">
               <p className="text-sm text-amber-800 dark:text-amber-200">
                 <strong>Fallback:</strong> If install is unavailable on your browser, use the APK build instead.
               </p>
@@ -143,7 +180,7 @@ export default function DownloadsPage() {
                 href={latestApkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-primary-500 text-white hover:bg-primary-600"
+                className="inline-block w-full px-5 py-2.5 rounded-xl font-semibold transition-all bg-primary-500 text-white hover:bg-primary-600 text-sm"
               >
                 Download Latest APK (GitHub)
               </a>
@@ -152,25 +189,25 @@ export default function DownloadsPage() {
                 href={mobileReleasesUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
+                className="inline-block w-full px-5 py-2.5 rounded-xl font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600 text-sm"
               >
                 View Mobile Releases (GitHub)
               </a>
 
               <a
-                href={qaReleaseUrl}
+                href={latestReleaseUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
+                className="inline-block w-full px-5 py-2.5 rounded-xl font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600 text-sm"
               >
-                Open Current QA Release (v1.1.0)
+                Open Current GitHub Release
               </a>
 
               <a
                 href={mobileRepoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block w-full px-6 py-3 rounded-lg font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600"
+                className="inline-block w-full px-5 py-2.5 rounded-xl font-semibold transition-all bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600 text-sm"
               >
                 Open Mobile Repository
               </a>
@@ -215,9 +252,9 @@ export default function DownloadsPage() {
         </div>
 
         {/* Features Section */}
-        <section className="grid md:grid-cols-3 gap-6 my-16">
-          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-md">
-            <div className="text-3xl mb-3">📱</div>
+        <section className="grid md:grid-cols-3 gap-5 my-14">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md">
+            <div className="text-2xl mb-2.5">📱</div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">
               Mobile First
             </h3>
@@ -226,8 +263,8 @@ export default function DownloadsPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-md">
-            <div className="text-3xl mb-3">🔒</div>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md">
+            <div className="text-2xl mb-2.5">🔒</div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">
               Student Verified
             </h3>
@@ -236,8 +273,8 @@ export default function DownloadsPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-md">
-            <div className="text-3xl mb-3">⚡</div>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md">
+            <div className="text-2xl mb-2.5">⚡</div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">
               Instant Transactions
             </h3>
