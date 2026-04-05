@@ -2,7 +2,6 @@ import Link from "next/link";
 import UniversityLinksGrid from "@/components/UniversityLinksGrid";
 import HomeFeedSections from "@/components/HomeFeedSections";
 import FeaturedCategoriesSection from "@/components/FeaturedCategoriesSection";
-import { CATEGORIES } from "@/lib/data";
 import {
   getNewListingsPage,
   getNearbyListingsPage,
@@ -91,6 +90,7 @@ export default async function HomePage() {
                   type="text"
                   name="q"
                   aria-label="Search listings"
+                  aria-autocomplete="list"
                 />
                 <button
                   type="submit"

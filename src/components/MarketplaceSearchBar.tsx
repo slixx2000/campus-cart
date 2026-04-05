@@ -140,7 +140,6 @@ export default function MarketplaceSearchBar({
           className={inputClassName}
           aria-label="Search marketplace listings"
           aria-autocomplete="list"
-          aria-expanded={shouldShowDropdown}
         />
 
         {shouldShowDropdown && (

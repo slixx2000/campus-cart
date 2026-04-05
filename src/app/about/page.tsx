@@ -95,7 +95,7 @@ export default function AboutPage() {
               Who Can Browse?
             </h3>
             <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              Anyone can browse listings with any email. No verification required to explore what's available on campus.
+              Anyone can browse listings with any email. No verification required to explore what&apos;s available on campus.
             </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
@@ -103,7 +103,7 @@ export default function AboutPage() {
               Who Can Sell?
             </h3>
             <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-              Only verified students can create listings and sell. Link your university email, and we'll verify you're a student at your institution.
+              Only verified students can create listings and sell. Link your university email, and we&apos;ll verify you&apos;re a student at your institution.
             </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
@@ -114,7 +114,7 @@ export default function AboutPage() {
               Look for the <span className="inline-flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-300">
                 <span className="material-symbols-outlined text-sm">verified</span>
                 Verified
-              </span> badge on seller profiles. It means they've confirmed their student status.
+              </span> badge on seller profiles. It means they&apos;ve confirmed their student status.
             </p>
           </div>
           <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">

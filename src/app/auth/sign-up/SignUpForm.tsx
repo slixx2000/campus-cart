@@ -59,8 +59,8 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           mail_outline
         </span>
         <p className="mb-2 font-bold text-slate-900 dark:text-white">Check Your Email</p>
-        <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We've sent a confirmation link to your inbox. Click it to verify your account and start using CampusCart.</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Can't find it? Check your spam folder or try signing in if you've already confirmed.</p>
+        <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">We&apos;ve sent a confirmation link to your inbox. Click it to verify your account and start using CampusCart.</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Can&apos;t find it? Check your spam folder or try signing in if you&apos;ve already confirmed.</p>
         <a 
           href="/auth/sign-in"
           className="text-sm font-semibold text-primary hover:underline dark:text-sky-300"

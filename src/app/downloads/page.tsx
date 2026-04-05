@@ -8,6 +8,19 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
+interface GitHubReleaseAsset {
+  name?: string;
+  browser_download_url?: string;
+  content_type?: string;
+}
+
+interface GitHubRelease {
+  tag_name?: string;
+  name?: string;
+  assets?: GitHubReleaseAsset[];
+  html_url?: string;
+}
+
 export default function DownloadsPage() {
   const mobileRepoUrl = 'https://github.com/slixx2000/campus-cart';
   const mobileReleasesUrl = 'https://github.com/slixx2000/campus-cart/releases';
@@ -54,10 +67,10 @@ export default function DownloadsPage() {
 
         if (!response.ok) return;
 
-        const release = await response.json();
+        const release = (await response.json()) as GitHubRelease;
         const tagName = String(release?.tag_name ?? release?.name ?? '').replace(/^v/i, '');
         const assets = Array.isArray(release?.assets) ? release.assets : [];
-        const apkAsset = assets.find((asset: any) => {
+        const apkAsset = assets.find((asset) => {
           const name = typeof asset?.name === 'string' ? asset.name.toLowerCase() : '';
           return typeof asset?.browser_download_url === 'string' && (name.endsWith('.apk') || asset?.content_type === 'application/vnd.android.package-archive');
         });
@@ -170,7 +183,7 @@ export default function DownloadsPage() {
               </p>
               {!isInstalled && !installEvent && isAndroid ? (
                 <p className="text-sm text-amber-800 dark:text-amber-200 mt-2">
-                  Tip: In Chrome, tap the menu and choose "Install app" or "Add to Home screen" first.
+                  Tip: In Chrome, tap the menu and choose &quot;Install app&quot; or &quot;Add to Home screen&quot; first.
                 </p>
               ) : null}
             </div>

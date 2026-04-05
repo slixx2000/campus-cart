@@ -35,6 +35,7 @@ export default function MessageToastProvider({ userId }: { userId: string }) {
 
   useEffect(() => {
     const supabase = createClient();
+    const timers = timersRef.current;
 
     // Pre-load the user's conversations so we can map conversationId → other name.
     void supabase
@@ -117,8 +118,8 @@ export default function MessageToastProvider({ userId }: { userId: string }) {
     return () => {
       supabase.removeChannel(channel);
       // Clear all pending timers on cleanup.
-      timersRef.current.forEach(clearTimeout);
-      timersRef.current.clear();
+      timers.forEach(clearTimeout);
+      timers.clear();
     };
   }, [userId]);
 

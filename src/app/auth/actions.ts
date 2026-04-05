@@ -40,7 +40,7 @@ export type AuthState = {
   message?: string;
 };
 
-function getSiteUrl(): string {
+async function getSiteUrl(): Promise<string> {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (explicit) return explicit.replace(/\/+$/, "");
 
@@ -48,7 +48,7 @@ function getSiteUrl(): string {
   if (siteUrl) return siteUrl.replace(/\/+$/, "");
 
   try {
-    const headerList = headers();
+    const headerList = await headers();
     const host = headerList.get("x-forwarded-host") || headerList.get("host");
     if (host) {
       const forwardedProto = headerList.get("x-forwarded-proto");
@@ -73,9 +73,9 @@ function normalizeRedirectPath(path?: string): string {
   return path;
 }
 
-function buildAuthCallbackUrl(nextPath: string): string {
+async function buildAuthCallbackUrl(nextPath: string): Promise<string> {
   const safeNextPath = normalizeRedirectPath(nextPath);
-  return `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(safeNextPath)}`;
+  return `${await getSiteUrl()}/auth/callback?next=${encodeURIComponent(safeNextPath)}`;
 }
 
 export async function signInAction(
@@ -124,7 +124,7 @@ export async function signUpAction(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: buildAuthCallbackUrl(parsed.data.redirectTo ?? "/"),
+      emailRedirectTo: await buildAuthCallbackUrl(parsed.data.redirectTo ?? "/"),
       data: {
         full_name: parsed.data.fullName,
         phone: parsed.data.phone ?? null,
@@ -183,7 +183,7 @@ export async function forgotPasswordAction(
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
 
   const supabase = await createClient();
-  const redirectTo = buildAuthCallbackUrl("/auth/reset-password");
+  const redirectTo = await buildAuthCallbackUrl("/auth/reset-password");
 
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo,

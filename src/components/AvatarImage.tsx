@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 interface AvatarImageProps {
@@ -26,10 +27,12 @@ export default function AvatarImage({
   }
 
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
-      loading="lazy"
+      width={256}
+      height={256}
+      unoptimized
       className={className}
       onError={() => setHasError(true)}
     />

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function NotFoundState() {
   return (
@@ -18,9 +19,12 @@ export default function NotFoundState() {
               school
             </span>
             <div className="rounded-2xl border-4 border-white shadow-lg dark:border-slate-700">
-              <img
+                <Image
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAE2j0j8h2KVMwoWd4Cb6ICWqE63ow8ZwwwDMGXBnQDTuMMIrBLUth6lfYchtdDEBdCp8aTxCaFcxcLhnI2ilBtLV5vHxuazdfugc5D6tH3GCTDzQ-02Vx2G6vgVGLHtWJXMFFDLJvyERz8hIQ_zBWnFDvuVk_G_2weSpRl_qycb1JhYULMG3mmxiU6IQL_OfvBevfHr6hfG_5tNXXdTNI-1piuw_syfmaHeZ3klFGQ9qIOJf8hf9q2RTHLhTuIVfR8bnXk8SdQqho"
                 alt="Empty dorm room illustration"
+                  width={256}
+                  height={256}
+                  unoptimized
                 className="h-52 w-52 rounded-xl object-cover md:h-64 md:w-64"
               />
             </div>
