@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a2ce2",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191121",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>CampusCart - Marketplace</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 flex items-center justify-between border-b border-primary/20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 md:px-10 lg:px-20">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined">shopping_bag</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">CampusCart</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Browse</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Sell</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Messages</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Profile</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<label class="hidden sm:flex flex-col min-w-40 h-10 max-w-xs relative group">
+<div class="flex w-full items-center rounded-full bg-slate-200/50 dark:bg-primary/10 border border-transparent focus-within:border-primary transition-all px-4">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-[20px]">search</span>
+<input class="w-full border-none bg-transparent focus:ring-0 text-sm placeholder:text-slate-500 dark:placeholder:text-slate-400 py-2 pl-2" placeholder="Search textbooks, tech..." type="text"/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-full size-10 bg-slate-200/50 dark:bg-primary/10 text-slate-700 dark:text-white hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="flex items-center justify-center rounded-full size-10 bg-slate-200/50 dark:bg-primary/10 text-slate-700 dark:text-white hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-primary/20 rounded-full p-0.5 border border-primary/30">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8" data-alt="Student profile avatar headshot" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDNKH6f_i8Pp5zVOsyXPSINQlrCU2G-hik2XaezuE0WncUz3HLNaYBtZVQNff4vkph85J-C_nKdvNMXFQmluqag9PXDp1ooLIIFcDIJSzHIEP1GXb313N719of36L5KWmr5zYWgBCYfZBFat_kc0X5iug-CD3r9KkYN8HS30Zl3Hg0Ea5mMMYpYJsdNZ0__RPdSI73-aJYSC86k3mWDv4_PxW7jGaQZAiwh3Ab0jy1RrG8BnbO9PPa3Y3goKOcfDoHm5nOe1KbIwmQ");'></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex flex-1 px-4 py-6 md:px-10 lg:px-20 gap-8">
+<!-- Sidebar Filter -->
+<aside class="hidden lg:flex flex-col w-64 shrink-0 gap-8">
+<div class="flex flex-col gap-6 p-6 rounded-2xl bg-white/5 dark:bg-primary/5 border border-slate-200 dark:border-primary/10 backdrop-blur-sm">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-white font-bold text-lg">Filters</h3>
+<button class="text-primary text-xs font-semibold hover:underline">Clear all</button>
+</div>
+<div class="flex flex-col gap-4">
+<div class="group cursor-pointer flex items-center gap-3 px-3 py-2 rounded-xl bg-primary text-white shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined text-[20px]">category</span>
+<span class="text-sm font-medium">Categories</span>
+</div>
+<div class="group cursor-pointer flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-primary/10 text-slate-600 dark:text-slate-300 transition-all">
+<span class="material-symbols-outlined text-[20px]">sell</span>
+<span class="text-sm font-medium">Price Range</span>
+</div>
+<div class="group cursor-pointer flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-primary/10 text-slate-600 dark:text-slate-300 transition-all">
+<span class="material-symbols-outlined text-[20px]">school</span>
+<span class="text-sm font-medium">University</span>
+</div>
+<div class="group cursor-pointer flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-primary/10 text-slate-600 dark:text-slate-300 transition-all">
+<span class="material-symbols-outlined text-[20px]">info</span>
+<span class="text-sm font-medium">Condition</span>
+</div>
+</div>
+<hr class="border-slate-200 dark:border-primary/10"/>
+<div class="flex flex-col gap-4">
+<p class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">Price Range (ZMW)</p>
+<div class="relative pt-4 px-2">
+<div class="h-1.5 w-full bg-slate-200 dark:bg-primary/20 rounded-full relative">
+<div class="absolute inset-y-0 left-0 right-1/4 bg-primary rounded-full"></div>
+<div class="absolute -top-1.5 left-0 size-4 rounded-full bg-white border-2 border-primary shadow-md cursor-pointer"></div>
+<div class="absolute -top-1.5 right-1/4 size-4 rounded-full bg-white border-2 border-primary shadow-md cursor-pointer"></div>
+</div>
+<div class="flex justify-between mt-3 text-[10px] font-bold text-slate-500 dark:text-slate-400">
+<span>K0</span>
+<span>K18,000</span>
+<span>K25k+</span>
+</div>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all transform active:scale-95">
+                        Apply Filters
+                    </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col gap-6">
+<!-- Sorting & Quick Filters -->
+<div class="flex items-center justify-between flex-wrap gap-4">
+<div class="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
+<button class="flex h-10 shrink-0 items-center gap-2 rounded-full bg-primary/10 border border-primary/30 px-4 text-primary text-sm font-semibold">
+<span>Sort: Relevant</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<button class="flex h-10 shrink-0 items-center gap-2 rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 px-4 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-300/50 dark:hover:bg-white/10 transition-colors">
+<span>Price: Low to High</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<button class="flex h-10 shrink-0 items-center gap-2 rounded-full bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 px-4 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-300/50 dark:hover:bg-white/10 transition-colors">
+<span>Newest</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+</div>
+<p class="text-sm text-slate-500 dark:text-slate-400 font-medium">1,248 items found</p>
+</div>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Item 1 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="MacBook Pro 14 inch laptop on desk" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC79I_fjItfY1dkMRSd3EdZhEeRRRh2PdhGBoe_x_3wombarDCZQ6RzPUQ28xfvqyD4KqUdCSvrysTxbuvTVllOsjCLOyu0UcUfiAQLs65eOHBj0V9DJP2X-KxG7xVj-fgnrBfnbSZ5dtiPerbzlPDWilIPeHHmvACHFlc9y2b_Of3QZQfXm4ZGw6Ac40yXCzlz846woSBvzvazx9OmWgnKJs5i5b5cMiIkCZM8qO2ZTTLPhEa_sNHhG8sCvplZPy6rJGI3m4KJuLE");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Electronics</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">MacBook Pro 14" M1</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">4.8</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 18,500</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">UNZA</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Used • Excellent</p>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="Modern studio couch sofa" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDNqzQs9oiNVC0XWqJ1KqkRy0aJrr_-citKUrZ2fY25F5wSqOuSo_id6xn4wk5BDPoDQ7K-3L8GrQkAAcf8yRv6MwhzW8f9xhP9PPBrWOeFCgUTRw3JAutNLCGfVAArj6uYR_MHKarzOz1mIuAHacgdnLE_xXPHD9MxAYHuvbP345V_t-cO_clfhIcJxiTDWVFz5awNzQSUF6xTXeIGzCNXVgnvT1anIIJVjsiLG-V30PF7gfHxcFvF6HluA3_Hsi6uZnAlh_p_MBw");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Furniture</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Studio Couch</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">4.5</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 3,200</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">CBU</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Used • Good</p>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="Organic Chemistry textbook stack" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDVMYBqkWA3k2sGgv_1TFfrViiTtvnwZvpQrUBEfy3FLO14bKOnfS9i6hWBzW_WVP_cYvGkiWbIYzn4AoxnPCaDsZ-GE2kqLBJTq4Ez2Lt2wZAuWL2kpGSD2rJ3uo6X2ruAwxFSgjuQekN4nt90tSCefbbPJrEpjmwkGdBee39BI4eK5P6Huhi6jYMIWt-rrlkUgcHvrhzHOuxHIgVkSjRteB_xXn-_nDPMUdnAtxMmn1qelOrlTXpgHWHQLo-i3iaI1-SnAptdm7Q");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Books</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Organic Chemistry</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">5.0</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 450</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">MULUNGUSHI</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">New</p>
+</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="Black mountain bike standing outdoors" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBkn_GK-NerMMsGNg6DmfK5n8pmVbY7Jp0YgFD5m_BYTpHeOrDW-iDxouycIe1UnMSEdTaUjx4hQIxQMBbTDsAr7j7pWxhpu_LnRlLh_JdMnuMKftbAIiHKpdgyR0U4XNMRqWq8Y2KyVEavn3a4bUuzDqeKMyTWFFz_geNnLdnT91j9bLJ1c2eW1o1xWX7vy3fDIjGBH5xvgWpe4IWK1qf-C9zDaI_o4EsdQysOIQNvaxFgvLDiO_aAQZCobPmYhFOgz-fc7cLlhmw");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Sports</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Mountain Bike</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">4.2</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 2,100</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">UNILUS</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Used • Fair</p>
+</div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="Portable monitor for laptop" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDI-QxODAllFE_BPbUq51QIQ_FV_IbHBhEnPVOT4mBW518BSzNa-SXRAMSxNAhLHcyWUvFlkgezH2Iy4TCp4CqfKlrbR1Ax-NBptVqifZfEENhHCjHYrQXSU4f_kWd8j5zgD6HIsjHlKFRocsLIjRTmlfDBkce1tUqUnEXRlBGmUzsOJt8VjS1QhXi0QfdEGISOppO0hWRlt8KP-4z6Nlo7Y7ip-2CZo7XTfT42R_KtfxY7pusgi8xF3XZVR_U7sTwO6lBILNVo2Y4");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Electronics</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Portable Monitor</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">4.7</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 1,800</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">ZCAS</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Used • Like New</p>
+</div>
+</div>
+</div>
+<!-- Item 6 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="Study desk lamp with warm light" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD9d3alB2mkRk9LSf5nQv7ZW2v2ZPeQfLVuLvdvVUkd3vrQvg0xcQsyglor4hFJbviYAPPr-hiLoWhzqFXtiiEeMjLq5a1cfeoVk8FmONAXpmRoGAzXSyHAfw8lgJSbOdapjZGC8u1gSqACNpXhUX3tukRuGwRshxfdtPxDZwG1Zsr6Hm7eJEnebGvyoD1x8Xdi-CzPROanREA0zQRm4I5QLcu23jNTRWLhU_zl0WkiJwSkiJiK4Lh-P7yWq7ozIAJrM60jG_-k0P8");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Lifestyle</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">LED Study Lamp</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 250</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">UNZA</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Brand New</p>
+</div>
+</div>
+</div>
+<!-- Item 7 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="Noise cancelling headphones" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAuoqNsoaR-ehkt6CMZYbRmxiYj2DAtZ5w1CWafZu0KdshhYLkpubsGwFe9UdRSJ9AE5mdHjfu3afhkD6ouIwKid_3mXbdiWVrb6-SdwJ3y1eRFmeOplXnTI2Uxd2MVCmDXADDDucoY2crkuGQyDo_nrGDZIpkpoOfhnKXbT07XfCNsINAWpaXkJsl5e9Jp-cqJWhuQ5pQsBtFEmfCfOp9G2tnmMTuWICeZOtM5dMeqMh4VSY5ydVVJiqin3JbVUJSCPSKNJAvf5r0");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Electronics</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Sony WH-1000XM4</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">4.6</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 4,500</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">CBU</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Used • Excellent</p>
+</div>
+</div>
+</div>
+<!-- Item 8 -->
+<div class="group flex flex-col gap-3 p-4 rounded-2xl bg-white/50 dark:bg-white/5 border border-white/20 dark:border-white/10 backdrop-blur-xl hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10">
+<div class="relative w-full aspect-square overflow-hidden rounded-xl">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transform group-hover:scale-110 transition-transform duration-500" data-alt="Professional scientific calculator" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAeWPYO7LhXqY0-q--9QeCrcyJGVDzfsLDC4Jpl2TubEFN1GTbDrINHAmmB9M83KNFvimCgFVx9VYaDfk2aQGHm8k8f2YGQh7Q-DyIQuddjSZbiDFy8MyX0yvoM87794bJF9IwPpWaewvqDn1bWi4Tm5LwWxR5AW4m_hfn0U9-FzPOn6vIQEWK1H3-LXTgGL9Leyo6SVHy6tqlbDN2sIvN_IVUADj4-ygkUoP9HYXiuJ0DhOxTVvJkaYY1BhkiB-Vh1uN5qfkhW924");'></div>
+<div class="absolute top-2 left-2 px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md text-[10px] font-bold text-white uppercase tracking-wider">Education</div>
+<button class="absolute top-2 right-2 size-8 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500 transition-colors">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-start">
+<h4 class="text-slate-900 dark:text-white font-bold leading-tight group-hover:text-primary transition-colors">Casio FX-991EX</h4>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-[14px] fill-current">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+<p class="text-primary font-bold text-lg">ZMW 750</p>
+<div class="flex items-center gap-2 mt-2">
+<div class="px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase">UNZA</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Used • Like New</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center gap-2 py-10">
+<button class="size-10 flex items-center justify-center rounded-xl bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-primary/20 hover:text-primary transition-all">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold">1</button>
+<button class="size-10 flex items-center justify-center rounded-xl bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-primary/20 hover:text-primary transition-all">2</button>
+<button class="size-10 flex items-center justify-center rounded-xl bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-primary/20 hover:text-primary transition-all">3</button>
+<span class="text-slate-500">...</span>
+<button class="size-10 flex items-center justify-center rounded-xl bg-slate-200/50 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-primary/20 hover:text-primary transition-all">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto border-t border-primary/10 py-10 px-10 md:px-20 bg-background-light dark:bg-background-dark/50">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 bg-primary rounded flex items-center justify-center text-white">
+<span class="material-symbols-outlined">shopping_bag</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold">CampusCart</h2>
+</div>
+<p class="text-slate-500 text-sm leading-relaxed">The trusted peer-to-peer marketplace for university students across Zambia.</p>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-slate-900 dark:text-white font-bold">Quick Links</h4>
+<ul class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+<li><a class="hover:text-primary" href="#">About Us</a></li>
+<li><a class="hover:text-primary" href="#">Safety Tips</a></li>
+<li><a class="hover:text-primary" href="#">Verified Universities</a></li>
+<li><a class="hover:text-primary" href="#">Help Center</a></li>
+</ul>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-slate-900 dark:text-white font-bold">Contact</h4>
+<ul class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+<li>support@campuscart.zm</li>
+<li>Lusaka, Zambia</li>
+<li>+260 977 000 000</li>
+</ul>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-slate-900 dark:text-white font-bold">Newsletter</h4>
+<p class="text-xs text-slate-500">Get updates on the best student deals.</p>
+<div class="flex">
+<input class="w-full bg-slate-200 dark:bg-primary/10 border-none rounded-l-xl focus:ring-1 focus:ring-primary text-sm px-4" placeholder="Email" type="text"/>
+<button class="bg-primary text-white p-2 rounded-r-xl">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="mt-10 pt-6 border-t border-slate-200 dark:border-primary/5 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-xs text-slate-500">© 2024 CampusCart Zambia. All rights reserved.</p>
+<div class="flex gap-4 text-slate-500">
+<a href="#"><span class="material-symbols-outlined text-[18px]">social_leaderboard</span></a>
+<a href="#"><span class="material-symbols-outlined text-[18px]">alternate_email</span></a>
+<a href="#"><span class="material-symbols-outlined text-[18px]">photo_camera</span></a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

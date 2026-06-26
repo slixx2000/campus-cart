@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a2ce2",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191121",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>CampusCart - iPhone 15 Pro</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/20 px-6 md:px-20 py-4 bg-background-light dark:bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined">shopping_basket</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">CampusCart</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Electronics</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Fashion</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary transition-colors text-sm font-medium" href="#">Books</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-4 md:gap-8 items-center">
+<label class="hidden sm:flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+<div class="text-slate-400 flex border-none bg-primary/10 items-center justify-center pl-4 rounded-l-xl">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-primary/10 focus:ring-0 focus:outline-none text-slate-900 dark:text-slate-100 placeholder:text-slate-500 px-4 rounded-r-xl text-base font-normal" placeholder="Search campus items..." value=""/>
+</div>
+</label>
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-primary/10 text-primary hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-10 w-10 border-2 border-primary" data-alt="User profile picture of a student" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDofPfJIKPfJMF7kvd3P5Sn9bDoSO_ArrC7m6_LfNMxGUkTeXTC4H7gpWsVeiiw3FJstAe4rKwacLAmyWCXYiuiGzRtuIh8bidr7wGrTFdhvgwwl21gH9qQp3b-kg9k2regjukQz5Osp2BDjM85b84xstVt5ZKJI9cxjDXoE3fZ4EaSvWaFZADj5SRDWVxXP_49Kx3yvXz2SXp56uQC9HgC2nqpOU2LXRHRPTN6jLOC7GtFiFiLAdGQgLUZtJacV-5Czoo83Y5B16I");'></div>
+</div>
+</header>
+<main class="flex flex-1 flex-col px-4 md:px-20 py-8 max-w-7xl mx-auto w-full">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- Product Gallery -->
+<div class="space-y-4">
+<div class="aspect-square w-full rounded-xl overflow-hidden bg-primary/5 border border-primary/10 relative">
+<div class="absolute top-4 right-4 z-10">
+<button class="bg-background-dark/50 backdrop-blur-md p-2 rounded-full text-white hover:text-primary">
+<span class="material-symbols-outlined">favorite</span>
+</button>
+</div>
+<div class="w-full h-full bg-cover bg-center" data-alt="High quality shot of iPhone 15 Pro Titanium" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBsQQKyx6effBcP0NCDeT8hLIVerOrsPyVeSunLSAzWeVUQytGYC_maZSQS5Ry6xUaXpk0rZVfCBxvYSqtav0SNMoN4M8nR6feTEFpqTE_r1yNYl8qB3uYFWb--4aBgC3E-G8ZcC5ZiaFzUj7dx__eNM_4ITeInUtf9eh3qsZWqZ44xh3G1Dhyt9lXXV7Fhz1aOVVhwE8wfJC4mjv7ag6uAd3yKMYgl4XBb-z71H5AVN_l8IflELSrncsgmW30fUoA4p2q2KxrEvwM");'></div>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<div class="aspect-square rounded-lg border-2 border-primary overflow-hidden cursor-pointer">
+<div class="w-full h-full bg-cover bg-center" data-alt="iPhone 15 Pro front view" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD3cW_elvjDCeTeE_UbuayKHXAutIMIn9C_AxO0qTgtwINRZyjqHPHukr9jd86n_0vrkJB4A_MSeOukH3ywNzo9xOa1Txb4E4agy9vr4umExT_tKY8X3STDSdZclf28Tm8KsJck0ArN8qeM4gi4xTWzRV8Uw3_d_VOTvR5J_HfNZHrLBIQwdccVNOrpMI6HxGkYQc0wjkHlfOpQ56r072d7k6bLLT2qBeFGVxp3mZ97J-nm1H1V6SY_AodwxtRvZ1iY62V74x02Hrk");'></div>
+</div>
+<div class="aspect-square rounded-lg border border-primary/10 overflow-hidden cursor-pointer hover:border-primary/50">
+<div class="w-full h-full bg-cover bg-center" data-alt="iPhone 15 Pro camera details" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDNxP8mAhisr-koFoliPV-BqR6K9-OXpXyUfI-Y0jyhKTfL_QvlB9XjXJumfa5HIH_cmXU0qfxiN5G_ioe930X2EqeQ4lynVP_DW-dLZsRuaPnSgVrP6xnRJFSgHEmD57BwCj9783RoxPHbe02VZzcDwoiQdWlmpqAhomy9Dn5xtHR8BqRTpD_dfrAxepRHBY73blX3Ce_eY84wainHlZrUhjj-BCnp5VvRfQtF7HWRkqpTPc2gNrEaHdHh8iwaod_UO7MuPunHFck");'></div>
+</div>
+<div class="aspect-square rounded-lg border border-primary/10 overflow-hidden cursor-pointer hover:border-primary/50">
+<div class="w-full h-full bg-cover bg-center" data-alt="iPhone 15 Pro side profile" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1atGfvl-obD1_uqQp0sOqYqdksKML3iqKLPJjQSO-rJHl6G5KN5nzv60U1EARO_0l1Yts7sFUvAbPtcRci-QE5z_awL5fzs17iAhtlc6KZAD9G2fQvjGLTXJUQ5r3Tw8WyY-Cc40g1d0XdqHx9-zIIUIrLlSFjdnL2isIVl8WCDt-tx8OOi7qMxoRmTw504nZcstUJze8uugM4wiyNFmIZe6kPBGxaMZ2y91leiob_HRQFSa6xUXP92tHME7I0-z5lmlup9cuC4U");'></div>
+</div>
+<div class="aspect-square rounded-lg border border-primary/10 overflow-hidden cursor-pointer hover:border-primary/50 relative">
+<div class="w-full h-full bg-cover bg-center brightness-50" data-alt="Additional iPhone angles" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBqB6RHlLXBoWFKJDWEXCKQYfDFnWrgN-rfxxOSDq4u6DD8Jkx2YimMu-fo84WIF7xy6oVf74zvPYcqkXsPW-e0GnA7N-yHtMlmunKwJlwc9aE6QAND6tYd2rWWPIFGy0bCPMdufr8lsaAPtb8YEHHuVmzyuYFsXaAAF01-AxX22b1q40n0SrpAN4NoX-CGT5o1t8e4_uFLOCzHwuhBaQ2wSIZuwIrYTOVh1iGdy8bFpcItg7xjL64XX-r3RHpoAFmQTiFmSnQS3Nc");'></div>
+<div class="absolute inset-0 flex items-center justify-center text-white font-bold text-sm">+3</div>
+</div>
+</div>
+</div>
+<!-- Item Details -->
+<div class="flex flex-col gap-6">
+<div>
+<div class="flex items-center gap-2 text-primary mb-2">
+<span class="text-xs font-bold uppercase tracking-widest px-2 py-1 bg-primary/20 rounded">Electronics</span>
+<span class="text-xs font-bold uppercase tracking-widest px-2 py-1 bg-green-500/20 text-green-400 rounded">Available</span>
+</div>
+<h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-slate-100 mb-2">iPhone 15 Pro</h1>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold text-primary">ZMW 850</p>
+<p class="text-slate-500 line-through text-lg">ZMW 920</p>
+</div>
+</div>
+<div class="p-6 rounded-xl bg-primary/5 border border-primary/10">
+<h3 class="font-bold text-lg mb-2">Description</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                                Pristine condition iPhone 15 Pro, 256GB, Natural Titanium. Battery health is at 100%. Comes with the original box and unused USB-C braided cable. Always kept in a case with a screen protector. No scratches or dents. Local campus pickup only at the Main Library entrance.
+                            </p>
+</div>
+<!-- Seller Info -->
+<div class="flex items-center justify-between p-4 rounded-xl border border-primary/10 bg-primary/5">
+<div class="flex items-center gap-4">
+<div class="size-14 rounded-full bg-cover bg-center border-2 border-primary" data-alt="Sarah Jenkins seller avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAs5MFv94IHyEF2dJBWX50DZIZG2ALnNe71dBQipV8nP3B8jwikLnP0uloNrWvBcoZsvFH3bH9vxDm-c2UUKbLsO7Z_ReATUOLHT3y_ZNznT6TQ8Qt0Y3SbmA5hl1IT46FajjRPQQusNgs1ELC6KXkK92Q00HSBOuHF84pLRJ3Z2Q4ebggSBje2TDlghhq8Ae0wRm8UAPnRgY7Ki4XLTXF3hYQnJzaMo5YHXhvYARPuYCn3G-21xujm1KIPLciTKFoGM2SnEdX1nlU");'></div>
+<div>
+<p class="font-bold text-lg text-slate-900 dark:text-slate-100">Sarah Jenkins</p>
+<div class="flex items-center gap-1 text-yellow-500">
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm fill-1">star</span>
+<span class="material-symbols-outlined text-sm">star_half</span>
+<span class="text-xs text-slate-500 ml-1">(42 reviews)</span>
+</div>
+</div>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 transition-transform active:scale-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">chat</span>
+                                Chat with Seller
+                            </button>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-2">
+<div class="flex items-center gap-3 p-3 rounded-lg bg-primary/5">
+<span class="material-symbols-outlined text-primary">verified_user</span>
+<span class="text-sm font-medium">Verified Student</span>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-lg bg-primary/5">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<span class="text-sm font-medium">Campus Pickup</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Similar Items Section -->
+<section class="mt-20">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-2xl font-bold tracking-tight">Similar Items</h2>
+<a class="text-primary font-bold hover:underline flex items-center gap-1" href="#">
+                            See all <span class="material-symbols-outlined">chevron_right</span>
+</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="group rounded-xl border border-primary/10 bg-primary/5 overflow-hidden hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer">
+<div class="aspect-square bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="iPhone 14 Pro listing" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBqttNS-Vn1MxEEkkiUU0JihQGKMAc1aeeilSQo3c0WW0vwcuoDaZ0iCe91d9lrZSp1K7z8FHsVagZfOwhrCcvvsrAjyb5HsvgTY_7ZkRXvqxE76umPaGmKrrgqgsfbO6Oi68hZsiKVKpZY845NbiTKvE4d7b7jlMF6c9jdXoi4jynJXNi1xCbuU8OcByV3o9eZCxGVg61yGBaMuDXm2SriThFjXDIrXSjVwzZFN-VVB9WG8Y2CsQWiEb0QxLveqHPo0Mc1YldZMOg");'></div>
+<div class="p-4">
+<p class="text-xs font-bold text-primary mb-1">ELECTRONICS</p>
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">iPhone 14 Pro - 128GB</h4>
+<p class="text-lg font-bold mt-2">ZMW 650</p>
+<div class="flex items-center gap-1 mt-3 text-xs text-slate-500">
+<span class="material-symbols-outlined text-xs">location_on</span>
+                                    East Campus
+                                </div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group rounded-xl border border-primary/10 bg-primary/5 overflow-hidden hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer">
+<div class="aspect-square bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="iPad Pro 11-inch" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuScTZ6w4z1suj59KFjCOhh8P7SsSPTToTqoWqbhhSGwSjZVsAwlT0j8m0PL9pHkNFt002V-AjRNIaZamTcU4tUPmzcdQAG2mDDp3tt6mCQOocbs5hvwWqYA372iJK4XZbFUzcv_rCEcLemAEoVzAVGNihRya-J6QQdf8kbOwGnyY40hrFOuCoSisNbUa0pBxv_aJxT7Z5DIgHv-WEIuNmUCSvAVDegdrmp0qr60AMGLEDUhMnqPoYMEmiPoYxkejI8a4phDIo7kM");'></div>
+<div class="p-4">
+<p class="text-xs font-bold text-primary mb-1">ELECTRONICS</p>
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">iPad Pro 11" M2 Chip</h4>
+<p class="text-lg font-bold mt-2">ZMW 750</p>
+<div class="flex items-center gap-1 mt-3 text-xs text-slate-500">
+<span class="material-symbols-outlined text-xs">location_on</span>
+                                    Student Union
+                                </div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group rounded-xl border border-primary/10 bg-primary/5 overflow-hidden hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer">
+<div class="aspect-square bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="MacBook Air M1" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC0XZCoiWtH1uT0l4GLC7jTqrt7ZrYmZCihTRFZ36HtSxxpvOUZV3NnwCBSEK3gjP7vfgi6g2IaG7hmqYnwfNkX2qKN4-MfEzSHoQz4PbSyhWBvnkTHXnJwpZZ7M-9d82uxSmd-9sMa6TQOieNRqAzqHKyq9lK0-SSHw3cT93lMmAAsjxAgYZ_rxAv2nz-wUfFzV_P-zcDFRGGzAlIj05Q0AXFpoHsvzJzZ4cj5BZePC1zpPMWpKlVjd69u4FGhXK1SvZPp10xnNy0");'></div>
+<div class="p-4">
+<p class="text-xs font-bold text-primary mb-1">ELECTRONICS</p>
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">MacBook Air M1 Space Grey</h4>
+<p class="text-lg font-bold mt-2">ZMW 1,200</p>
+<div class="flex items-center gap-1 mt-3 text-xs text-slate-500">
+<span class="material-symbols-outlined text-xs">location_on</span>
+                                    North Dorms
+                                </div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group rounded-xl border border-primary/10 bg-primary/5 overflow-hidden hover:shadow-xl hover:shadow-primary/10 transition-all cursor-pointer">
+<div class="aspect-square bg-cover bg-center group-hover:scale-105 transition-transform duration-500" data-alt="Sony WH-1000XM4 Headphones" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAZncaBI-87RaQ45NWxwUraN01ILlfepp7sXhNJBJcAfwJW1BsvJwEY9XUGnMzZxizpqxIW2kXpSsCweIbmU_cUEYPad1d1ScULZGl5V1KcN98IgeMxaHyYbOx0zzO7w_bycqu4yQ-14flg3PWnXLkdxcEJHI2FqrCaNvvc8KDm5pE9KEbp2vrLOnactVA7bW2OTFq-1JGE5ueRNR2RJO2y3vjDWoNQ5eiMxuK3KV1YWQqhJwHik4T2faLwaN8_6a65dV2hulUUdjg");'></div>
+<div class="p-4">
+<p class="text-xs font-bold text-primary mb-1">ACCESSORIES</p>
+<h4 class="font-bold text-slate-900 dark:text-slate-100 truncate">Sony WH-1000XM4 Noise Cancelling</h4>
+<p class="text-lg font-bold mt-2">ZMW 320</p>
+<div class="flex items-center gap-1 mt-3 text-xs text-slate-500">
+<span class="material-symbols-outlined text-xs">location_on</span>
+                                    Library Annex
+                                </div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="mt-20 border-t border-primary/10 py-12 px-6 md:px-20 bg-background-light dark:bg-background-dark/50">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-3 text-primary">
+<div class="size-6 flex items-center justify-center bg-primary rounded text-white">
+<span class="material-symbols-outlined text-sm">shopping_basket</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 font-bold">CampusCart</h2>
+</div>
+<div class="flex gap-8 text-sm text-slate-500">
+<a class="hover:text-primary" href="#">Safety Tips</a>
+<a class="hover:text-primary" href="#">Help Center</a>
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+</div>
+<p class="text-sm text-slate-500">© 2024 CampusCart Inc.</p>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

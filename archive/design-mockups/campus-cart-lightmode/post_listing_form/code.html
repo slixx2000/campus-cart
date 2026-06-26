@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Post Listing - CampusCart</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b9dee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101a22",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 py-3">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-2 text-primary">
+<div class="size-8 bg-primary rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined !text-xl">shopping_cart</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-xl font-bold tracking-tight">CampusCart</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Marketplace</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">Categories</a>
+<a class="text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-primary transition-colors" href="#">My Listings</a>
+</nav>
+<div class="flex items-center gap-3">
+<button class="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-10 rounded-full border-2 border-primary/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Student profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAclP9B60UYQ-DnLSVoy2gYhSyAZHmmgnVcVBCtkzM-0rVoCV54n_IEMvwZVeVASsY1QwA7iJpn2lHKHYJlz3hRh_XpN-pP1fnupQB3-UPTuV6rEMPWkjaswPTmlXJm4k-FhoPKF-Pv5rxsH8gmkCKzc2lI8HrIHuppl4EU2vX3OE0tc3f-sc_fy2kZ7FYEreoysnoYPyInDD8wdbX2TeaTSJT1GV6km30-k_-YXo07dGGsp9TMq5h76xEHcYoN-5k6RQO22Ft-jJs"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto px-6 py-10">
+<!-- Progress Stepper -->
+<div class="mb-10">
+<div class="flex items-center justify-between mb-4">
+<div class="flex flex-col">
+<span class="text-primary font-bold text-sm uppercase tracking-wider">Step 2 of 3</span>
+<h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">Item Details</h1>
+</div>
+<span class="text-slate-400 font-medium">66% Complete</span>
+</div>
+<div class="h-3 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-blue-400 w-2/3 rounded-full transition-all duration-500"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Form Area -->
+<div class="lg:col-span-2 space-y-6">
+<!-- Step 1: Photos Preview (Small context) -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">image</span>
+                            Photos
+                        </h3>
+<button class="text-primary text-sm font-semibold hover:underline">Edit</button>
+</div>
+<div class="flex gap-3 overflow-x-auto pb-2">
+<div class="relative min-w-24 h-24 rounded-lg overflow-hidden group">
+<img class="w-full h-full object-cover" data-alt="Textbook photo preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrYzX4N_T4gEG8Td3fbUJUcBJfMTVxXJZ8RHzEiegZgX7_4Byx3JwgzH81moBhBJ85PUylU3DJzm9SOuc7jQ8zeBd7mPfvet5YkK8nl5SoDsW2n-juVKYkGPtuEoPXBX2iIMp-OFrS2NWs8SodNdaY2nFFKhLBe72--vHOkvo8heHhks5Ipmt1MI0zn4anOYGgF_G_sAQ78q_hOM7SPR9y12W40xxE-Rgcvs2aIv35kA7SZgR6wKge6GHS3plgXmF0Eo03jclgaf4"/>
+</div>
+<div class="relative min-w-24 h-24 rounded-lg overflow-hidden group">
+<img class="w-full h-full object-cover" data-alt="Open book photo preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA11psLUs8JfknDn4N0A8LKv6maWDzVTVIvaVHvXQ2EEE0s_HLPDivr0s6HMc7Aef0NrMciPn7RCfdVPh-PZwyOCZdKTSnvjsGMsuqkCTE8F1wnGApagO2W9JMw-MZUK9dDFFeRF7nFq8glJKL16bDkIr9fXheE6Yslq-QwPybH-muGsZKJYO-CvOJUQde0AoiryJyNmyCFY8aDQwmf2IKAD3NMD7ShFK1rPVkCa6Z4Zi1KPp9hcbtfZ3nwSdWna-eTlSDzAu1X-yA"/>
+</div>
+<button class="min-w-24 h-24 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg flex flex-col items-center justify-center text-slate-400 hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined">add_a_photo</span>
+<span class="text-[10px] font-bold">Add More</span>
+</button>
+</div>
+</div>
+<!-- Step 2: Main Details Form -->
+<div class="bg-white dark:bg-slate-900 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 space-y-6">
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Listing Title</label>
+<input class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="e.g. Organic Chemistry 8th Ed - Like New" type="text"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Category</label>
+<select class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer">
+<option>Textbooks</option>
+<option>Electronics</option>
+<option>Dorm Furniture</option>
+<option>Kitchenware</option>
+<option>Clothing</option>
+<option>Sports Gear</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Condition</label>
+<select class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer">
+<option>New</option>
+<option>Like New</option>
+<option>Good</option>
+<option>Fair</option>
+<option>Poor</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Price (ZMW)</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">ZMW</span>
+<input class="w-full pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all pl-16" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Location</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 !text-xl">location_on</span>
+<input class="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="e.g. North Campus / Student Union" type="text"/>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">Description</label>
+<textarea class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all resize-none" placeholder="Tell buyers more about the item..." rows="4"></textarea>
+</div>
+</div>
+<!-- Navigation Buttons -->
+<div class="flex items-center justify-between pt-4">
+<button class="px-8 py-3 rounded-full font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined !text-lg">arrow_back</span>
+                        Back
+                    </button>
+<button class="px-10 py-3 rounded-full font-bold text-white bg-gradient-to-r from-primary to-blue-400 hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-2">
+                        Next Step
+                        <span class="material-symbols-outlined !text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Sidebar Info/Tips -->
+<div class="space-y-6">
+<div class="bg-primary/10 dark:bg-primary/5 p-6 rounded-xl border border-primary/20">
+<h4 class="font-bold text-primary flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined">lightbulb</span>
+                        Selling Tips
+                    </h4>
+<ul class="text-sm text-slate-600 dark:text-slate-400 space-y-3">
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-primary !text-lg">check_circle</span>
+                            Items with 3+ photos sell 50% faster.
+                        </li>
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-primary !text-lg">check_circle</span>
+                            Be specific about the condition of the item.
+                        </li>
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-primary !text-lg">check_circle</span>
+                            Mention your preferred meeting spots on campus.
+                        </li>
+</ul>
+</div>
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
+<h4 class="font-bold text-slate-900 dark:text-white mb-4">Safety First</h4>
+<p class="text-xs text-slate-500 leading-relaxed mb-4">
+                        Always meet in well-lit, public campus areas. Use the CampusCart messaging system for all communication.
+                    </p>
+<div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+<img class="w-full h-24 object-cover rounded-md mb-2 grayscale" data-alt="University campus map" data-location="Stanford University" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5wJeDwZjL8xU2acNgnm2xF26j7kCo2enPUnH_Ja_KK_lEHhCWrJMjlvOFoX3wWxxhFHKPMpoNvuHhUUrV8UFLdulm-c24oiLZMcnDN_SeALk1GzVrOSekBdTssft8Y_ngK6JOvOjt1Y0SFGCHMG7U0ttfxYcEAAvtapwvLMlXdPCxkWjJpEAwaEusWe7j-paiAuxkLzufh35AXyeXDTK9YidinRoYo57SUGBmXp3wgnTTW_ldiTWaiN6533CGrICbQ3t8hjjMrJs"/>
+<p class="text-[10px] text-center font-bold text-slate-400">Campus Safe Zones Active</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-20 border-t border-slate-200 dark:border-slate-800 py-12 px-6 bg-white dark:bg-background-dark">
+<div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="col-span-2 md:col-span-1">
+<div class="flex items-center gap-2 text-primary mb-4">
+<div class="size-6 bg-primary rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined !text-sm">shopping_cart</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold">CampusCart</h2>
+</div>
+<p class="text-sm text-slate-500">The #1 trusted marketplace for university students. Buy, sell, and trade with your peers.</p>
+</div>
+<div>
+<h4 class="font-bold mb-4">Support</h4>
+<ul class="text-sm text-slate-500 space-y-2">
+<li><a class="hover:text-primary" href="#">Help Center</a></li>
+<li><a class="hover:text-primary" href="#">Safety Guidelines</a></li>
+<li><a class="hover:text-primary" href="#">Report a Scam</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Legal</h4>
+<ul class="text-sm text-slate-500 space-y-2">
+<li><a class="hover:text-primary" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-primary" href="#">Terms of Service</a></li>
+<li><a class="hover:text-primary" href="#">Cookie Policy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Download</h4>
+<div class="flex flex-col gap-2">
+<button class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2">
+<span class="material-symbols-outlined">ios</span> App Store
+                    </button>
+<button class="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2">
+<span class="material-symbols-outlined">play_arrow</span> Google Play
+                    </button>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-100 dark:border-slate-800 text-center text-sm text-slate-400">
+            © 2024 CampusCart Inc. All rights reserved.
+        </div>
+</footer>
+</body></html>

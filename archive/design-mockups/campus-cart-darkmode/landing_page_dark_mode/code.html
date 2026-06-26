@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#8a2ce2",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#191121",
+                    },
+                    fontFamily: {
+                        "display": ["Lexend", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>CampusCart - University Marketplace</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-primary/20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 lg:px-20 py-4">
+<div class="mx-auto flex max-w-7xl items-center justify-between gap-8">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">shopping_cart</span>
+<h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">CampusCart</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Shop</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Sell</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">About</a>
+</nav>
+</div>
+<div class="flex flex-1 items-center justify-end gap-4">
+<div class="relative hidden sm:block w-full max-w-xs">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+<input class="w-full rounded-full border-none bg-primary/10 py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary dark:text-white" placeholder="Search campus..." type="text"/>
+</div>
+<button class="flex items-center justify-center rounded-full bg-primary px-6 py-2 text-sm font-bold text-white hover:opacity-90 transition-opacity">
+                        Sign In
+                    </button>
+<div class="h-10 w-10 rounded-full border-2 border-primary/30 bg-primary/20 bg-cover bg-center" data-alt="University student profile placeholder image"></div>
+</div>
+</div>
+</header>
+<main class="flex-1">
+<!-- Hero Section -->
+<section class="relative px-6 py-12 lg:px-20 lg:py-24 overflow-hidden">
+<div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent"></div>
+<div class="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/10 blur-[100px]"></div>
+<div class="mx-auto max-w-7xl">
+<div class="flex flex-col items-center gap-8 text-center">
+<div class="inline-flex items-center rounded-full bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+                            Your Campus, Your Deals
+                        </div>
+<h1 class="max-w-4xl text-5xl font-black tracking-tight text-slate-900 dark:text-white md:text-7xl">
+                            The Marketplace for <span class="text-primary">Your Campus</span>
+</h1>
+<p class="max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+                            Buy and sell everything from textbooks to dorm furniture with your fellow students. Secure, fast, and local.
+                        </p>
+<!-- Hero Search Bar -->
+<div class="w-full max-w-2xl">
+<div class="flex items-center gap-2 rounded-2xl border border-primary/20 bg-white/5 dark:bg-primary/5 p-2 backdrop-blur-lg shadow-xl">
+<span class="material-symbols-outlined ml-4 text-slate-400">search</span>
+<input class="flex-1 border-none bg-transparent py-3 text-lg focus:ring-0 dark:text-white" placeholder="What are you looking for today?" type="text"/>
+<button class="rounded-xl bg-primary px-8 py-3 font-bold text-white shadow-lg shadow-primary/30 hover:scale-[1.02] transition-transform">
+                                    Search
+                                </button>
+</div>
+</div>
+<div class="mt-4 flex flex-wrap justify-center gap-4">
+<button class="rounded-full bg-primary px-8 py-4 text-lg font-bold text-white transition-all hover:shadow-xl hover:shadow-primary/20">
+                                Browse Marketplace
+                            </button>
+<button class="rounded-full border border-primary/30 bg-transparent px-8 py-4 text-lg font-bold text-primary transition-all hover:bg-primary/10">
+                                Sell an Item
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Categories -->
+<section class="px-6 py-12 lg:px-20">
+<div class="mx-auto max-w-7xl">
+<div class="mb-10 flex items-end justify-between">
+<div>
+<h2 class="text-3xl font-bold text-slate-900 dark:text-white">Featured Categories</h2>
+<p class="mt-2 text-slate-600 dark:text-slate-400">Find exactly what you need for this semester</p>
+</div>
+</div>
+<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+<!-- Category Cards -->
+<div class="group cursor-pointer rounded-xl border border-primary/10 bg-white/5 dark:bg-primary/5 p-8 transition-all hover:border-primary/40 hover:bg-primary/10">
+<div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-white">
+<span class="material-symbols-outlined text-3xl">book_5</span>
+</div>
+<h3 class="text-xl font-bold dark:text-white">Textbooks</h3>
+<p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Buy used and save up to 70% off retail prices.</p>
+</div>
+<div class="group cursor-pointer rounded-xl border border-primary/10 bg-white/5 dark:bg-primary/5 p-8 transition-all hover:border-primary/40 hover:bg-primary/10">
+<div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-white">
+<span class="material-symbols-outlined text-3xl">devices</span>
+</div>
+<h3 class="text-xl font-bold dark:text-white">Electronics</h3>
+<p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Laptops, tablets, and accessories for studies.</p>
+</div>
+<div class="group cursor-pointer rounded-xl border border-primary/10 bg-white/5 dark:bg-primary/5 p-8 transition-all hover:border-primary/40 hover:bg-primary/10">
+<div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-white">
+<span class="material-symbols-outlined text-3xl">bed</span>
+</div>
+<h3 class="text-xl font-bold dark:text-white">Dorm Furniture</h3>
+<p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Desks, chairs, and bedding for your space.</p>
+</div>
+<div class="group cursor-pointer rounded-xl border border-primary/10 bg-white/5 dark:bg-primary/5 p-8 transition-all hover:border-primary/40 hover:bg-primary/10">
+<div class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-white">
+<span class="material-symbols-outlined text-3xl">psychology</span>
+</div>
+<h3 class="text-xl font-bold dark:text-white">Services</h3>
+<p class="mt-2 text-sm text-slate-600 dark:text-slate-400">Tutoring, design, and other student services.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Trending Listings -->
+<section class="px-6 py-12 lg:px-20 bg-primary/5">
+<div class="mx-auto max-w-7xl">
+<div class="mb-10 flex items-center justify-between">
+<h2 class="text-3xl font-bold text-slate-900 dark:text-white">Trending Listings</h2>
+<a class="flex items-center gap-1 font-bold text-primary hover:underline" href="#">
+                            View All <span class="material-symbols-outlined">chevron_right</span>
+</a>
+</div>
+<div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+<!-- Product Card 1 -->
+<div class="group overflow-hidden rounded-xl border border-primary/10 bg-white dark:bg-background-dark transition-all hover:shadow-2xl">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Medical textbook" class="h-full w-full object-cover transition-transform group-hover:scale-105" data-alt="Modern medical textbook on a desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsnvatsYHghgXNxSMASHEx3gYXNuPUeHFTb6oD0axtHeURZZaTMZ_02qVOuj_wtRSUeJhHr85RqgkkGLNTe452KXoWHyTGBBg70-wUQkz98Ss_YuR8eL6_NDfL3PZIh5A4evi0cYlhyExkM5wOvwH_VhPCYJQ0Dvq7v7fxIlrVgG3OO4rjATBFw-ScFkhQLvIGRPxegIVlDNf73qc8-v7fGgD1Lr0grTp5pXhO7IcITSUeYsLnoeHj8IAmIWNQmpcjprlhkOilRl8"/>
+<div class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-primary shadow-sm dark:bg-background-dark/90">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<span class="text-xs font-semibold text-primary">Textbooks</span>
+<h3 class="mt-1 font-bold dark:text-white">Gray's Anatomy 42nd Ed.</h3>
+<p class="mt-2 text-xl font-black text-primary">ZMW 850</p>
+<div class="mt-4 flex items-center justify-between border-t border-primary/10 pt-4">
+<div class="flex items-center gap-2">
+<div class="h-6 w-6 rounded-full bg-primary/20" data-alt="User avatar thumbnail"></div>
+<span class="text-xs text-slate-500">Sarah M.</span>
+</div>
+<span class="text-[10px] uppercase text-slate-400">UNZA Campus</span>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group overflow-hidden rounded-xl border border-primary/10 bg-white dark:bg-background-dark transition-all hover:shadow-2xl">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Macbook Pro" class="h-full w-full object-cover transition-transform group-hover:scale-105" data-alt="Silver Macbook Pro on a table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtSVGkY6TzEiFkuhtsBk4PfWbHWFqGDqm4HHikcf1xZ7HUd5S92s_2XWzpIYIwWcEKr4ImRkbViJqt9WPhAfb5nlLcwRM5E1aPMxFHvxtNBNcV1N0JTrFPhd5aGoH8xk-E408X2z9D2cPC3XyhoUmGQuETwA6HgQWzXAkryqPACiBoELMNu1LZWycZZO1l4z0A7EGP8EguwmUJRWPJyuucvlrNiMQfEyqVfbYmL3lBQlWRv4iinNHOjtztz6yWyRVsoj7anayTUbg"/>
+<div class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-primary shadow-sm dark:bg-background-dark/90">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<span class="text-xs font-semibold text-primary">Electronics</span>
+<h3 class="mt-1 font-bold dark:text-white">MacBook Pro M1 (2021)</h3>
+<p class="mt-2 text-xl font-black text-primary">ZMW 14,500</p>
+<div class="mt-4 flex items-center justify-between border-t border-primary/10 pt-4">
+<div class="flex items-center gap-2">
+<div class="h-6 w-6 rounded-full bg-primary/20" data-alt="User avatar thumbnail"></div>
+<span class="text-xs text-slate-500">John D.</span>
+</div>
+<span class="text-[10px] uppercase text-slate-400">CBU Campus</span>
+</div>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group overflow-hidden rounded-xl border border-primary/10 bg-white dark:bg-background-dark transition-all hover:shadow-2xl">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Office chair" class="h-full w-full object-cover transition-transform group-hover:scale-105" data-alt="Ergonomic office chair for dorm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvjVmzzyn5iIzini5fxHuI2Dfs_kfn8TPOYZUnBgYA2jOD2B1P0yXQxOBuv8SP4L3pkz8rZoMzB2oxmdVBphsG_bdxNOVY-HpiEySMe5IsC4mbmb8z-ZbqENXJZaoZCPLC9H_zLsN4uE_yVv6RYb0zdEVksPTpF6bFfVTEi83us8qr9A-RmHBLFGj8QgKZZc8nbAMekhGsRYa8BJacuuj102iwl1YD2XBf8bpC618c0aoeIowYt3d76aPepW5f81s1HHkYwhkZPrE"/>
+<div class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-primary shadow-sm dark:bg-background-dark/90">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<span class="text-xs font-semibold text-primary">Furniture</span>
+<h3 class="mt-1 font-bold dark:text-white">Ergonomic Desk Chair</h3>
+<p class="mt-2 text-xl font-black text-primary">ZMW 1,200</p>
+<div class="mt-4 flex items-center justify-between border-t border-primary/10 pt-4">
+<div class="flex items-center gap-2">
+<div class="h-6 w-6 rounded-full bg-primary/20" data-alt="User avatar thumbnail"></div>
+<span class="text-xs text-slate-500">Mike R.</span>
+</div>
+<span class="text-[10px] uppercase text-slate-400">Mulungushi</span>
+</div>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="group overflow-hidden rounded-xl border border-primary/10 bg-white dark:bg-background-dark transition-all hover:shadow-2xl">
+<div class="relative aspect-square overflow-hidden">
+<img alt="Scientific calculator" class="h-full w-full object-cover transition-transform group-hover:scale-105" data-alt="Advanced scientific calculator for math" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCF0TA4LUZNBYGqNdWy4V6LIqMKHBKaPkg7O0owF9smGAgWtfwdR84OCrwytzd508EKDgGvyFjiDAHJVNWywiM_ZIdwEg6pTQUiKuwfk49CsYwjsEqUVMUxVdQ8M9-R1YLX32ePqlw-1ja5DEkZsbkHDlvszkaZx_tk8oQbedrU9Kv1f9AsbNp2rMAKX9IKvqtQHX0u2WEKnA10D6lUg4ns8GXtTGdUih9_F5Pxj1zgffMFNZuTpUW6lKWEUV4_RjWawqeYs0Nfw8"/>
+<div class="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-primary shadow-sm dark:bg-background-dark/90">
+<span class="material-symbols-outlined">favorite</span>
+</div>
+</div>
+<div class="p-4">
+<span class="text-xs font-semibold text-primary">Electronics</span>
+<h3 class="mt-1 font-bold dark:text-white">Texas Instruments TI-84</h3>
+<p class="mt-2 text-xl font-black text-primary">ZMW 600</p>
+<div class="mt-4 flex items-center justify-between border-t border-primary/10 pt-4">
+<div class="flex items-center gap-2">
+<div class="h-6 w-6 rounded-full bg-primary/20" data-alt="User avatar thumbnail"></div>
+<span class="text-xs text-slate-500">Loveness T.</span>
+</div>
+<span class="text-[10px] uppercase text-slate-400">UNZA Campus</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Call to Action Section -->
+<section class="px-6 py-20 lg:px-20">
+<div class="mx-auto max-w-7xl">
+<div class="relative overflow-hidden rounded-xl bg-primary px-8 py-16 text-center text-white shadow-2xl">
+<div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+<div class="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-black/10 blur-3xl"></div>
+<div class="relative z-10 flex flex-col items-center gap-6">
+<h2 class="max-w-2xl text-4xl font-black">Ready to Declutter Your Dorm?</h2>
+<p class="max-w-xl text-lg text-primary-100/80">Join thousands of students turning their unused items into extra cash. It takes less than 2 minutes to list your first item.</p>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="rounded-full bg-white px-10 py-4 text-lg font-bold text-primary hover:bg-slate-50">
+                                    Start Selling
+                                </button>
+<button class="rounded-full border border-white/30 bg-white/10 px-10 py-4 text-lg font-bold backdrop-blur-sm hover:bg-white/20">
+                                    Browse Shop
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="border-t border-primary/10 bg-background-light dark:bg-background-dark px-6 py-12 lg:px-20">
+<div class="mx-auto max-w-7xl">
+<div class="grid grid-cols-1 gap-12 lg:grid-cols-4">
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-2xl">shopping_cart</span>
+<h2 class="text-lg font-bold">CampusCart</h2>
+</div>
+<p class="text-sm text-slate-500">The safest and easiest way for students to buy and sell on campus.</p>
+</div>
+<div>
+<h4 class="mb-4 font-bold dark:text-white">Marketplace</h4>
+<ul class="flex flex-col gap-2 text-sm text-slate-500">
+<li><a class="hover:text-primary" href="#">Textbooks</a></li>
+<li><a class="hover:text-primary" href="#">Electronics</a></li>
+<li><a class="hover:text-primary" href="#">Dorm Life</a></li>
+<li><a class="hover:text-primary" href="#">Safety Tips</a></li>
+</ul>
+</div>
+<div>
+<h4 class="mb-4 font-bold dark:text-white">Support</h4>
+<ul class="flex flex-col gap-2 text-sm text-slate-500">
+<li><a class="hover:text-primary" href="#">Help Center</a></li>
+<li><a class="hover:text-primary" href="#">Contact Us</a></li>
+<li><a class="hover:text-primary" href="#">Terms of Service</a></li>
+<li><a class="hover:text-primary" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="mb-4 font-bold dark:text-white">Connect</h4>
+<div class="flex gap-4">
+<a class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">public</span>
+</a>
+<a class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">alternate_email</span>
+</a>
+</div>
+</div>
+</div>
+<div class="mt-12 border-t border-primary/10 pt-8 text-center text-xs text-slate-500">
+                    © 2024 CampusCart. Built by students, for students.
+                </div>
+</div>
+</footer>
+</div>
+</body></html>

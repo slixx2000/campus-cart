@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#dbeafe"/>
+  <rect x="140" y="80" width="120" height="80" rx="8" fill="#3b82f6"/>
+  <rect x="155" y="95" width="90" height="55" rx="4" fill="#93c5fd"/>
+  <ellipse cx="200" cy="175" rx="50" ry="8" fill="#2563eb" opacity="0.3"/>
+  <text x="200" y="230" text-anchor="middle" font-family="Arial" font-size="16" fill="#1e40af">Electronics</text>
+</svg>
