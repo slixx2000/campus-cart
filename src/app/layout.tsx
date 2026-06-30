@@ -1,3 +1,4 @@
+import {ClerkProvider} from "@clerk/nextjs";
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/HeaderServer";
@@ -51,14 +52,16 @@ export default function RootLayout({
         />
       </head>
       <body className="font-display antialiased bg-background-light text-slate-900 min-h-screen transition-colors dark:bg-background-dark dark:text-slate-100">
-        <PWARegister />
-        <PWAInstallPopup />
-        <ScaledDesktopFrame>
+        <ClerkProvider>
+          <PWARegister />
+          <PWAInstallPopup />
+          <ScaledDesktopFrame>
           <Header />
           <main className="min-h-screen">{children}</main>
           <Footer />
-        </ScaledDesktopFrame>
-        <NotificationServer />
+          </ScaledDesktopFrame>
+          <NotificationServer />
+        </ClerkProvider>
       </body>
     </html>
   );

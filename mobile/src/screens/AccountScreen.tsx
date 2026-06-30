@@ -8,11 +8,10 @@ import { ProfileStatCard } from '../components/profile/ProfileStatCard';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { styles } from '../lib/styles';
-import type { Listing, Profile, UniversityRow } from '../types';
-import type { User } from '@supabase/supabase-js';
+import type { AuthUser, Listing, Profile, UniversityRow } from '../types';
 
 type Props = {
-  user: User | null;
+  user: AuthUser | null;
   profile: Profile | null;
   universityName?: string;
   activeCount: number;
@@ -35,6 +34,13 @@ type Props = {
   onGoogleAuth: () => void;
   resetEmail: string;
   setResetEmail: (value: string) => void;
+  resetCode: string;
+  setResetCode: (value: string) => void;
+  resetNewPassword: string;
+  setResetNewPassword: (value: string) => void;
+  resetConfirmPassword: string;
+  setResetConfirmPassword: (value: string) => void;
+  resetStage: 'request' | 'verify';
   resetLoading: boolean;
   resetEmailCooldownLeft: number;
   onRequestPasswordReset: () => void;
@@ -91,6 +97,13 @@ export function AccountScreen(props: Props) {
     onGoogleAuth,
     resetEmail,
     setResetEmail,
+    resetCode,
+    setResetCode,
+    resetNewPassword,
+    setResetNewPassword,
+    resetConfirmPassword,
+    setResetConfirmPassword,
+    resetStage,
     resetLoading,
     resetEmailCooldownLeft,
     onRequestPasswordReset,
@@ -368,7 +381,11 @@ export function AccountScreen(props: Props) {
       {authMode === 'sign-in' ? (
         <View style={styles.helperCard}>
           <Text style={styles.helperCardTitle}>Forgot password?</Text>
-          <Text style={styles.helperText}>Enter your account email and we will send a password reset link.</Text>
+          <Text style={styles.helperText}>
+            {resetStage === 'request'
+              ? 'Enter your account email and we will send a password reset code.'
+              : 'Enter the reset code from your email and choose a new password.'}
+          </Text>
           <TextInput
             style={styles.input}
             placeholder="Reset email"
@@ -377,11 +394,45 @@ export function AccountScreen(props: Props) {
             autoCapitalize="none"
             value={resetEmail}
             onChangeText={setResetEmail}
+            editable={resetStage === 'request' && !resetLoading}
           />
+          {resetStage === 'verify' ? (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Reset code"
+                placeholderTextColor="#64748b"
+                keyboardType="number-pad"
+                autoCapitalize="none"
+                value={resetCode}
+                onChangeText={setResetCode}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="New password"
+                placeholderTextColor="#64748b"
+                secureTextEntry
+                value={resetNewPassword}
+                onChangeText={setResetNewPassword}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm new password"
+                placeholderTextColor="#64748b"
+                secureTextEntry
+                value={resetConfirmPassword}
+                onChangeText={setResetConfirmPassword}
+              />
+            </>
+          ) : null}
           <Pressable style={styles.secondaryButton} onPress={onRequestPasswordReset} disabled={resetLoading || resetEmailCooldownLeft > 0}>
-            {resetLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Send reset email</Text>}
+            {resetLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.secondaryButtonText}>{resetStage === 'request' ? 'Send reset code' : 'Reset password'}</Text>
+            )}
           </Pressable>
-          {resetEmailCooldownLeft > 0 ? (
+          {resetStage === 'request' && resetEmailCooldownLeft > 0 ? (
             <Text style={styles.helperText}>Resend available in {resetEmailCooldownLeft}s</Text>
           ) : null}
         </View>

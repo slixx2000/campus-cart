@@ -5,11 +5,10 @@ import { SectionHeader } from '../components/SectionHeader';
 import { CATEGORY_OPTIONS } from '../lib/constants';
 import { styles } from '../lib/styles';
 import type { PickedImage } from '../lib/imageUpload';
-import type { Profile } from '../types';
-import type { User } from '@supabase/supabase-js';
+import type { AuthUser, Profile } from '../types';
 
 type Props = {
-  user: User | null;
+  user: AuthUser | null;
   profile: Profile | null;
   sellTitle: string;
   setSellTitle: (value: string) => void;

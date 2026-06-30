@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Session, User } from '@supabase/supabase-js';
+import { useAuth, useClerk, useOAuth, useSignIn, useSignUp, useUser } from '@clerk/clerk-expo';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -20,7 +20,7 @@ import { SellScreen } from './src/screens/SellScreen';
 import { pickImages, uploadListingImages, type PickedImage } from './src/lib/imageUpload';
 import { fetchDefaultAvatars, pickSingleProfileImage, uploadProfileAvatar } from './src/lib/profileUpload';
 import { registerPushToken } from './src/lib/pushNotifications';
-import { sendPasswordResetEmail, signInWithGoogle, signInWithPassword, signUpWithEmail } from './src/lib/authService';
+import { bootstrapClerkProfile, CLERK_SUPABASE_TEMPLATE, createUuid, parseSupabaseIdFromToken, toAuthUser } from './src/lib/clerkBridge';
 import { generateWhatsAppLink, normalizeZambiaPhoneForStorage } from './src/lib/whatsapp';
 import { checkForLatestAppUpdate, type AppUpdateInfo } from './src/lib/appUpdates';
 import { useOtpCooldown } from './src/hooks/useOtpCooldown';
@@ -29,8 +29,8 @@ import { CATEGORY_OPTIONS, LISTING_SELECT } from './src/lib/constants';
 import { mapListing } from './src/lib/mappers';
 import { getSellerReviews, upsertSellerReview } from './src/lib/reviews';
 import { colors, styles } from './src/lib/styles';
-import { supabase } from './src/lib/supabase';
-import type { CategoryRow, Listing, MainTabParamList, Profile, RootStackParamList, SellerRatingSummary, SellerReview, UniversityRow } from './src/types';
+import { setSupabaseAccessTokenProvider, supabase } from './src/lib/supabase';
+import type { AuthUser, CategoryRow, Listing, MainTabParamList, Profile, RootStackParamList, SellerRatingSummary, SellerReview, UniversityRow } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -287,6 +287,13 @@ function MainTabsNavigator(props: any) {
             onGoogleAuth={handleGoogleAuth}
             resetEmail={resetEmail}
             setResetEmail={setResetEmail}
+            resetCode={resetCode}
+            setResetCode={setResetCode}
+            resetNewPassword={resetNewPassword}
+            setResetNewPassword={setResetNewPassword}
+            resetConfirmPassword={resetConfirmPassword}
+            setResetConfirmPassword={setResetConfirmPassword}
+            resetStage={resetStage}
             resetLoading={resetLoading}
             resetEmailCooldownLeft={resetEmailCooldownLeft}
             onRequestPasswordReset={handlePasswordReset}
@@ -324,8 +331,15 @@ function MainTabsNavigator(props: any) {
 }
 
 export default function App() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const { getToken, isLoaded: isAuthLoaded, isSignedIn } = useAuth();
+  const { user: clerkUser } = useUser();
+  const { signOut: clerkSignOut } = useClerk();
+  const { signIn, setActive: setActiveSignIn } = useSignIn();
+  const { signUp, setActive: setActiveSignUp } = useSignUp();
+  const { startOAuthFlow: startGoogleOAuthFlow } = useOAuth({ strategy: 'oauth_google' });
+
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [currentSupabaseId, setCurrentSupabaseId] = useState<string | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [myListings, setMyListings] = useState<Listing[]>([]);
@@ -343,6 +357,10 @@ export default function App() {
   const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in');
   const [authLoading, setAuthLoading] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  const [resetCode, setResetCode] = useState('');
+  const [resetNewPassword, setResetNewPassword] = useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('');
+  const [resetStage, setResetStage] = useState<'request' | 'verify'>('request');
   const [resetLoading, setResetLoading] = useState(false);
   const [sellTitle, setSellTitle] = useState('');
   const [sellDescription, setSellDescription] = useState('');
@@ -382,7 +400,6 @@ export default function App() {
   const [feedbackModalIcon, setFeedbackModalIcon] = useState<keyof typeof MaterialIcons.glyphMap>('info-outline');
   const [updateInfo, setUpdateInfo] = useState<AppUpdateInfo | null>(null);
   const [checkingForUpdates, setCheckingForUpdates] = useState(false);
-  const processedOAuthCodesRef = useRef<Set<string>>(new Set());
   const dismissedUpdateVersionRef = useRef<string | null>(null);
   const updateCheckInFlightRef = useRef(false);
   const loadingCartProgress = useRef(new Animated.Value(0)).current;
@@ -461,7 +478,7 @@ export default function App() {
     [openThemedAlert]
   );
 
-  const loadProfile = useCallback(async (userId: string) => {
+  const loadProfile = useCallback(async (userId: string, authUser?: AuthUser | null) => {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, phone, avatar_url, is_verified_student, is_pioneer_seller, university_id, student_email, student_email_requested_at, student_email_verified_at')
@@ -475,17 +492,13 @@ export default function App() {
     }
 
     if (!data) {
-      const {
-        data: { user: authUser },
-      } = await supabase.auth.getUser();
-
       if (authUser?.id === userId) {
-        const fallbackName = authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'CampusCart User';
+        const fallbackName = authUser.fullName || authUser.email?.split('@')[0] || 'CampusCart User';
         await supabase.from('profiles').upsert(
           {
             id: userId,
             full_name: fallbackName,
-            phone: authUser.user_metadata?.phone ?? null,
+            phone: authUser.phone ?? null,
           },
           { onConflict: 'id' }
         );
@@ -673,82 +686,72 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    let mounted = true;
+    setSupabaseAccessTokenProvider(() => getToken({ template: CLERK_SUPABASE_TEMPLATE, skipCache: true }));
 
+    return () => {
+      setSupabaseAccessTokenProvider(null);
+    };
+  }, [getToken]);
+
+  useEffect(() => {
     void handleCheckForAppUpdates({ silent: true });
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
-      if (data.session?.user) {
-        loadProfile(data.session.user.id);
-        loadMyListings(data.session.user.id);
-        loadFavorites(data.session.user.id);
-        registerPushToken(data.session.user.id).catch(() => undefined);
-      }
-    });
+    Promise.all([loadListings(), loadFeaturedHomeListings(), loadCategories(), loadUniversities(), loadDefaultAvatars()]).finally(() => setLoading(false));
+  }, [handleCheckForAppUpdates, loadCategories, loadDefaultAvatars, loadFeaturedHomeListings, loadListings, loadUniversities]);
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-      if (nextSession?.user) {
-        loadProfile(nextSession.user.id);
-        loadMyListings(nextSession.user.id);
-        loadFavorites(nextSession.user.id);
-        registerPushToken(nextSession.user.id).catch(() => undefined);
-      } else {
+  useEffect(() => {
+    let cancelled = false;
+
+    const syncAuthenticatedUser = async () => {
+      if (!isAuthLoaded) return;
+
+      if (!isSignedIn || !clerkUser) {
+        if (!cancelled) {
+          setUser(null);
+          setCurrentSupabaseId(null);
+          setProfile(null);
+          setMyListings([]);
+          setFavoriteIds([]);
+        }
+        return;
+      }
+
+      const templateToken = await getToken({ template: CLERK_SUPABASE_TEMPLATE, skipCache: true });
+      const supabaseId = parseSupabaseIdFromToken(templateToken);
+      const authUser = toAuthUser({
+        clerkId: clerkUser.id,
+        supabaseId,
+        email: clerkUser.primaryEmailAddress?.emailAddress ?? null,
+        fullName: clerkUser.fullName,
+        phone: (clerkUser.unsafeMetadata?.phone as string | undefined) ?? null,
+      });
+
+      if (cancelled) return;
+
+      setUser(authUser);
+      setCurrentSupabaseId(supabaseId);
+
+      if (!supabaseId) {
         setProfile(null);
         setMyListings([]);
         setFavoriteIds([]);
+        return;
       }
-    });
 
-    Promise.all([loadListings(), loadFeaturedHomeListings(), loadCategories(), loadUniversities(), loadDefaultAvatars()]).finally(() => setLoading(false));
+      await Promise.all([
+        loadProfile(supabaseId, authUser),
+        loadMyListings(supabaseId),
+        loadFavorites(supabaseId),
+        registerPushToken(supabaseId).catch(() => undefined),
+      ]);
+    };
+
+    void syncAuthenticatedUser();
 
     return () => {
-      mounted = false;
-      listener.subscription.unsubscribe();
+      cancelled = true;
     };
-  }, [handleCheckForAppUpdates, loadCategories, loadDefaultAvatars, loadFavorites, loadFeaturedHomeListings, loadListings, loadMyListings, loadProfile, loadUniversities]);
-
-  useEffect(() => {
-    const completeOAuthFromLink = async (url: string) => {
-      try {
-        const parsed = new URL(url);
-        const code = parsed.searchParams.get('code');
-        if (!code) return;
-
-        if (processedOAuthCodesRef.current.has(code)) {
-          return;
-        }
-        processedOAuthCodesRef.current.add(code);
-
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) {
-          processedOAuthCodesRef.current.delete(code);
-          openThemedAlert('Google sign-in failed', error.message);
-        }
-      } catch (error) {
-        console.warn('oauth-link-parse-error', error);
-      }
-    };
-
-    const linkingSub = Linking.addEventListener('url', ({ url }) => {
-      completeOAuthFromLink(url).catch(() => undefined);
-    });
-
-    Linking.getInitialURL()
-      .then((initialUrl) => {
-        if (!initialUrl) return;
-        completeOAuthFromLink(initialUrl).catch(() => undefined);
-      })
-      .catch(() => undefined);
-
-    return () => {
-      linkingSub.remove();
-    };
-  }, []);
+  }, [clerkUser, getToken, isAuthLoaded, isSignedIn, loadFavorites, loadMyListings, loadProfile]);
 
   useEffect(() => {
     if (!loading) return;
@@ -856,26 +859,62 @@ export default function App() {
 
     try {
       if (authMode === 'sign-in') {
-        await signInWithPassword(email.trim(), password);
+        if (!signIn || !setActiveSignIn) {
+          throw new Error('Sign-in is still loading. Please try again.');
+        }
+
+        const result = await signIn.create({ identifier: email.trim(), password });
+        if (result.status !== 'complete' || !result.createdSessionId) {
+          throw new Error('Additional verification is required before sign-in can complete.');
+        }
+
+        await setActiveSignIn({ session: result.createdSessionId });
         setSignedInToastVisible(true);
         return;
       }
 
       const normalizedPhone = normalizeZambiaPhoneForStorage(phone);
-      const data = await signUpWithEmail(email.trim(), password, fullName, normalizedPhone ?? undefined);
-      await startAuthEmailCooldown();
-
-      if (data.user?.id) {
-        try {
-          await supabase.from('profiles').upsert({ id: data.user.id, full_name: fullName, phone: normalizedPhone ?? null });
-        } catch (profileError) {
-          console.warn('[AUTH] Profile creation error:', profileError);
-          // Don't fail the signup if profile creation fails - user can update later
-        }
+      if (!signUp || !setActiveSignUp) {
+        throw new Error('Sign-up is still loading. Please try again.');
       }
 
-      setAuthMode('sign-in');
-      openThemedAlert('Check your email', 'Check your email for the login code or confirmation link, then sign in.');
+      const provisionalSupabaseId = createUuid();
+      const data = await signUp.create({
+        emailAddress: email.trim(),
+        password,
+        unsafeMetadata: {
+          full_name: fullName,
+          phone: normalizedPhone ?? null,
+          supabase_id: provisionalSupabaseId,
+        },
+      });
+
+      await startAuthEmailCooldown();
+
+      if (data.status !== 'complete' || !data.createdSessionId) {
+        setAuthMode('sign-in');
+        openThemedAlert('Check your email', 'Your account was created. Complete any Clerk verification steps, then sign in.');
+        return;
+      }
+
+      await setActiveSignUp({ session: data.createdSessionId });
+
+      const sessionToken = await getToken({ skipCache: true });
+      if (!sessionToken) {
+        throw new Error('Your account was created, but the session token is missing. Please sign in again.');
+      }
+
+      await bootstrapClerkProfile({
+        sessionToken,
+        supabaseId: provisionalSupabaseId,
+        fullName,
+        phone: normalizedPhone ?? null,
+      });
+
+      await getToken({ template: CLERK_SUPABASE_TEMPLATE, skipCache: true });
+
+      setSignedInToastVisible(true);
+      openThemedAlert('Account ready', 'Your account has been created and linked.');
     } catch (err) {
       console.error('[AUTH ERROR]', err);
       openThemedAlert('Authentication error', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
@@ -889,25 +928,28 @@ export default function App() {
 
     setAuthLoading(true);
     try {
-      await signInWithGoogle();
+      const result = await startGoogleOAuthFlow({});
+      if (result.createdSessionId && result.setActive) {
+        await result.setActive({ session: result.createdSessionId });
+        setSignedInToastVisible(true);
+      }
     } catch (err) {
       openThemedAlert('Google sign-in failed', err instanceof Error ? err.message : 'Could not continue with Google.');
     } finally {
       setAuthLoading(false);
     }
-  }, [authLoading]);
+  }, [authLoading, startGoogleOAuthFlow]);
 
   const signOut = useCallback(async () => {
-    if (user?.id) {
+    if (currentSupabaseId) {
       await supabase
         .from('push_tokens')
         .update({ is_active: false, updated_at: new Date().toISOString() })
-        .eq('user_id', user.id);
+        .eq('user_id', currentSupabaseId);
     }
-    await supabase.auth.signOut();
-    setSession(null);
+    await clerkSignOut();
     openThemedAlert('Signed out', 'You have been signed out.');
-  }, [user?.id]);
+  }, [clerkSignOut, currentSupabaseId]);
 
   const handlePasswordReset = useCallback(async () => {
     if (resetLoading) return;
@@ -918,25 +960,75 @@ export default function App() {
       return;
     }
 
-    if (!canSendResetEmail) {
+    if (resetStage === 'request' && !canSendResetEmail) {
       openThemedAlert('Please wait', `Resend available in ${resetEmailCooldownLeft}s`);
       return;
     }
 
     setResetLoading(true);
     try {
-      await sendPasswordResetEmail(normalizedEmail);
-      await startResetEmailCooldown();
+      if (!signIn || !setActiveSignIn) {
+        throw new Error('Password reset is still loading. Please try again.');
+      }
 
-      openThemedAlert('Reset email sent', 'Check your email for the login code or reset link. It may take a few minutes to arrive.');
+      if (resetStage === 'request') {
+        await signIn.create({ strategy: 'reset_password_email_code', identifier: normalizedEmail });
+        await signIn.prepareFirstFactor({ strategy: 'reset_password_email_code' });
+        await startResetEmailCooldown();
+        setResetStage('verify');
+        openThemedAlert('Check your email', 'We sent a password reset code to your email.');
+        return;
+      }
+
+      if (!resetCode.trim()) {
+        throw new Error('Enter the password reset code from your email.');
+      }
+
+      if (resetNewPassword.length < 8) {
+        throw new Error('New password must be at least 8 characters long.');
+      }
+
+      if (resetNewPassword !== resetConfirmPassword) {
+        throw new Error('New password and confirmation do not match.');
+      }
+
+      const result = await signIn.attemptFirstFactor({
+        strategy: 'reset_password_email_code',
+        code: resetCode.trim(),
+        password: resetNewPassword,
+      });
+
+      if (result.status !== 'complete' || !result.createdSessionId) {
+        throw new Error('Password reset could not be completed. Please verify the code and try again.');
+      }
+
+      await setActiveSignIn({ session: result.createdSessionId });
+      setResetStage('request');
       setResetEmail('');
+      setResetCode('');
+      setResetNewPassword('');
+      setResetConfirmPassword('');
+      setSignedInToastVisible(true);
+      openThemedAlert('Password updated', 'Your password has been reset and you are now signed in.');
     } catch (err) {
       console.error('[PASSWORD RESET ERROR]', err);
-      openThemedAlert('Error sending reset email', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
+      openThemedAlert('Password reset error', err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
     } finally {
       setResetLoading(false);
     }
-  }, [canSendResetEmail, resetEmail, resetEmailCooldownLeft, resetLoading, startResetEmailCooldown]);
+  }, [
+    canSendResetEmail,
+    resetCode,
+    resetConfirmPassword,
+    resetEmail,
+    resetEmailCooldownLeft,
+    resetLoading,
+    resetNewPassword,
+    resetStage,
+    setActiveSignIn,
+    signIn,
+    startResetEmailCooldown,
+  ]);
 
   const handleSaveProfile = useCallback(async (options?: { silent?: boolean }) => {
     if (!user) return false;

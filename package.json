@@ -17,6 +17,7 @@
     "shared:typecheck": "npm run -w @campuscart/shared typecheck"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.5.9",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.1",
     "browser-image-compression": "^2.0.2",

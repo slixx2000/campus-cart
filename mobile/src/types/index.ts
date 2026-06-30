@@ -37,6 +37,13 @@ export type Profile = {
   student_email_verified_at?: string | null;
 };
 
+export type AuthUser = {
+  id: string;
+  email: string | null;
+  fullName?: string | null;
+  phone?: string | null;
+};
+
 export type CategoryRow = {
   id: string;
   name: string;

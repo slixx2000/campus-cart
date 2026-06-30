@@ -11,6 +11,7 @@
     "doctor": "npx expo-doctor"
   },
   "dependencies": {
+    "@clerk/clerk-expo": "^2.19.31",
     "@expo/metro-runtime": "~55.0.6",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/bottom-tabs": "^7.15.6",
@@ -25,7 +26,9 @@
     "expo-image": "~55.0.6",
     "expo-image-picker": "~55.0.13",
     "expo-notifications": "~55.0.13",
+    "expo-secure-store": "^56.0.4",
     "expo-status-bar": "~55.0.4",
+    "expo-web-browser": "^56.0.5",
     "nativewind": "^4.2.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",

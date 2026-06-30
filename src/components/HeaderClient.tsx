@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { fetchUnreadCountAction } from "@/app/messages/actions";
 import { createClient } from "@/lib/supabase/client";
 import MarketplaceSearchBar from "@/components/MarketplaceSearchBar";
@@ -138,46 +139,56 @@ export default function HeaderClient({
             </button>
           ) : null}
           <ThemeToggle />
-          {user ? (
-            <>
-              {isAdmin ? (
-                <Link
-                  href="/admin/student-verifications"
-                  className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
-                >
-                  Admin
-                </Link>
-              ) : null}
-              <SlideTabs unreadMessages={liveUnread} />
-            </>
-          ) : (
-            <>
+          <Show when="signed-in">
+            {isAdmin ? (
               <Link
-                href="/browse"
+                href="/admin/student-verifications"
                 className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
               >
-                Browse
+                Admin
               </Link>
-              <Link
-                href="/downloads"
-                className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
-              >
-                Mobile App
-              </Link>
-              <Link
-                href="/about"
-                className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
-              >
-                About
-              </Link>
-              <Link
-                href="/auth/sign-in"
+            ) : null}
+            <SlideTabs unreadMessages={liveUnread} />
+            <div className="shrink-0">
+              <UserButton afterSignOutUrl="/" />
+            </div>
+</Show>
+            <Show when="signed-out">
+            <Link
+              href="/browse"
+              className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
+            >
+              Browse
+            </Link>
+            <Link
+              href="/downloads"
+              className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
+            >
+              Mobile App
+            </Link>
+            <Link
+              href="/about"
+              className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
+            >
+              About
+            </Link>
+            <SignInButton mode="redirect" forceRedirectUrl="/">
+              <button
+                type="button"
                 className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
               >
                 Sign In
-              </Link>
-            </>
-          )}
+              </button>
+            </SignInButton>
+            <SignUpButton mode="redirect" forceRedirectUrl="/">
+              <button
+                type="button"
+                className="shrink-0 text-[clamp(0.68rem,0.85vw,0.8rem)] font-semibold text-slate-600 transition-colors hover:text-primary dark:text-slate-300"
+              >
+                Sign Up
+              </button>
+            </SignUpButton>
+          </Show>
           <Link
             href="/sell"
             className="relative inline-flex shrink-0 items-center gap-1 rounded-full border border-primary/45 bg-gradient-to-r from-primary to-sky-400 px-2.5 py-1 text-[clamp(0.68rem,0.85vw,0.8rem)] font-bold text-sky-950 shadow-lg shadow-primary/25 transition-all hover:opacity-95 active:scale-[0.98] dark:border-primary/60 dark:text-white dark:shadow-primary/45"

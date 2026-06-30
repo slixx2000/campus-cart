@@ -13,11 +13,10 @@ import {
 import { FallbackImage } from '../components/FallbackImage';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { styles } from '../lib/styles';
-import type { UniversityRow } from '../types';
-import type { User } from '@supabase/supabase-js';
+import type { AuthUser, UniversityRow } from '../types';
 
 type Props = {
-  user: User | null;
+  user: AuthUser | null;
   refreshing: boolean;
   onRefresh: () => void;
   onBack: () => void;
