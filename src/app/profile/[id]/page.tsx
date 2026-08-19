@@ -54,24 +54,24 @@ export default async function ProfilePage({ params }: Props) {
   }).format(new Date(profile.created_at));
 
   return (
-    <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-background-dark dark:text-slate-100">
+    <div className="min-h-screen bg-bg text-slate-900 transition-colors dark:text-slate-100">
       <div className="mx-auto max-w-5xl px-4 py-7 md:px-8">
 
         {/* ── Profile header card ── */}
-        <div className="mb-8 rounded-[1.6rem] border border-slate-200/70 bg-white/85 p-5 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.45)] backdrop-blur md:p-8 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
+        <div className="mb-8 rounded-lg border border-line bg-surface p-5 md:p-8 dark:bg-surface">
           <div className="flex flex-col items-center gap-6 md:flex-row md:items-start">
 
             {/* Avatar */}
             <div className="relative shrink-0">
-              <div className="size-28 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-xl dark:border-slate-800 md:size-36">
+              <div className="size-28 overflow-hidden rounded-full border-4 border-white bg-slate-200 md:size-36">
                 <AvatarImage
                   alt={profile.full_name}
                   src={profile.avatar_url}
                   className="h-full w-full object-cover"
-                  fallbackClassName="flex h-full w-full items-center justify-center bg-primary/10 text-primary dark:bg-sky-400/10 dark:text-sky-300"
+                  fallbackClassName="flex h-full w-full items-center justify-center bg-primary/10 text-primary  "
                 />
               </div>
-              <div className="absolute bottom-2 right-2 size-5 rounded-full border-4 border-white bg-green-500 dark:border-slate-800" />
+              <div className="absolute bottom-2 right-2 size-5 rounded-full border-4 border-white bg-green-500" />
             </div>
 
             {/* Details */}
@@ -87,7 +87,7 @@ export default async function ProfilePage({ params }: Props) {
                   </span>
                 )}
                 {profile.is_verified_student && (
-                  <span className="inline-flex items-center gap-1 self-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[0.7rem] font-bold text-primary dark:border-sky-300/30 dark:bg-sky-300/10 dark:text-sky-300">
+                  <span className="inline-flex items-center gap-1 self-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[0.7rem] font-bold text-primary">
                     <span className="material-symbols-outlined text-xs">verified</span>
                     Verified Student
                   </span>
@@ -126,14 +126,14 @@ export default async function ProfilePage({ params }: Props) {
                 <div className="flex flex-col gap-3 sm:flex-row">
                   <Link
                     href="/sell"
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/45 bg-gradient-to-r from-primary to-sky-400 px-5 py-2 text-sm font-bold text-sky-950 shadow-lg shadow-primary/25 transition hover:opacity-90 dark:text-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/45 px-5 py-2 text-sm font-bold text-accent shadow-primary/25 transition hover:opacity-90 dark:text-white"
                   >
                     <span className="material-symbols-outlined text-sm">add_circle</span>
                     New Listing
                   </Link>
                   <Link
                     href="/profile/settings"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-100 px-5 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-surface-2 px-5 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-surface dark:text-slate-200 dark:hover:bg-surface"
                   >
                     <span className="material-symbols-outlined text-sm">photo_camera</span>
                     Profile Settings
@@ -141,11 +141,11 @@ export default async function ProfilePage({ params }: Props) {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-bold text-white transition hover:brightness-110 dark:bg-gradient-to-r dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950">
+                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-bold text-on-primary transition hover:brightness-110 dark:text-slate-950">
                     <span className="material-symbols-outlined text-sm">chat</span>
                     Message
                   </button>
-                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-100 px-5 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-white/10 dark:text-slate-200 dark:hover:bg-white/15">
+                  <button className="inline-flex items-center justify-center gap-2 rounded-full bg-surface-2 px-5 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-surface dark:text-slate-200 dark:hover:bg-surface">
                     <span className="material-symbols-outlined text-sm">share</span>
                     Share Profile
                   </button>
@@ -172,7 +172,7 @@ export default async function ProfilePage({ params }: Props) {
         />
 
         {isOwnProfile ? (
-          <section className="mt-10 rounded-[1.4rem] border border-slate-200/70 bg-white/80 p-4.5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+          <section className="mt-10 rounded-lg border border-line bg-surface p-4.5 dark:bg-surface">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-bold text-slate-900 dark:text-white">Account Session</p>

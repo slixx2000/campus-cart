@@ -34,24 +34,23 @@ export function SkeletonBlock({
 
 export function PageFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-background-light text-slate-900 dark:bg-[#07111f] dark:text-slate-100">
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">{children}</div>
+    <div className="min-h-screen bg-bg text-fg">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 md:px-12">{children}</div>
     </div>
   );
 }
 
 export function ProductCardSkeleton() {
   return (
-    <article className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-white/10 dark:bg-white/5">
+    <article className="card flex h-full flex-col overflow-hidden">
       <SkeletonBlock className="aspect-square rounded-none" />
-      <div className="space-y-3 p-4">
-        <SkeletonBlock className="h-4 w-3/4" delayMs={80} />
-        <SkeletonBlock className="h-4 w-1/3" delayMs={160} />
-        <SkeletonBlock className="h-3 w-1/2" delayMs={240} />
-        <div className="flex items-center gap-2 pt-2">
-          <SkeletonBlock className="size-8 rounded-full" delayMs={320} />
-          <SkeletonBlock className="h-3 w-1/3" delayMs={400} />
-        </div>
+      <div className="flex flex-1 flex-col gap-2 p-3">
+        {/* price */}
+        <SkeletonBlock className="h-5 w-1/3" delayMs={80} />
+        {/* title */}
+        <SkeletonBlock className="h-4 w-3/4" delayMs={160} />
+        {/* location */}
+        <SkeletonBlock className="mt-auto h-3 w-1/2" delayMs={240} />
       </div>
     </article>
   );
@@ -59,7 +58,7 @@ export function ProductCardSkeleton() {
 
 export function ProductGridSkeleton({ count = 6 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-4 gap-[clamp(0.45rem,0.8vw,1.25rem)]">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: count }).map((_, i) => (
         <ProductCardSkeleton key={i} />
       ))}
@@ -70,8 +69,8 @@ export function ProductGridSkeleton({ count = 6 }: { count?: number }) {
 export function SectionHeaderSkeleton() {
   return (
     <div className="mb-4 flex items-center justify-between">
-      <SkeletonBlock className="h-7 w-56" />
-      <SkeletonBlock className="h-4 w-20" />
+      <SkeletonBlock className="h-8 w-56" />
+      <SkeletonBlock className="h-4 w-16" />
     </div>
   );
 }
@@ -79,7 +78,7 @@ export function SectionHeaderSkeleton() {
 export function MessageShellSkeleton() {
   return (
     <div className="flex gap-4 h-[calc(100vh-180px)]">
-      <aside className="hidden w-80 shrink-0 rounded-2xl border border-slate-200 bg-white/70 p-4 md:block dark:border-slate-800 dark:bg-slate-900/70">
+      <aside className="hidden w-80 shrink-0 card p-4 md:block">
         <SkeletonBlock className="mb-4 h-6 w-28" variant="chat" />
         <div className="space-y-3">
           {Array.from({ length: 7 }).map((_, i) => (
@@ -93,8 +92,8 @@ export function MessageShellSkeleton() {
           ))}
         </div>
       </aside>
-      <section className="flex flex-1 flex-col rounded-2xl border border-slate-200 bg-white/70 p-4 dark:border-slate-800 dark:bg-slate-900/70">
-        <div className="mb-4 flex items-center gap-3 border-b border-slate-100 pb-4 dark:border-slate-800">
+      <section className="card flex flex-1 flex-col p-4">
+        <div className="mb-4 flex items-center gap-3 border-b border-line pb-4">
           <SkeletonBlock className="size-12 rounded-full" variant="chat" />
           <div className="space-y-2">
             <SkeletonBlock className="h-4 w-36" variant="chat" delayMs={60} />
@@ -111,8 +110,8 @@ export function MessageShellSkeleton() {
             />
           ))}
         </div>
-        <div className="mt-4 border-t border-slate-100 pt-4 dark:border-slate-800">
-          <SkeletonBlock className="h-11 w-full rounded-2xl" variant="chat" delayMs={200} />
+        <div className="mt-4 border-t border-line pt-4">
+          <SkeletonBlock className="h-11 w-full rounded-lg" variant="chat" delayMs={200} />
         </div>
       </section>
     </div>
@@ -121,7 +120,7 @@ export function MessageShellSkeleton() {
 
 export function ProfileHeaderSkeleton() {
   return (
-    <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-6 dark:border-white/10 dark:bg-white/5 md:p-10">
+    <div className="card p-6 md:p-10">
       <div className="flex flex-col items-center gap-8 md:flex-row md:items-start">
         <SkeletonBlock className="size-32 rounded-full md:size-40" />
         <div className="w-full flex-1 space-y-3">
@@ -147,18 +146,18 @@ export function ListRowSkeleton({ count = 5 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="flex items-start gap-4 rounded-[1.5rem] border border-slate-200/70 bg-white/85 p-4 dark:border-white/10 dark:bg-white/5"
+          className="card flex items-start gap-4 p-4"
         >
-          <SkeletonBlock className="size-20 rounded-xl" />
+          <SkeletonBlock className="size-20 rounded-lg" />
           <div className="flex-1 space-y-2">
             <SkeletonBlock className="h-4 w-3/5" />
             <SkeletonBlock className="h-4 w-1/3" />
             <SkeletonBlock className="h-3 w-1/2" />
           </div>
           <div className="hidden gap-2 sm:flex">
-            <SkeletonBlock className="h-9 w-16 rounded-full" />
-            <SkeletonBlock className="h-9 w-16 rounded-full" />
-            <SkeletonBlock className="h-9 w-20 rounded-full" />
+            <SkeletonBlock className="h-9 w-16 rounded-md" />
+            <SkeletonBlock className="h-9 w-16 rounded-md" />
+            <SkeletonBlock className="h-9 w-20 rounded-md" />
           </div>
         </div>
       ))}
@@ -168,7 +167,7 @@ export function ListRowSkeleton({ count = 5 }: { count?: number }) {
 
 export function FormCardSkeleton() {
   return (
-    <div className="rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 dark:border-white/10 dark:bg-white/5">
+    <div className="card p-8">
       <div className="space-y-4">
         <SkeletonBlock className="h-4 w-36" variant="form" />
         <SkeletonBlock className="h-8 w-72" variant="form" delayMs={90} />
@@ -177,9 +176,9 @@ export function FormCardSkeleton() {
       <div className="mt-8 space-y-4">
         <SkeletonBlock className="h-12 w-full" variant="form" delayMs={240} />
         <SkeletonBlock className="h-12 w-full" variant="form" delayMs={320} />
-        <SkeletonBlock className="h-40 w-full rounded-2xl" variant="form" delayMs={400} />
+        <SkeletonBlock className="h-40 w-full rounded-lg" variant="form" delayMs={400} />
         <div className="flex justify-end">
-          <SkeletonBlock className="h-11 w-36 rounded-full" variant="form" delayMs={480} />
+          <SkeletonBlock className="h-11 w-36 rounded-md" variant="form" delayMs={480} />
         </div>
       </div>
     </div>

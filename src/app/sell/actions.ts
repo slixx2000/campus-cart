@@ -129,7 +129,6 @@ export async function createListingAction(
       university_id: universityId,
       condition: condition ?? null,
       is_service: isService,
-      featured: false,
       status: "active",
     })
     .select("id")

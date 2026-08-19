@@ -108,7 +108,7 @@ export default function DownloadsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background-light to-surface-light dark:from-background-dark dark:to-surface-dark transition-colors">
+    <div className="min-h-screen from-background-light to-surface-light dark:from-background-dark dark:to-surface-dark transition-colors">
       {/* Hero Section */}
       <section className="max-w-3xl mx-auto px-4 py-10 md:py-16">
         <div className="text-center mb-9">
@@ -121,16 +121,16 @@ export default function DownloadsPage() {
 
           {/* Android Download Card */}
           <div
-            className={`bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-5 md:p-7 mb-7 border-2 ${
+            className={`bg-surface dark:bg-slate-800 rounded-2xl  p-5 md:p-7 mb-7 border-2 ${
               isAndroid
-                ? 'border-primary-500 ring-2 ring-primary-100 dark:ring-primary-900'
-                : 'border-slate-200 dark:border-slate-700'
+                ? 'border-fg ring-2 ring-fg/10'
+                : 'border-line '
             } transition-all`}
           >
             <div className="flex items-center justify-center mb-4">
               {/* Android Logo SVG */}
               <svg
-                className="w-12 h-12 text-primary-500"
+                className="w-12 h-12 text-fg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -168,7 +168,7 @@ export default function DownloadsPage() {
                 onClick={handleInstallClick}
                 className={`w-full px-5 py-2.5 rounded-xl font-semibold transition-all mb-3 text-sm ${
                   isAndroid
-                    ? 'bg-primary-500 hover:bg-primary-600 text-white'
+                    ? 'bg-primary text-on-primary hover:opacity-90'
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600'
                 }`}
               >
@@ -193,7 +193,7 @@ export default function DownloadsPage() {
                 href={latestApkUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block w-full px-5 py-2.5 rounded-xl font-semibold transition-all bg-primary-500 text-white hover:bg-primary-600 text-sm"
+                className="btn-primary w-full text-sm"
               >
                 Download Latest APK (GitHub)
               </a>
@@ -230,7 +230,7 @@ export default function DownloadsPage() {
                 <summary className="cursor-pointer text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 font-medium">
                   Developer: GitHub Release Workflow
                 </summary>
-                <div className="mt-3 p-3 bg-slate-100 dark:bg-slate-900 rounded text-sm text-slate-700 dark:text-slate-300 font-mono">
+                <div className="mt-3 p-3 bg-surface-2 dark:bg-slate-900 rounded text-sm text-slate-700 dark:text-slate-300 font-mono">
                   <p className="mb-2">Upload APK to the mobile repo Releases page:</p>
                   <code className="block bg-slate-800 text-slate-100 p-2 rounded mb-2 overflow-x-auto">
                     {mobileReleasesUrl}
@@ -244,7 +244,7 @@ export default function DownloadsPage() {
           </div>
 
           {/* iOS Coming Soon */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 md:p-10 border border-slate-200 dark:border-slate-700 opacity-75">
+          <div className="bg-surface dark:bg-slate-800 rounded-lg p-8 md:p-10 border border-line opacity-75">
             <div className="flex items-center justify-center mb-4">
               {/* Apple Logo SVG */}
               <svg
@@ -266,7 +266,7 @@ export default function DownloadsPage() {
 
         {/* Features Section */}
         <section className="grid md:grid-cols-3 gap-5 my-14">
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-5 shadow-md">
             <div className="text-2xl mb-2.5">📱</div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">
               Mobile First
@@ -276,7 +276,7 @@ export default function DownloadsPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-5 shadow-md">
             <div className="text-2xl mb-2.5">🔒</div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">
               Student Verified
@@ -286,7 +286,7 @@ export default function DownloadsPage() {
             </p>
           </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md">
+          <div className="bg-surface dark:bg-slate-800 rounded-xl p-5 shadow-md">
             <div className="text-2xl mb-2.5">⚡</div>
             <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-2">
               Instant Transactions
@@ -301,7 +301,7 @@ export default function DownloadsPage() {
         <div className="text-center">
           <Link
             href="/"
-            className="inline-block text-primary-500 hover:text-primary-600 dark:text-primary-400 dark:hover:text-primary-300 font-semibold transition-colors"
+            className="inline-block text-fg hover:opacity-80 font-semibold transition-colors"
           >
             ← Back to Home
           </Link>

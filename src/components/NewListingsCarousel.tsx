@@ -6,13 +6,19 @@ import type { Listing } from "@/types";
 
 type NewListingsCarouselProps = {
   listings: Listing[];
+  favoriteIds?: Set<string>;
+  signedIn?: boolean;
 };
 
 const AUTO_SCROLL_PX_PER_SEC = 34;
 const RESUME_COOLDOWN_MS = 3000;
 const RESUME_RAMP_MS = 650;
 
-export default function NewListingsCarousel({ listings }: NewListingsCarouselProps) {
+export default function NewListingsCarousel({
+  listings,
+  favoriteIds,
+  signedIn = false,
+}: NewListingsCarouselProps) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const measureCardRef = useRef<HTMLDivElement | null>(null);
 
@@ -235,7 +241,11 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
                 className="w-[78vw] shrink-0 pr-6 sm:w-[320px] lg:w-[300px]"
                 data-index={idx}
               >
-                <ProductCard listing={listing} />
+                <ProductCard
+                  listing={listing}
+                  isFavorited={favoriteIds?.has(listing.id) ?? false}
+                  signedIn={signedIn}
+                />
               </div>
             );
           })}
@@ -246,7 +256,7 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
       <button
         type="button"
         onClick={() => scrollByDirection("left")}
-        className={`absolute left-1 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 text-slate-800 shadow-lg ring-1 ring-slate-200/80 transition-all dark:bg-slate-900/85 dark:text-slate-100 dark:ring-white/10 ${
+        className={`absolute left-1 top-1/2 z-10 -translate-y-1/2 rounded-full bg-surface p-2 text-slate-800  ring-1 ring-slate-200/80 transition-all dark:bg-slate-900/85 dark:text-slate-100 dark:ring-white/10 ${
           showLeftButton
             ? "opacity-100"
             : "opacity-0"
@@ -259,7 +269,7 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
       <button
         type="button"
         onClick={() => scrollByDirection("right")}
-        className={`absolute right-1 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/90 p-2 text-slate-800 shadow-lg ring-1 ring-slate-200/80 transition-all dark:bg-slate-900/85 dark:text-slate-100 dark:ring-white/10 ${
+        className={`absolute right-1 top-1/2 z-10 -translate-y-1/2 rounded-full bg-surface p-2 text-slate-800  ring-1 ring-slate-200/80 transition-all dark:bg-slate-900/85 dark:text-slate-100 dark:ring-white/10 ${
           showRightButton
             ? "opacity-100"
             : "opacity-0"
@@ -273,8 +283,8 @@ export default function NewListingsCarousel({ listings }: NewListingsCarouselPro
         Showing a continuously scrolling feed of {total} new listings.
       </div>
 
-      <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-background-light to-transparent dark:from-background-dark" />
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-background-light to-transparent dark:from-background-dark" />
+      <div className="pointer-events-none absolute left-0 top-0 h-full w-10 from-background-light dark:from-background-dark" />
+      <div className="pointer-events-none absolute right-0 top-0 h-full w-10 from-background-light dark:from-background-dark" />
 
     </div>
   );

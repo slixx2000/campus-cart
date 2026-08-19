@@ -18,7 +18,7 @@ export default async function ProfileSettingsPage() {
   const profile = await getCurrentProfile();
 
   return (
-    <div className="min-h-screen bg-background-light px-4 py-12 text-slate-900 dark:bg-background-dark dark:text-slate-100">
+    <div className="min-h-screen bg-bg px-4 py-12 text-fg">
       <div className="mx-auto max-w-3xl">
         <ProfileSettingsForm
           initialAvatarUrl={profile?.avatar_url ?? null}
@@ -26,6 +26,8 @@ export default async function ProfileSettingsPage() {
           studentEmail={profile?.student_email ?? null}
           studentEmailRequestedAt={profile?.student_email_requested_at ?? null}
           studentEmailVerifiedAt={profile?.student_email_verified_at ?? null}
+          verificationRejectionReason={profile?.verification_rejection_reason ?? null}
+          phone={profile?.phone ?? null}
         />
       </div>
     </div>

@@ -27,7 +27,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
   };
 
   return (
-    <form action={formAction} className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+    <form action={formAction} className="space-y-5 rounded-lg border border-line bg-surface p-8 dark:bg-surface">
       {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
 
       {state.message && (
@@ -52,7 +52,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
           required
           autoComplete="email"
           placeholder="you@university.ac.zm"
-          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         {state.errors?.email && (
           <p className="text-xs text-red-500 mt-1">{state.errors.email[0]}</p>
@@ -70,7 +70,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pr-12 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+            className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 pr-12 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
           />
           <button
             type="button"
@@ -89,7 +89,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
         <div className="mt-2 text-right">
           <a
             href="/auth/forgot-password"
-            className="text-xs font-semibold text-primary hover:underline dark:text-sky-300"
+            className="text-xs font-semibold text-primary hover:underline"
           >
             Forgot password?
           </a>
@@ -104,7 +104,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
         type="button"
         onClick={handleGoogle}
         disabled={googleLoading || pending}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-slate-300 bg-white font-bold text-slate-800 transition-opacity hover:opacity-90 disabled:opacity-60 dark:border-white/20 dark:bg-[#0d1a2b] dark:text-slate-100"
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-line bg-surface font-bold text-slate-800 transition-opacity hover:opacity-90 disabled:opacity-60 dark:text-slate-100"
       >
         <span className="material-symbols-outlined text-xl">login</span>
         {googleLoading ? "Connecting to Google..." : "Continue with Google"}
@@ -113,7 +113,7 @@ export default function SignInForm({ redirectTo }: { redirectTo?: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+        className="btn-primary h-12 w-full disabled:opacity-60"
       >
         {pending ? (
           <span className="material-symbols-outlined animate-spin text-xl">

@@ -32,7 +32,8 @@ export interface Listing {
   isNearby?: boolean;
   sellerId?: string;
   sellerName: string;
-  sellerPhone: string;
+  /** Not carried on listing rows — fetch via the listing_seller_contact RPC. */
+  sellerPhone?: string;
   sellerAvatarUrl?: string;
   sellerIsPioneer?: boolean;
   images: string[];
@@ -51,7 +52,8 @@ export interface ListingFormData {
   condition?: Condition;
   university: string;
   sellerName: string;
-  sellerPhone: string;
+  /** Not carried on listing rows — fetch via the listing_seller_contact RPC. */
+  sellerPhone?: string;
 }
 
 export interface SellerReview {

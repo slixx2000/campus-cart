@@ -1,8 +1,9 @@
 "use server";
 
-import crypto from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { siteUrl } from "@/lib/siteUrl";
+import { sendStudentVerificationEmail } from "@/lib/mailer";
 
 export type AdminVerificationState = {
   message?: string;
@@ -37,7 +38,7 @@ export async function approveStudentEmailAction(
   formData: FormData
 ): Promise<AdminVerificationState> {
   try {
-    const { supabase, userId } = await requireAdmin();
+    const { supabase } = await requireAdmin();
     const profileId = String(formData.get("profileId") ?? "");
     const note = String(formData.get("note") ?? "").trim();
 
@@ -45,19 +46,13 @@ export async function approveStudentEmailAction(
       return { message: "Missing profile id." };
     }
 
-    const now = new Date().toISOString();
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        is_verified_student: true,
-        student_email_verified_at: now,
-        verification_review_note: note || null,
-        verification_rejection_reason: null,
-        verification_reviewed_at: now,
-        verification_reviewed_by: userId,
-        updated_at: now,
-      })
-      .eq("id", profileId);
+    // Privilege columns are not writable by the authenticated role; the definer
+    // function re-checks is_admin server-side.
+    const { error } = await supabase.rpc("admin_review_student_verification", {
+      p_profile_id: profileId,
+      p_approve: true,
+      p_note: note || null,
+    });
 
     if (error) {
       return { message: `Approval failed: ${error.message}` };
@@ -78,7 +73,7 @@ export async function rejectStudentEmailAction(
   formData: FormData
 ): Promise<AdminVerificationState> {
   try {
-    const { supabase, userId } = await requireAdmin();
+    const { supabase } = await requireAdmin();
     const profileId = String(formData.get("profileId") ?? "");
     const reason = String(formData.get("reason") ?? "").trim();
 
@@ -90,21 +85,11 @@ export async function rejectStudentEmailAction(
       return { message: "Add a rejection reason before clearing the request." };
     }
 
-    const now = new Date().toISOString();
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        is_verified_student: false,
-        student_email: null,
-        student_email_requested_at: null,
-        student_email_verified_at: null,
-        verification_review_note: null,
-        verification_rejection_reason: reason,
-        verification_reviewed_at: now,
-        verification_reviewed_by: userId,
-        updated_at: now,
-      })
-      .eq("id", profileId);
+    const { error } = await supabase.rpc("admin_review_student_verification", {
+      p_profile_id: profileId,
+      p_approve: false,
+      p_reason: reason,
+    });
 
     if (error) {
       return { message: `Rejection failed: ${error.message}` };
@@ -125,7 +110,7 @@ export async function createStudentVerificationLinkAction(
   formData: FormData
 ): Promise<AdminVerificationState> {
   try {
-    const { supabase, userId } = await requireAdmin();
+    const { supabase } = await requireAdmin();
     const profileId = String(formData.get("profileId") ?? "");
 
     if (!profileId) {
@@ -146,33 +131,27 @@ export async function createStudentVerificationLinkAction(
       return { message: "This account does not have a linked student email yet." };
     }
 
-    const rawToken = crypto.randomBytes(24).toString("hex");
-    const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString();
+    // Same definer RPC the student self-service path uses, so token shape,
+    // expiry and throttling live in exactly one place.
+    const { data: rawToken, error: mintError } = await supabase.rpc(
+      "issue_student_email_verification",
+      { p_profile_id: profileId }
+    );
 
-    const { error: insertError } = await supabase
-      .from("student_email_verification_tokens")
-      .insert({
-        profile_id: profileId,
-        student_email: profile.student_email,
-        token_hash: tokenHash,
-        expires_at: expiresAt,
-        created_by: userId,
-      });
-
-    if (insertError) {
-      return { message: `Could not create verification link: ${insertError.message}` };
+    if (mintError) {
+      return { message: `Could not create verification link: ${mintError.message}` };
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, "") || "http://localhost:3000";
-    const verificationLink = `${siteUrl}/student-email/confirm?token=${rawToken}`;
+    const verificationLink = `${siteUrl()}/student-email/confirm?token=${rawToken}`;
+    const sent = await sendStudentVerificationEmail(profile.student_email, rawToken as string);
 
     revalidatePath("/admin/student-verifications");
 
     return {
-      message:
-        "Verification link created. Your mailer is not wired yet, so copy and send this link manually for now.",
-      verificationLink,
+      message: sent.ok
+        ? `Verification email sent to ${profile.student_email}.`
+        : `Link created, but the email could not be sent (${sent.error}). Copy it below and send it manually.`,
+      verificationLink: sent.ok ? undefined : verificationLink,
     };
   } catch (error) {
     return { message: error instanceof Error ? error.message : "Could not create verification link." };

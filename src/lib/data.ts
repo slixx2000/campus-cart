@@ -69,5 +69,5 @@ export const CATEGORIES: {
 ];
 
 export const formatPrice = (amount: number): string => {
-  return `ZMW ${amount.toLocaleString("en-ZM")}`;
+  return `K${amount.toLocaleString("en-ZM")}`;
 };

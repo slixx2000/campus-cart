@@ -31,9 +31,9 @@ export default function ConversationList({
   basePath = "/messages",
 }: ConversationListProps) {
   return (
-    <aside className="w-80 flex-shrink-0 flex flex-col bg-white/70 dark:bg-slate-900/70 backdrop-blur rounded-2xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800">
+    <aside className="w-80 flex-shrink-0 flex flex-col bg-surface dark:bg-slate-900/70 rounded-2xl overflow-hidden shadow-sm border border-line">
       {/* Sidebar header */}
-      <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="p-4 border-b border-slate-100">
         <h3 className="font-bold text-lg text-slate-900 dark:text-white">
           Messages
         </h3>
@@ -62,10 +62,10 @@ export default function ConversationList({
               <Link
                 key={conv.id}
                 href={`${basePath}/${conv.id}`}
-                className={`flex gap-3 p-4 cursor-pointer transition-colors border-b border-slate-50 dark:border-slate-800 ${
+                className={`flex gap-3 p-4 cursor-pointer transition-colors border-b border-slate-50  ${
                   isActive
                     ? "bg-primary/5 border-l-4 border-l-primary"
-                    : "hover:bg-slate-50 dark:hover:bg-slate-800 border-l-4 border-l-transparent"
+                    : "hover:bg-surface-2 dark:hover:bg-slate-800 border-l-4 border-l-transparent"
                 }`}
               >
                 {/* Avatar */}
@@ -74,7 +74,7 @@ export default function ConversationList({
                     src={conv.other_participant_avatar}
                     alt={conv.other_participant_name}
                     className="size-full rounded-full object-cover"
-                    fallbackClassName="flex size-full rounded-full items-center justify-center bg-primary/10 text-primary dark:bg-sky-400/10 dark:text-sky-300"
+                    fallbackClassName="flex size-full rounded-full items-center justify-center bg-primary/10 text-primary  "
                   />
                 </div>
 

@@ -12,11 +12,11 @@ export default function UniversityLinksGrid() {
         {Array.from({ length: 8 }).map((_, index) => (
           <div
             key={index}
-            className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse"
+            className="bg-surface border border-line rounded-xl p-4 animate-pulse"
           >
             <div className="h-6 w-16 rounded bg-slate-200 mx-auto mb-2" />
-            <div className="h-3 w-28 rounded bg-slate-100 mx-auto mb-2" />
-            <div className="h-3 w-14 rounded bg-slate-100 mx-auto" />
+            <div className="h-3 w-28 rounded bg-surface-2 mx-auto mb-2" />
+            <div className="h-3 w-14 rounded bg-surface-2 mx-auto" />
           </div>
         ))}
       </div>
@@ -33,7 +33,7 @@ export default function UniversityLinksGrid() {
 
   if (universities.length === 0) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white px-4 py-5 text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+      <div className="rounded-xl border border-line bg-surface px-4 py-5 text-sm text-slate-500 dark:bg-surface dark:text-slate-400">
         No universities are available yet.
       </div>
     );
@@ -45,7 +45,7 @@ export default function UniversityLinksGrid() {
         <Link
           key={university.id}
           href={`/browse?university=${encodeURIComponent(university.code)}`}
-          className="group rounded-xl border border-slate-200 bg-white p-4 text-center transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5 dark:backdrop-blur-xl dark:hover:border-primary/40 dark:hover:shadow-primary/10"
+          className="group rounded-xl border border-line bg-surface p-4 text-center transition-all hover:border-primary hover:shadow-primary/5 dark:bg-surface dark:hover:border-primary/40 dark:hover:shadow-primary/10"
         >
           <p className="font-bold text-primary text-lg group-hover:scale-105 transition-transform inline-block">
             {university.short_name}

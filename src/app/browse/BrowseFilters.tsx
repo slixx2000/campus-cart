@@ -42,19 +42,34 @@ export default function BrowseFilters({
   const clearAll = () => router.push("/browse");
 
   const hasFilters =
-    get("q") || get("category") || get("university") || get("maxPrice") || get("type");
+    get("q") ||
+    get("category") ||
+    get("university") ||
+    get("minPrice") ||
+    get("maxPrice") ||
+    get("condition") ||
+    get("type");
+
+  const selectedConditions = get("condition").split(",").filter(Boolean);
+
+  const toggleCondition = (value: string) => {
+    const next = selectedConditions.includes(value)
+      ? selectedConditions.filter((c) => c !== value)
+      : [...selectedConditions, value];
+    push({ condition: next.join(",") });
+  };
 
   const sortBy = get("sort") || "newest";
   const currentPage = Number(get("page") || 1);
 
   const filtersPanel = (
-    <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-4 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur sm:p-6 dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
-      <div className="mb-4 flex items-center justify-between sm:mb-6">
-        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Filters</h3>
+    <div className="card p-5">
+      <div className="mb-5 flex items-center justify-between">
+        <h3 className="text-base font-semibold text-fg">Filters</h3>
         {hasFilters && (
           <button
             onClick={clearAll}
-            className="text-sm font-medium text-primary hover:underline dark:text-sky-300"
+            className="text-sm font-medium text-muted hover:text-fg"
           >
             Clear all
           </button>
@@ -66,12 +81,12 @@ export default function BrowseFilters({
           initialValue={get("q")}
           placeholder="Search listings..."
           onSubmitQuery={(nextQuery) => push({ q: nextQuery })}
-          inputClassName="w-full rounded-full border border-slate-200 bg-slate-100 py-2 pl-10 pr-3 text-sm text-slate-900 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          inputClassName="input pl-10"
         />
       </div>
 
       <fieldset className="mb-4 space-y-3 sm:mb-6">
-        <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+        <legend className="text-xs font-semibold uppercase tracking-wider text-muted">
           Category
         </legend>
         <div className="mt-2 space-y-2">
@@ -81,9 +96,9 @@ export default function BrowseFilters({
               name="category"
               checked={!get("category")}
               onChange={() => push({ category: "" })}
-              className="text-primary focus:ring-primary"
+              className="accent-fg"
             />
-            <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
+            <span className="text-sm text-fg">
               All Categories
             </span>
           </label>
@@ -94,9 +109,9 @@ export default function BrowseFilters({
                 name="category"
                 checked={get("category") === c.slug}
                 onChange={() => push({ category: c.slug })}
-                className="text-primary focus:ring-primary"
+                className="accent-fg"
               />
-              <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
+              <span className="text-sm text-fg">
                 {c.name}
               </span>
             </label>
@@ -104,24 +119,67 @@ export default function BrowseFilters({
         </div>
       </fieldset>
 
-      <div className="mb-4 space-y-3 sm:mb-6">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-          Max Price (ZMW)
+      <div className="mb-6 space-y-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">
+          Price (K)
         </h4>
-        <input
-          type="number"
-          defaultValue={get("maxPrice")}
-          placeholder="Max ZMW"
-          onBlur={(e) => push({ maxPrice: e.target.value })}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") push({ maxPrice: (e.target as HTMLInputElement).value });
-          }}
-          className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
-        />
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min={0}
+            defaultValue={get("minPrice")}
+            placeholder="Min"
+            aria-label="Minimum price in Kwacha"
+            onBlur={(e) => push({ minPrice: e.target.value })}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") push({ minPrice: (e.target as HTMLInputElement).value });
+            }}
+            className="input"
+          />
+          <span className="text-muted">–</span>
+          <input
+            type="number"
+            min={0}
+            defaultValue={get("maxPrice")}
+            placeholder="Max"
+            aria-label="Maximum price in Kwacha"
+            onBlur={(e) => push({ maxPrice: e.target.value })}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") push({ maxPrice: (e.target as HTMLInputElement).value });
+            }}
+            className="input"
+          />
+        </div>
       </div>
 
+      <fieldset className="mb-6 space-y-3">
+        <legend className="text-xs font-semibold uppercase tracking-wider text-muted">
+          Condition
+        </legend>
+        <div className="mt-2 space-y-2">
+          {(
+            [
+              { value: "new", label: "New" },
+              { value: "like_new", label: "Like New" },
+              { value: "good", label: "Good" },
+              { value: "fair", label: "Fair" },
+            ] as const
+          ).map(({ value, label }) => (
+            <label key={value} className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                checked={selectedConditions.includes(value)}
+                onChange={() => toggleCondition(value)}
+                className="accent-fg"
+              />
+              <span className="text-sm text-fg">{label}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       <div className="mb-4 space-y-3 sm:mb-6">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">
           University
         </h4>
         {error && <p className="text-xs text-amber-700 dark:text-amber-300">{error}</p>}
@@ -129,7 +187,7 @@ export default function BrowseFilters({
           value={get("university")}
           disabled={isLoading || universities.length === 0}
           onChange={(e) => push({ university: e.target.value })}
-          className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          className="input"
         >
           <option value="">
             {isLoading
@@ -152,7 +210,7 @@ export default function BrowseFilters({
       </div>
 
       <fieldset className="space-y-3">
-        <legend className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+        <legend className="text-xs font-semibold uppercase tracking-wider text-muted">
           Listing Type
         </legend>
         <div className="mt-2 space-y-2">
@@ -169,9 +227,9 @@ export default function BrowseFilters({
                 name="listing-type"
                 checked={get("type") === value}
                 onChange={() => push({ type: value })}
-                className="text-primary focus:ring-primary"
+                className="accent-fg"
               />
-              <span className="text-sm font-medium text-slate-700 group-hover:text-primary dark:text-slate-200 dark:group-hover:text-sky-300">
+              <span className="text-sm text-fg">
                 {label}
               </span>
             </label>
@@ -185,10 +243,10 @@ export default function BrowseFilters({
     <div className="flex flex-col gap-5 md:flex-row md:gap-8">
       <aside className="w-full shrink-0 space-y-4 md:w-72 md:space-y-6">
         <details className="md:hidden">
-          <summary className="cursor-pointer list-none rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 text-sm font-bold text-slate-800 shadow-sm dark:border-white/10 dark:bg-white/5 dark:text-slate-100">
+          <summary className="card cursor-pointer list-none px-4 py-3 text-sm font-semibold text-fg">
             <span className="flex items-center justify-between gap-4">
               <span>Filters</span>
-              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted">
                 {hasFilters ? "active" : "show"}
               </span>
             </span>
@@ -198,41 +256,26 @@ export default function BrowseFilters({
 
         <div className="hidden md:block">{filtersPanel}</div>
 
-        <div className="rounded-[1.5rem] border border-primary/20 bg-primary/10 p-5 dark:border-sky-400/20 dark:bg-sky-400/10">
-          <p className="mb-2 flex items-center gap-2 text-sm font-bold text-primary dark:text-sky-200">
-            <span className="material-symbols-outlined text-lg">verified_user</span>
-              Campus Verified
-            </p>
-          <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-              Shop with confidence. All sellers are verified university students.
-            </p>
-        </div>
       </aside>
 
       <div className="flex-1 space-y-6">
-        <div className="flex items-center justify-between gap-4">
-          <div className="no-scrollbar flex gap-2 overflow-x-auto pr-2">
-            {(["newest", "price-asc", "price-desc"] as const).map((s) => (
-              <button
-                key={s}
-                onClick={() => push({ sort: s })}
-                className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                  sortBy === s
-                    ? "bg-primary text-white dark:bg-sky-400 dark:text-slate-950"
-                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
-                }`}
-              >
-                {s === "newest"
-                  ? "Newest"
-                  : s === "price-asc"
-                  ? "Price: Low to High"
-                  : "Price: High to Low"}
-              </button>
-            ))}
-          </div>
-          <p className="whitespace-nowrap text-sm font-medium text-slate-500 dark:text-slate-400">
-            Showing {count} {count === 1 ? "result" : "results"}
-          </p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight text-fg">
+            Showing <span className="font-bold">{count}</span>{" "}
+            {count === 1 ? "result" : "results"}
+          </h1>
+          <label className="flex items-center gap-2">
+            <span className="sr-only">Sort results</span>
+            <select
+              value={sortBy}
+              onChange={(e) => push({ sort: e.target.value })}
+              className="input w-auto py-2"
+            >
+              <option value="newest">Newest First</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+            </select>
+          </label>
         </div>
 
         {children}
@@ -242,7 +285,7 @@ export default function BrowseFilters({
             <button
               onClick={() => push({ page: String(Math.max(1, currentPage - 1)) })}
               disabled={currentPage <= 1}
-              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
+              className="rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:text-slate-200 dark:hover:border-sky-300"
             >
               ← Prev
             </button>
@@ -252,7 +295,7 @@ export default function BrowseFilters({
             <button
               onClick={() => push({ page: String(currentPage + 1) })}
               disabled={currentPage * 12 >= count}
-              className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300"
+              className="rounded-full border border-line px-4 py-2 text-sm font-medium transition-colors hover:border-primary disabled:opacity-40 dark:text-slate-200 dark:hover:border-sky-300"
             >
               Next →
             </button>

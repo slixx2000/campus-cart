@@ -41,7 +41,7 @@ export default async function ConversationPage({
     .single();
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-[#07111f]">
+    <div className="min-h-screen bg-bg">
       <div className="mx-auto max-w-7xl px-4 py-6">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-6 md:hidden">
           Messages
@@ -71,6 +71,11 @@ export default async function ConversationPage({
             listingTitle={conversation.listing_title}
             blockedByCurrentUser={conversation.blocked_by_current_user}
             blockedByOtherUser={conversation.blocked_by_other_user}
+            otherLastReadAt={
+              conversation.buyer_id === user.id
+                ? conversation.seller_last_read_at
+                : conversation.buyer_last_read_at
+            }
           />
         </div>
       </div>

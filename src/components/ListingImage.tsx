@@ -28,6 +28,10 @@ export default function ListingImage({
   }, [src]);
 
   const displaySrc = hasError || !src ? fallbackSrc : src;
+  // The optimizer rejects SVG unless dangerouslyAllowSVG is set, and the local
+  // placeholders are all SVG — they're tiny, so serve those as-is and optimise
+  // the real (Supabase-hosted) photos.
+  const isSvg = displaySrc.endsWith(".svg");
 
   return (
     <Image
@@ -36,7 +40,8 @@ export default function ListingImage({
       fill={fill}
       className={className}
       priority={priority}
-      unoptimized
+      sizes={fill ? "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" : undefined}
+      unoptimized={isSvg}
       onError={() => setHasError(true)}
     />
   );

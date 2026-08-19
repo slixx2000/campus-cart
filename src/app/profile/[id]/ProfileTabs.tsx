@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import type { Listing } from "@/types";
 import type { SellerRatingSummary, SellerReview } from "@/types";
 import { formatPrice } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 import ArchiveListingButton from "@/app/my-listings/ArchiveListingButton";
+import ListingImage from "@/components/ListingImage";
 
 interface ProfileTabsProps {
   activeListings: Listing[];
@@ -126,19 +126,19 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
   return (
     <>
       {/* Tab bar */}
-      <div className="sticky top-[68px] z-40 -mx-4 px-4 py-2 backdrop-blur-md bg-background-light/90 dark:bg-background-dark/90 md:-mx-8 md:px-8">
-        <div className="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 no-scrollbar">
+      <div className="sticky top-[68px] z-40 -mx-4 px-4 py-2 bg-bg/90 md:-mx-8 md:px-8">
+        <div className="flex overflow-x-auto border-b border-line no-scrollbar">
           <button
             onClick={() => setTab("listings")}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-5 py-3.5 text-sm font-bold transition-all ${
               tab === "listings"
-                ? "border-primary text-primary dark:border-sky-300 dark:text-sky-300"
+                ? "border-primary text-primary  "
                 : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
             <span className="material-symbols-outlined text-lg leading-none">grid_view</span>
             {isOwnProfile ? "My Listings" : "Listings"}{" "}
-            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs dark:bg-white/10">
+            <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs dark:bg-surface">
               {activeListings.length}
             </span>
           </button>
@@ -147,7 +147,7 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
             onClick={() => setTab("reviews")}
             className={`flex items-center gap-2 whitespace-nowrap border-b-2 px-5 py-3.5 text-sm font-bold transition-all ${
               tab === "reviews"
-                ? "border-primary text-primary dark:border-sky-300 dark:text-sky-300"
+                ? "border-primary text-primary  "
                 : "border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >
@@ -161,7 +161,7 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
       {tab === "listings" && (
         <div className="mt-8">
           {activeListings.length === 0 ? (
-            <div className="rounded-[1.35rem] border border-slate-200/70 bg-white/85 p-11 text-center backdrop-blur dark:border-white/10 dark:bg-white/5">
+            <div className="rounded-lg border border-line bg-surface p-11 text-center dark:bg-surface">
               <span className="material-symbols-outlined mb-4 block text-4xl text-slate-300 dark:text-slate-600">
                 storefront
               </span>
@@ -175,7 +175,7 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
                   </p>
                   <Link
                     href="/sell"
-                    className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 px-6 py-2.5 font-bold text-white hover:opacity-90 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+                    className="btn-primary px-6"
                   >
                     <span className="material-symbols-outlined text-lg leading-none">add_circle</span>
                     Post Free Listing
@@ -189,22 +189,22 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
               {activeListings.map((listing) => (
                 <div
                   key={listing.id}
-                  className="flex items-start gap-4 rounded-[1.35rem] border border-slate-200/70 bg-white/85 p-3.5 shadow-sm backdrop-blur transition-all duration-300 ease-out hover:scale-[1.01] hover:-translate-y-1 hover:shadow-xl hover:ring-1 hover:ring-black/10 dark:border-white/10 dark:bg-white/5 dark:hover:ring-white/10"
+                  className="flex items-start gap-4 rounded-lg border border-line bg-surface p-3.5 shadow-sm transition-all duration-300 ease-out hover:scale-[1.01] hover:-translate-y-1 hover:ring-1 hover:ring-black/10 dark:bg-surface dark:hover:ring-white/10"
                 >
-                  <div className="relative size-18 shrink-0 overflow-hidden rounded-lg bg-slate-100 dark:bg-white/10">
-                    <Image
+                  <div className="relative size-18 shrink-0 overflow-hidden rounded-lg bg-surface-2 dark:bg-surface">
+                    <ListingImage
                       src={listing.images[0]}
                       alt={listing.title}
+                      fallbackSrc="/images/placeholder-electronics.svg"
                       fill
                       className="object-cover transition-transform duration-300 hover:scale-110"
-                      unoptimized
                     />
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate text-sm font-bold text-slate-900 dark:text-white">
                       {listing.title}
                     </h3>
-                    <p className="mt-0.5 text-xs font-bold text-primary dark:text-sky-300">
+                    <p className="mt-0.5 text-xs font-bold text-primary">
                       {formatPrice(listing.price)}
                     </p>
                     <div className="mt-1 flex items-center gap-2">
@@ -220,13 +220,13 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
                   <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
                     <Link
                       href={`/product/${listing.id}`}
-                      className="rounded-full border border-slate-200 px-3.5 py-1.5 text-center text-[0.7rem] font-bold text-slate-700 transition-colors hover:border-primary hover:text-primary dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300 dark:hover:text-sky-300"
+                      className="rounded-full border border-line px-3.5 py-1.5 text-center text-[0.7rem] font-bold text-slate-700 transition-colors hover:border-primary hover:text-primary dark:text-slate-200 dark:hover:border-sky-300"
                     >
                       View
                     </Link>
                     <Link
                       href={`/my-listings/${listing.id}/edit`}
-                      className="rounded-full border border-slate-200 px-3.5 py-1.5 text-center text-[0.7rem] font-bold text-slate-700 transition-colors hover:border-primary hover:text-primary dark:border-white/10 dark:text-slate-200 dark:hover:border-sky-300 dark:hover:text-sky-300"
+                      className="rounded-full border border-line px-3.5 py-1.5 text-center text-[0.7rem] font-bold text-slate-700 transition-colors hover:border-primary hover:text-primary dark:text-slate-200 dark:hover:border-sky-300"
                     >
                       Edit
                     </Link>
@@ -249,7 +249,7 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
       {/* Reviews tab */}
       {tab === "reviews" && (
         <div className="mt-8 space-y-4">
-          <div className="rounded-[1.35rem] border border-slate-200/70 bg-white/85 p-4.5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-lg border border-line bg-surface p-4.5 dark:bg-surface">
               <p className="text-sm font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Seller rating</p>
             <div className="mt-2 flex items-end gap-3">
               <p className="text-[2rem] font-black text-slate-900 dark:text-white">
@@ -261,7 +261,7 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
           </div>
 
           {canReview ? (
-            <div className="rounded-[1.35rem] border border-slate-200/70 bg-white/85 p-4.5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+            <div className="rounded-lg border border-line bg-surface p-4.5 dark:bg-surface">
               <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Leave a review</p>
               <div className="mt-3 flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -276,7 +276,7 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
                 ))}
               </div>
               <textarea
-                className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none focus:border-primary dark:border-white/10 dark:bg-slate-900 dark:text-slate-100"
+                className="mt-3 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-slate-800 outline-none focus:border-primary dark:bg-slate-900 dark:text-slate-100"
                 rows={3}
                 maxLength={1000}
                 value={reviewText}
@@ -287,14 +287,14 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
                 type="button"
                 onClick={handleSubmitReview}
                 disabled={submittingReview}
-                className="mt-3 inline-flex items-center rounded-full bg-primary px-4.5 py-2 text-sm font-bold text-white disabled:opacity-60"
+                className="mt-3 inline-flex items-center rounded-full bg-primary px-4.5 py-2 text-sm font-bold text-on-primary disabled:opacity-60"
               >
                 {submittingReview ? "Saving..." : "Submit review"}
               </button>
             </div>
           ) : null}
 
-          <div className="rounded-[1.35rem] border border-slate-200/70 bg-white/85 p-4.5 backdrop-blur dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-lg border border-line bg-surface p-4.5 dark:bg-surface">
             <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Recent reviews</p>
             {loadingReviews ? (
               <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Loading reviews...</p>
@@ -303,7 +303,7 @@ export default function ProfileTabs({ activeListings, isOwnProfile, sellerId, vi
             ) : (
               <div className="mt-3 space-y-3">
                 {reviews.map((review) => (
-                  <div key={review.id} className="rounded-[1.1rem] border border-slate-200 bg-white p-3.5 dark:border-white/10 dark:bg-slate-900">
+                  <div key={review.id} className="rounded-lg border border-line bg-surface p-3.5 dark:bg-slate-900">
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{review.reviewerName}</p>
                       <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(review.createdAt).toLocaleDateString()}</p>

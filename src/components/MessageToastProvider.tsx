@@ -80,7 +80,7 @@ export default function MessageToastProvider({ userId }: { userId: string }) {
           const current = pathnameRef.current;
           if (
             current === `/messages/${msg.conversation_id}` ||
-            current === `/chat/${msg.conversation_id}`
+            current === `/messages/${msg.conversation_id}`
           )
             return;
 
@@ -133,7 +133,7 @@ export default function MessageToastProvider({ userId }: { userId: string }) {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-lg dark:border-white/10 dark:bg-slate-900"
+          className="flex items-start gap-3 rounded-xl border border-line bg-surface p-3 dark:bg-slate-900"
         >
           <span className="material-symbols-outlined mt-0.5 text-xl text-primary">
             chat
@@ -146,7 +146,7 @@ export default function MessageToastProvider({ userId }: { userId: string }) {
               {toast.preview}
             </p>
             <Link
-              href={`/chat/${toast.conversationId}`}
+              href={`/messages/${toast.conversationId}`}
               onClick={() => dismiss(toast.id)}
               className="mt-1 inline-block text-xs font-semibold text-primary hover:underline"
             >

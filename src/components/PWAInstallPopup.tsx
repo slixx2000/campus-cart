@@ -85,7 +85,7 @@ export default function PWAInstallPopup() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-[120] mx-auto w-[min(28rem,calc(100vw-2rem))] rounded-2xl border border-blue-200 bg-white/95 p-4 shadow-2xl backdrop-blur dark:border-blue-900 dark:bg-slate-900/95">
+    <div className="fixed bottom-4 left-4 right-4 z-[120] mx-auto w-[min(28rem,calc(100vw-2rem))] rounded-2xl border border-blue-200 bg-surface p-4 dark:border-blue-900 dark:bg-slate-900/95">
       <div className="flex items-start gap-3">
         <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">
           download
@@ -110,7 +110,7 @@ export default function PWAInstallPopup() {
             <button
               type="button"
               onClick={dismiss}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-surface-2 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               Not now
             </button>

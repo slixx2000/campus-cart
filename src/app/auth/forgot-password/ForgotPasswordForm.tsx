@@ -57,10 +57,10 @@ export default function ForgotPasswordForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5"
+      className="space-y-5 rounded-lg border border-line bg-surface p-8 dark:bg-surface"
     >
       {message && (
-        <div className="rounded-xl border border-primary/20 bg-primary/10 p-4 text-sm text-primary dark:border-sky-300/20 dark:bg-sky-300/10 dark:text-sky-200">
+        <div className="rounded-xl border border-primary/20 bg-primary/10 p-4 text-sm text-primary">
           {message}
         </div>
       )}
@@ -83,7 +83,7 @@ export default function ForgotPasswordForm() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="you@university.ac.zm"
-          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
       </div>
 
@@ -94,7 +94,7 @@ export default function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={isSending || !canResend}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+        className="btn-primary h-12 w-full disabled:opacity-60"
       >
         {isSending ? (
           <span className="material-symbols-outlined animate-spin text-xl">

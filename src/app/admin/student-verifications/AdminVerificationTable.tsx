@@ -54,7 +54,7 @@ function VerificationActions({ row }: { row: VerificationRow }) {
           rows={2}
           defaultValue={row.verification_review_note ?? ""}
           placeholder="Approval note (optional)"
-          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-xs text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         <button
           type="submit"
@@ -72,7 +72,7 @@ function VerificationActions({ row }: { row: VerificationRow }) {
           rows={2}
           defaultValue={row.verification_rejection_reason ?? ""}
           placeholder="Rejection reason (required if rejecting)"
-          className="w-full rounded-xl border border-red-200 bg-white px-3 py-2 text-xs text-slate-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-300 dark:border-red-300/20 dark:bg-[#0d1a2b] dark:text-white"
+          className="w-full rounded-xl border border-red-200 bg-surface px-3 py-2 text-xs text-slate-900 outline-none focus:border-red-400 focus:ring-2 focus:ring-red-300 dark:border-red-300/20 dark:text-white"
         />
         <button
           type="submit"
@@ -88,12 +88,12 @@ function VerificationActions({ row }: { row: VerificationRow }) {
         <button
           type="submit"
           disabled={linkPending || !row.student_email}
-          className="rounded-full border border-sky-200 px-4 py-2 text-xs font-bold text-sky-700 transition hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-sky-300/20 dark:text-sky-200 dark:hover:bg-sky-300/10"
+          className="rounded-full border border-sky-200 px-4 py-2 text-xs font-bold text-accent transition hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {linkPending ? "Generating link..." : "Create verification link"}
         </button>
         {linkState.verificationLink ? (
-          <div className="rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-sky-800 dark:border-sky-300/20 dark:bg-sky-300/10 dark:text-sky-100">
+          <div className="rounded-xl border border-sky-200 bg-sky-50 p-3 text-xs text-accent">
             <p className="mb-2 font-semibold">Manual send link</p>
             <p className="break-all">{linkState.verificationLink}</p>
           </div>
@@ -112,17 +112,17 @@ function VerificationActions({ row }: { row: VerificationRow }) {
 export default function AdminVerificationTable({ rows }: { rows: VerificationRow[] }) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600 dark:border-white/10 dark:bg-[#0d1a2b] dark:text-slate-300">
+      <div className="rounded-2xl border border-line bg-surface-2 p-6 text-sm text-slate-600 dark:text-slate-300">
         No pending student email requests right now.
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/70 bg-white/85 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] dark:border-white/10 dark:bg-white/5">
+    <div className="overflow-hidden rounded-2xl border border-line bg-surface dark:bg-surface">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 dark:divide-white/10">
-          <thead className="bg-slate-50 dark:bg-white/5">
+          <thead className="bg-surface-2 dark:bg-surface">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">User</th>
               <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">Student email</th>

@@ -40,17 +40,39 @@ async function listDefaultAvatarUrlsWithClient(
     );
 }
 
+/** The subset of a profile that is safe to show to anyone, including visitors. */
+export type PublicProfile = Pick<
+  ProfileRow,
+  | "id"
+  | "full_name"
+  | "avatar_url"
+  | "university_id"
+  | "is_verified_student"
+  | "is_pioneer_seller"
+  | "created_at"
+>;
+
+const PUBLIC_PROFILE_COLUMNS =
+  "id, full_name, avatar_url, university_id, is_verified_student, is_pioneer_seller, created_at";
+
+/**
+ * Another user's profile, as shown on seller and profile pages.
+ *
+ * Explicit columns rather than `select("*")`: `*` requires privileges on every
+ * column, so it breaks the moment a sensitive column is revoked — and it was
+ * shipping `phone` and `student_email` to anyone viewing a listing.
+ */
 export async function getProfileById(
   id: string
-): Promise<ProfileRow | null> {
+): Promise<PublicProfile | null> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select(PUBLIC_PROFILE_COLUMNS)
     .eq("id", id)
     .single();
   if (error) return null;
-  return data as ProfileRow;
+  return data as unknown as PublicProfile;
 }
 
 export async function upsertProfile(
@@ -80,13 +102,28 @@ export async function upsertProfile(
   return inserted as ProfileRow;
 }
 
+/**
+ * The signed-in user's own profile, including private fields (phone, student
+ * email, verification notes) that `getProfileById` deliberately omits.
+ *
+ * Note this reads `*`: column privileges are role-wide, not row-aware, so if
+ * `phone` is ever revoked from `authenticated` as well as `anon`, this needs to
+ * move behind a `security definer` my_profile() function.
+ */
 export async function getCurrentProfile(): Promise<ProfileRow | null> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return null;
-  return getProfileById(user.id);
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+  if (error) return null;
+  return data as ProfileRow;
 }
 
 export async function getDefaultAvatarUrls(): Promise<string[]> {
@@ -124,7 +161,9 @@ export async function ensureProfileForUser(
     phone: user.user_metadata?.phone ?? existingProfile?.phone ?? null,
     university_id: existingProfile?.university_id ?? null,
     avatar_url: fallbackAvatar,
-    is_verified_student: existingProfile?.is_verified_student ?? false,
+    // is_verified_student is deliberately absent: it is not writable by the
+    // authenticated role (migration 20260819091000). handle_new_user seeds it,
+    // and only the admin/verification definer functions may change it.
     created_at: existingProfile?.created_at,
     updated_at: new Date().toISOString(),
   };

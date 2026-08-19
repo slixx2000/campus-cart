@@ -10,24 +10,41 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#2b9dee",
-        secondary: "#f59e0b",
-        success: "#10b981",
-        accent: "#a78bfa",
+        // Semantic tokens. Values live as `R G B` triplets in globals.css so the
+        // same class works in both themes and supports /opacity modifiers.
+        bg: "rgb(var(--bg) / <alpha-value>)",
+        surface: "rgb(var(--surface) / <alpha-value>)",
+        "surface-2": "rgb(var(--surface-2) / <alpha-value>)",
+        line: "rgb(var(--line) / <alpha-value>)",
+        fg: "rgb(var(--fg) / <alpha-value>)",
+        muted: "rgb(var(--muted) / <alpha-value>)",
+        primary: "rgb(var(--primary) / <alpha-value>)",
+        "on-primary": "rgb(var(--on-primary) / <alpha-value>)",
+        accent: "rgb(var(--accent) / <alpha-value>)",
         danger: "#ef4444",
-        "background-light": "#f6f7f8",
-        "background-dark": "#101a22",
+        // Legacy aliases kept so existing `bg-background-light dark:bg-background-dark`
+        // pairs stay correct without a sweep.
+        "background-light": "#f8fafc",
+        "background-dark": "#0b1120",
       },
       fontFamily: {
-        display: ["Plus Jakarta Sans", "sans-serif"],
+        display: ["var(--font-geist)", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
       },
       borderRadius: {
-        DEFAULT: "1rem",
-        sm: "0.5rem",
-        md: "0.75rem",
-        lg: "2rem",
-        xl: "3rem",
+        none: "0",
+        sm: "4px",
+        DEFAULT: "6px",
+        md: "6px",
+        lg: "8px",
+        xl: "8px",
+        "2xl": "12px",
+        "3xl": "16px",
         full: "9999px",
+      },
+      boxShadow: {
+        // "Flat-plus": 1px border at rest, this on hover. No ambient elevation.
+        hover: "0 4px 12px rgb(15 23 42 / 0.05)",
       },
     },
   },

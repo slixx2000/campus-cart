@@ -2,6 +2,7 @@
 
 ## Architecture
 - architecture/DOWNLOADS_PAGE_ARCHITECTURE.md
+- email-setup.md — ZeptoMail / DNS for campuscart.social
 
 ## Launch
 - launch/LAUNCH_CLEANUP_PLAN.md

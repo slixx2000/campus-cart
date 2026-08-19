@@ -33,13 +33,13 @@ export default function NoConnectionState({ onRetry }: NoConnectionStateProps) {
 
   return (
     <section className="relative overflow-hidden px-6 py-12 md:py-20">
-      <div className="pointer-events-none absolute inset-0 -z-10 dark:fluid-gradient-dark" />
-      <div className="pointer-events-none absolute -left-20 top-0 h-64 w-64 rounded-full bg-primary/10 blur-[90px] dark:bg-sky-300/10" />
-      <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-primary/15 blur-[100px] dark:bg-cyan-300/10" />
+      <div className="pointer-events-none absolute inset-0 -z-10" />
+      <div className="pointer-events-none absolute -left-20 top-0 h-64 w-64 rounded-full bg-primary/10" />
+      <div className="pointer-events-none absolute -right-20 bottom-0 h-64 w-64 rounded-full bg-primary/15 dark:bg-cyan-300/10" />
 
       <div className="mx-auto max-w-xl text-center">
-        <div className="mb-8 rounded-3xl border border-primary/15 bg-white/70 p-8 shadow-xl backdrop-blur dark:border-white/10 dark:bg-white/5">
-          <div className="relative mx-auto flex h-44 w-44 items-center justify-center rounded-full bg-white/90 dark:bg-slate-900/80">
+        <div className="mb-8 rounded-3xl border border-primary/15 bg-surface p-8 dark:bg-surface">
+          <div className="relative mx-auto flex h-44 w-44 items-center justify-center rounded-full bg-surface dark:bg-slate-900/80">
             <span className="material-symbols-outlined text-[96px] text-primary/30">router</span>
             <span className="material-symbols-outlined absolute text-5xl text-primary">wifi_off</span>
           </div>
@@ -60,14 +60,14 @@ export default function NoConnectionState({ onRetry }: NoConnectionStateProps) {
           <button
             type="button"
             onClick={handleRetry}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-sky-400 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-primary/25 transition hover:shadow-primary/40 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950 dark:shadow-sky-400/25"
+            className="btn-primary px-8 py-3 text-sm"
           >
             <span className="material-symbols-outlined text-lg">refresh</span>
             Try Again
           </button>
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-8 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-line bg-surface px-8 py-3 text-sm font-semibold text-slate-700 transition hover:bg-surface-2 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <span className="material-symbols-outlined text-lg">home</span>
             Home
