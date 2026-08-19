@@ -5,10 +5,10 @@ export const metadata = { title: "Forgot Password - CampusCart" };
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="fluid-gradient-dark flex min-h-screen items-center justify-center bg-background-light px-4 py-16 transition-colors dark:bg-[#07111f]">
+    <div className="flex min-h-screen items-center justify-center bg-bg px-4 py-16 transition-colors">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <span className="material-symbols-outlined text-5xl text-primary dark:text-sky-300">
+          <span className="material-symbols-outlined text-5xl text-primary">
             lock_reset
           </span>
           <h1 className="mt-4 text-3xl font-extrabold text-slate-900 dark:text-white">
@@ -25,7 +25,7 @@ export default function ForgotPasswordPage() {
           Remember your password?{" "}
           <Link
             href="/auth/sign-in"
-            className="font-semibold text-primary hover:underline dark:text-sky-300"
+            className="font-semibold text-primary hover:underline"
           >
             Back to sign in
           </Link>

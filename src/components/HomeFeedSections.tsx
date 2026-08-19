@@ -9,11 +9,9 @@ import type { Listing } from "@/types";
 type FeedResponse = {
   newListings: Listing[];
   nearbyListings: Listing[];
-  recentlyActiveListings: Listing[];
   hasMore: {
     newListings: boolean;
     nearbyListings: boolean;
-    recentlyActiveListings: boolean;
   };
 };
 
@@ -39,8 +37,9 @@ async function parseFeedResponse(response: Response): Promise<FeedResponse> {
 type HomeFeedSectionsProps = {
   initialNewListings: Listing[];
   initialNearbyListings: Listing[];
-  initialRecentlyActiveListings: Listing[];
   hasNearbyUniversity: boolean;
+  favoriteIds?: string[];
+  signedIn?: boolean;
 };
 
 const PAGE_SIZE = 20;
@@ -58,19 +57,19 @@ const appendUnique = (existing: Listing[], incoming: Listing[]): Listing[] => {
 export default function HomeFeedSections({
   initialNewListings,
   initialNearbyListings,
-  initialRecentlyActiveListings,
   hasNearbyUniversity,
+  favoriteIds = [],
+  signedIn = false,
 }: HomeFeedSectionsProps) {
+  const favorited = useMemo(() => new Set(favoriteIds), [favoriteIds]);
   const [newListings, setNewListings] = useState(initialNewListings);
   const [nearbyListings, setNearbyListings] = useState(initialNearbyListings);
-  const [recentlyActiveListings, setRecentlyActiveListings] = useState(initialRecentlyActiveListings);
   const [page, setPage] = useState(0);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState({
     newListings: initialNewListings.length === PAGE_SIZE,
     nearbyListings: hasNearbyUniversity ? initialNearbyListings.length === PAGE_SIZE : false,
-    recentlyActiveListings: initialRecentlyActiveListings.length === PAGE_SIZE,
   });
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -80,7 +79,7 @@ export default function HomeFeedSections({
   const mountedRef = useRef(true);
 
   const hasAnyMore = useMemo(
-    () => hasMore.newListings || hasMore.nearbyListings || hasMore.recentlyActiveListings,
+    () => hasMore.newListings || hasMore.nearbyListings,
     [hasMore]
   );
   const shouldShowEndOfFeedMessage = page > 0 && !hasAnyMore;
@@ -117,7 +116,6 @@ export default function HomeFeedSections({
         const payload = await parseFeedResponse(response);
         setNewListings((prev) => appendUnique(prev, payload.newListings));
         setNearbyListings((prev) => appendUnique(prev, payload.nearbyListings));
-        setRecentlyActiveListings((prev) => appendUnique(prev, payload.recentlyActiveListings));
         setHasMore(payload.hasMore);
         setPage(nextPage);
 
@@ -128,7 +126,6 @@ export default function HomeFeedSections({
           counts: {
             newListings: payload.newListings.length,
             nearbyListings: payload.nearbyListings.length,
-            recentlyActiveListings: payload.recentlyActiveListings.length,
           },
         });
       })
@@ -186,21 +183,20 @@ export default function HomeFeedSections({
     <>
       <section className="mx-auto mt-12 max-w-[1200px] px-4 pb-4 sm:mt-20 sm:px-6 sm:pb-6">
         <div className="mb-5 flex items-center justify-between sm:mb-8">
-          <h2 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl dark:text-white">
-            <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
-              trending_up
-            </span>
-            New Listings
-          </h2>
+          <h2 className="text-2xl font-semibold tracking-tight text-fg">New Listings</h2>
           <Link
             href="/browse"
-            className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
+            className="flex items-center gap-1 text-sm font-medium text-muted hover:text-fg"
           >
             View all{" "}
             <span className="material-symbols-outlined text-sm">arrow_forward</span>
           </Link>
         </div>
-        <NewListingsCarousel listings={newListings} />
+        <NewListingsCarousel
+          listings={newListings}
+          favoriteIds={favorited}
+          signedIn={signedIn}
+        />
         {page > 0 && !hasMore.newListings ? (
           <p className="mt-5 text-center text-xs font-semibold text-slate-400 dark:text-slate-500">
             No more new listings right now.
@@ -208,20 +204,15 @@ export default function HomeFeedSections({
         ) : null}
       </section>
 
-      <div className="mx-auto h-px w-[1200px] max-w-[calc(100%-3rem)] bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/10" />
+      <div className="mx-auto h-px w-[1200px] max-w-[calc(100%-3rem)]" />
 
-      <section className="bg-white py-10 sm:py-16 dark:border-y dark:border-primary/10 dark:bg-primary/5">
+      <section className="bg-surface py-10 sm:py-16 dark:border-y dark:border-primary/10 dark:bg-primary/5">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
           <div className="mb-5 flex items-center justify-between sm:mb-8">
-            <h2 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl dark:text-white">
-              <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
-                location_on
-              </span>
-              Nearby Listings
-            </h2>
+            <h2 className="text-2xl font-semibold tracking-tight text-fg">Nearby Listings</h2>
             <Link
               href="/browse"
-              className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
+              className="flex items-center gap-1 text-sm font-medium text-muted hover:text-fg"
             >
               View all{" "}
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -233,9 +224,14 @@ export default function HomeFeedSections({
             </p>
           ) : (
             <>
-              <div className="grid grid-cols-4 gap-[clamp(0.45rem,0.8vw,1.25rem)]">
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 {nearbyListings.map((listing) => (
-                  <ProductCard key={listing.id} listing={{ ...listing, isNearby: true }} />
+                  <ProductCard
+                    key={listing.id}
+                    listing={{ ...listing, isNearby: true }}
+                    isFavorited={favorited.has(listing.id)}
+                    signedIn={signedIn}
+                  />
                 ))}
               </div>
               {page > 0 && !hasMore.nearbyListings ? (
@@ -248,43 +244,11 @@ export default function HomeFeedSections({
         </div>
       </section>
 
-      <div className="mx-auto h-px w-[1200px] max-w-[calc(100%-3rem)] bg-gradient-to-r from-transparent via-slate-200 to-transparent dark:via-white/10" />
-
-      <section className="bg-white py-10 sm:py-16 dark:border-y dark:border-primary/10 dark:bg-primary/5">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6">
-          <div className="mb-5 flex items-center justify-between sm:mb-8">
-            <h2 className="flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:text-2xl dark:text-white">
-              <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
-                schedule
-              </span>
-              Recently Active Listings
-            </h2>
-            <Link
-              href="/browse"
-              className="text-primary font-bold hover:underline flex items-center gap-1 text-sm"
-            >
-              View all{" "}
-              <span className="material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
-          </div>
-          <div className="grid grid-cols-4 gap-[clamp(0.45rem,0.8vw,1.25rem)]">
-            {recentlyActiveListings.map((listing) => (
-              <ProductCard key={listing.id} listing={listing} />
-            ))}
-          </div>
-          {page > 0 && !hasMore.recentlyActiveListings ? (
-            <p className="mt-5 text-center text-xs font-semibold text-slate-400 dark:text-slate-500">
-              No more recently active listings right now.
-            </p>
-          ) : null}
-        </div>
-      </section>
-
       <div ref={sentinelRef} className="mx-auto max-w-[1200px] px-4 py-6 sm:px-6 sm:py-8">
         {isLoadingMore ? (
-          <div className="grid grid-cols-3 gap-[clamp(0.45rem,0.8vw,1.1rem)]">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="animate-pulse space-y-3 rounded-xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
+              <div key={i} className="animate-pulse space-y-3 rounded-xl border border-line bg-surface p-4 dark:bg-surface">
                 <div className="h-40 rounded-lg bg-gray-200 dark:bg-slate-700" />
                 <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-slate-700" />
                 <div className="h-4 w-1/2 rounded bg-gray-200 dark:bg-slate-700" />

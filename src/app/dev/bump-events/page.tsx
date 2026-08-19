@@ -64,7 +64,7 @@ export default function BumpEventsPage() {
   }, [loadEvents]);
 
   return (
-    <div className="min-h-screen bg-background-light px-6 py-10 text-slate-900 dark:bg-[#07111f] dark:text-slate-100">
+    <div className="min-h-screen bg-bg px-6 py-10 text-slate-900 dark:text-slate-100">
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -76,13 +76,13 @@ export default function BumpEventsPage() {
           <button
             type="button"
             onClick={() => void loadEvents()}
-            className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+            className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-on-primary shadow-sm transition-opacity hover:opacity-90"
           >
             Refresh
           </button>
         </header>
 
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-white/5">
+        <section className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm dark:bg-surface">
           {loading ? (
             <div className="p-8 text-sm font-semibold text-slate-500 dark:text-slate-300">Loading events...</div>
           ) : error ? (
@@ -92,7 +92,7 @@ export default function BumpEventsPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-                <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500 dark:bg-white/10 dark:text-slate-300">
+                <thead className="bg-surface-2 text-xs uppercase tracking-wider text-slate-500 dark:bg-surface dark:text-slate-300">
                   <tr>
                     <th className="px-4 py-3">Bumped At</th>
                     <th className="px-4 py-3">Listing</th>
@@ -102,7 +102,7 @@ export default function BumpEventsPage() {
                 </thead>
                 <tbody>
                   {events.map((event) => (
-                    <tr key={event.id} className="border-t border-slate-100 dark:border-white/10">
+                    <tr key={event.id} className="border-t border-slate-100">
                       <td className="px-4 py-3 font-medium">{new Date(event.bumpedAt).toLocaleString()}</td>
                       <td className="px-4 py-3">{event.listingTitle ?? "Untitled Listing"}</td>
                       <td className="px-4 py-3 font-mono text-xs text-slate-600 dark:text-slate-300">

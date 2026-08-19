@@ -54,7 +54,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
 
   if (state.message && !state.errors) {
     return (
-      <div className="rounded-[1.75rem] border border-green-200 bg-green-50 p-8 text-center dark:border-emerald-300/20 dark:bg-emerald-300/10">
+      <div className="rounded-lg border border-green-200 bg-green-50 p-8 text-center dark:border-emerald-300/20 dark:bg-emerald-300/10">
         <span className="material-symbols-outlined mb-4 block text-4xl text-green-500 dark:text-emerald-300">
           mail_outline
         </span>
@@ -63,7 +63,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
         <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Can&apos;t find it? Check your spam folder or try signing in if you&apos;ve already confirmed.</p>
         <a 
           href="/auth/sign-in"
-          className="text-sm font-semibold text-primary hover:underline dark:text-sky-300"
+          className="text-sm font-semibold text-primary hover:underline"
         >
           Go to Sign In →
         </a>
@@ -113,7 +113,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+    <form onSubmit={handleSubmit} className="space-y-5 rounded-lg border border-line bg-surface p-8 dark:bg-surface">
       {redirectTo && <input type="hidden" name="redirectTo" value={redirectTo} />}
 
       {state.message && (
@@ -137,7 +137,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           name="fullName"
           required
           placeholder="e.g. Mwila Banda"
-          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         {state.errors?.fullName && (
           <p className="text-xs text-red-500 mt-1">{state.errors.fullName[0]}</p>
@@ -154,7 +154,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           required
           autoComplete="email"
           placeholder="you@gmail.com or you@university.ac.zm"
-          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
           You can browse with any email. Selling is unlocked after student verification.
@@ -172,11 +172,11 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
           type="tel"
           name="phone"
           placeholder="+260 97 1234567"
-          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+          className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
         />
       </div>
 
-      <div className="rounded-2xl border border-slate-200/70 bg-slate-50/80 p-5 dark:border-white/10 dark:bg-white/5">
+      <div className="rounded-2xl border border-line bg-surface-2 p-5 dark:bg-surface">
         <AvatarPicker onChange={setAvatarSelection} />
         {avatarError && (
           <p className="mt-3 text-xs text-red-500 dark:text-rose-300">{avatarError}</p>
@@ -196,7 +196,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="At least 8 characters"
-            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 pr-12 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+            className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 pr-12 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
           />
           <button
             type="button"
@@ -257,7 +257,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+        className="btn-primary h-12 w-full disabled:opacity-60"
       >
         {pending ? (
           <span className="material-symbols-outlined animate-spin text-xl">
@@ -272,7 +272,7 @@ export default function SignUpForm({ redirectTo }: { redirectTo?: string }) {
         type="button"
         onClick={handleGoogle}
         disabled={googleLoading || pending}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-slate-300 bg-white font-bold text-slate-800 transition-opacity hover:opacity-90 disabled:opacity-60 dark:border-white/20 dark:bg-[#0d1a2b] dark:text-slate-100"
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-full border border-line bg-surface font-bold text-slate-800 transition-opacity hover:opacity-90 disabled:opacity-60 dark:text-slate-100"
       >
         <span className="material-symbols-outlined text-xl">login</span>
         {googleLoading ? "Connecting to Google..." : "Sign up with Google"}

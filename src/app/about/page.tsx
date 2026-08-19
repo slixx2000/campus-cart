@@ -5,21 +5,21 @@ import { CATEGORIES } from "@/lib/data";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background-light transition-colors dark:bg-background-dark">
+    <div className="min-h-screen bg-bg transition-colors">
       {/* Hero */}
-      <section className="bg-slate-900 py-24 px-6">
+      <section className="px-6 py-24">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-primary/20 text-primary font-bold text-sm px-4 py-2 rounded-full mb-6">
+          <div className="chip mb-6">
             <span className="material-symbols-outlined text-lg leading-none">
               school
             </span>
             Built for Zambian students
           </div>
-          <h1 className="text-white text-4xl sm:text-5xl font-extrabold leading-tight mb-6">
+          <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-fg sm:text-5xl">
             The Marketplace for Your{" "}
-            <span className="text-primary">Campus</span>
+            <span className="text-accent">Campus</span>
           </h1>
-          <p className="text-white/70 text-lg leading-relaxed">
+          <p className="text-lg leading-relaxed text-muted">
             CampusCart connects student entrepreneurs with fellow students
             across universities in Zambia — making it easier to buy, sell, and
             discover products and services right on campus.
@@ -58,7 +58,7 @@ export default function AboutPage() {
           ].map((item) => (
             <div
               key={item.step}
-              className="group rounded-xl border border-slate-200 bg-white p-8 transition-all hover:border-primary hover:shadow-xl hover:shadow-primary/5 dark:border-white/10 dark:bg-white/5"
+              className="group rounded-xl border border-line bg-surface p-8 transition-all hover:border-primary hover:shadow-primary/5 dark:bg-surface"
             >
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
@@ -82,7 +82,7 @@ export default function AboutPage() {
       </section>
 
       {/* Trust & Safety */}
-      <section className="max-w-7xl mx-auto px-6 py-20 border-y border-slate-100 dark:border-white/10">
+      <section className="max-w-7xl mx-auto px-6 py-20 border-y border-slate-100">
         <h2 className="mb-12 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
           <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
             shield
@@ -90,7 +90,7 @@ export default function AboutPage() {
           Trust & Safety
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-xl border border-line bg-surface p-8 dark:bg-surface">
             <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
               Who Can Browse?
             </h3>
@@ -98,7 +98,7 @@ export default function AboutPage() {
               Anyone can browse listings with any email. No verification required to explore what&apos;s available on campus.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-xl border border-line bg-surface p-8 dark:bg-surface">
             <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
               Who Can Sell?
             </h3>
@@ -106,7 +106,7 @@ export default function AboutPage() {
               Only verified students can create listings and sell. Link your university email, and we&apos;ll verify you&apos;re a student at your institution.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-xl border border-line bg-surface p-8 dark:bg-surface">
             <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
               Verification Badges
             </h3>
@@ -117,7 +117,7 @@ export default function AboutPage() {
               </span> badge on seller profiles. It means they&apos;ve confirmed their student status.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-8 dark:border-white/10 dark:bg-white/5">
+          <div className="rounded-xl border border-line bg-surface p-8 dark:bg-surface">
             <h3 className="mb-3 text-lg font-bold text-slate-900 dark:text-white">
               Safe Transactions
             </h3>
@@ -129,7 +129,7 @@ export default function AboutPage() {
       </section>
 
       {/* Stats */}
-      <section className="border-y border-slate-100 bg-white px-6 py-16 dark:border-white/10 dark:bg-white/5">
+      <section className="border-y border-slate-100 bg-surface px-6 py-16 dark:bg-surface">
         <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
             <p className="text-4xl font-extrabold text-primary mb-1">
@@ -164,7 +164,7 @@ export default function AboutPage() {
       </section>
 
       {/* Categories */}
-      <section className="border-t border-slate-100 bg-white px-6 py-16 dark:border-white/10 dark:bg-white/5">
+      <section className="border-t border-slate-100 bg-surface px-6 py-16 dark:bg-surface">
         <div className="max-w-7xl mx-auto">
           <h2 className="mb-8 flex items-center gap-2 text-2xl font-extrabold text-slate-900 dark:text-white">
             <span className="bg-primary/10 p-2 rounded-md text-primary material-symbols-outlined">
@@ -177,7 +177,7 @@ export default function AboutPage() {
               <Link
                 key={cat.label}
                 href={`/browse?category=${encodeURIComponent(cat.label)}`}
-                className={`group flex flex-col items-center gap-2 rounded-xl border border-slate-200 p-4 text-center transition-all hover:border-primary hover:shadow-md hover:shadow-primary/5 dark:border-white/10 dark:hover:border-sky-300/50`}
+                className={`group flex flex-col items-center gap-2 rounded-xl border border-line p-4 text-center transition-all hover:border-primary hover:shadow-md hover:shadow-primary/5  dark:hover:border-sky-300/50`}
               >
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform ${cat.color}`}
@@ -208,14 +208,14 @@ export default function AboutPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/browse"
-              className="inline-flex items-center gap-2 bg-white text-slate-900 font-bold px-8 py-4 rounded-full hover:scale-105 transition-transform"
+              className="inline-flex items-center gap-2 bg-surface text-slate-900 font-bold px-8 py-4 rounded-full hover:scale-105 transition-transform"
             >
               <span className="material-symbols-outlined">explore</span>
               Browse Listings
             </Link>
             <Link
               href="/sell"
-              className="inline-flex items-center gap-2 bg-primary text-white font-bold px-8 py-4 rounded-full hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 bg-primary text-on-primary font-bold px-8 py-4 rounded-full hover:opacity-90 transition-opacity"
             >
               <span className="material-symbols-outlined">add_circle</span>
               Post for Free

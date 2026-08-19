@@ -166,6 +166,31 @@ export type PushTokenRow = {
   updated_at: string;
 };
 
+export type ListingPromotionRow = {
+  id: string;
+  listing_id: string;
+  kind: "featured";
+  starts_at: string;
+  ends_at: string;
+  amount_kwacha: number | null;
+  note: string | null;
+  granted_by: string;
+  created_at: string;
+}
+
+export type AdBannerRow = {
+  id: string;
+  placement: "home" | "browse";
+  title: string;
+  image_url: string;
+  target_url: string;
+  advertiser: string | null;
+  starts_at: string;
+  ends_at: string;
+  sort_order: number;
+  created_at: string;
+}
+
 export type Database = {
   public: {
     Tables: {
@@ -224,17 +249,49 @@ export type Database = {
         Update: Partial<ProfileRow>;
         Relationships: [];
       };
+      listing_promotions: {
+        // Written only by admin_grant_listing_promotion / admin_end_listing_promotion;
+        // clients hold no INSERT/UPDATE grant on this table.
+        Row: ListingPromotionRow;
+        Insert: Omit<ListingPromotionRow, "id" | "created_at"> & {
+          id?: string;
+          created_at?: string;
+        };
+        Update: Partial<ListingPromotionRow>;
+        Relationships: [];
+      };
+      ad_banners: {
+        Row: AdBannerRow;
+        Insert: Omit<AdBannerRow, "id" | "created_at" | "starts_at" | "sort_order"> & {
+          id?: string;
+          created_at?: string;
+          starts_at?: string;
+          sort_order?: number;
+        };
+        Update: Partial<AdBannerRow>;
+        Relationships: [];
+      };
       listings: {
         Row: ListingRow;
-        Insert: Omit<ListingRow, "id" | "created_at" | "updated_at" | "deleted_at" | "last_bumped_at" | "view_count" | "search_vector"> & {
+        // `featured` is deliberately absent: it is not insertable or updatable by
+        // the authenticated role (see migration 20260819091000) — only the
+        // security-definer admin functions may set it.
+        Insert: Omit<
+          ListingRow,
+          | "id"
+          | "created_at"
+          | "updated_at"
+          | "deleted_at"
+          | "last_bumped_at"
+          | "view_count"
+          | "search_vector"
+          | "featured"
+        > & {
           id?: string;
           created_at?: string;
           updated_at?: string;
           deleted_at?: string | null;
-          last_bumped_at?: string;
-          view_count?: number;
           status?: ListingStatus;
-          featured?: boolean;
         };
         Update: Partial<ListingRow>;
         Relationships: [];
@@ -338,6 +395,40 @@ export type Database = {
         Args: { p_token_hash: string };
         Returns: boolean;
       };
+      admin_review_student_verification: {
+        Args: {
+          p_profile_id: string;
+          p_approve: boolean;
+          p_note?: string | null;
+          p_reason?: string | null;
+        };
+        Returns: undefined;
+      };
+      issue_student_email_verification: {
+        Args: { p_profile_id?: string | null };
+        Returns: string;
+      };
+      listing_seller_contact: {
+        Args: { p_listing_id: string };
+        Returns: string | null;
+      };
+      admin_grant_listing_promotion: {
+        Args: {
+          p_listing_id: string;
+          p_days: number;
+          p_amount?: number | null;
+          p_note?: string | null;
+        };
+        Returns: string;
+      };
+      admin_end_listing_promotion: {
+        Args: { p_listing_id: string };
+        Returns: undefined;
+      };
+      bump_listing: {
+        Args: { p_listing_id: string; p_request_id?: string | null };
+        Returns: undefined;
+      };
       mark_conversation_read: {
         Args: { p_conversation_id: string };
         Returns: undefined;
@@ -389,6 +480,6 @@ export type ConversationWithRelations = ConversationRow & {
 export type ListingWithRelations = ListingRow & {
   categories: Pick<CategoryRow, "id" | "name" | "slug" | "material_icon" | "color_class"> | null;
   universities: Pick<UniversityRow, "id" | "name" | "short_name" | "city"> | null;
-  profiles: Pick<ProfileRow, "id" | "full_name" | "phone" | "avatar_url"> | null;
+  profiles: Pick<ProfileRow, "id" | "full_name" | "avatar_url" | "is_pioneer_seller"> | null;
   listing_images: ListingImageRow[];
 };

@@ -11,7 +11,8 @@ export type Listing = {
   university: string;
   universityShortName?: string;
   sellerName: string;
-  sellerPhone: string;
+  /** Not on listing rows — use the listing_seller_contact RPC. */
+  sellerPhone?: string;
   sellerAvatarUrl?: string | null;
   sellerId?: string;
   sellerVerified: boolean;

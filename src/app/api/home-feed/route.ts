@@ -3,7 +3,6 @@ import { dbListingToUi } from "@/lib/mappers";
 import {
   getNearbyListingsPage,
   getNewListingsPage,
-  getRecentlyActiveListingsPage,
 } from "@/lib/repositories/listings";
 import { TimeoutError, withTimeout } from "@/lib/asyncTimeout";
 import { createClient } from "@/lib/supabase/server";
@@ -17,11 +16,9 @@ const HOME_FEED_QUERY_TIMEOUT_MS = 4_500;
 type HomeFeedPayload = {
   newListings: ReturnType<typeof dbListingToUi>[];
   nearbyListings: ReturnType<typeof dbListingToUi>[];
-  recentlyActiveListings: ReturnType<typeof dbListingToUi>[];
   hasMore: {
     newListings: boolean;
     nearbyListings: boolean;
-    recentlyActiveListings: boolean;
   };
 };
 
@@ -94,14 +91,12 @@ export async function GET(request: Request) {
 
     let newRows: Awaited<ReturnType<typeof getNewListingsPage>>;
     let nearbyRows: Awaited<ReturnType<typeof getNearbyListingsPage>> | [];
-    let recentlyActiveRows: Awaited<ReturnType<typeof getRecentlyActiveListingsPage>>;
 
     try {
-      [newRows, nearbyRows, recentlyActiveRows] = await withTimeout(
+      [newRows, nearbyRows] = await withTimeout(
         Promise.all([
           getNewListingsPage(page, pageSize),
           userUniversityId ? getNearbyListingsPage(userUniversityId, page, pageSize) : Promise.resolve([]),
-          getRecentlyActiveListingsPage(page, pageSize),
         ]),
         HOME_FEED_QUERY_TIMEOUT_MS,
         "Timed out while loading home feed"
@@ -145,11 +140,9 @@ export async function GET(request: Request) {
     const payload: HomeFeedPayload = {
       newListings: newRows.map(dbListingToUi),
       nearbyListings: nearbyRows.map(dbListingToUi),
-      recentlyActiveListings: recentlyActiveRows.map(dbListingToUi),
       hasMore: {
         newListings: newRows.length === pageSize,
         nearbyListings: userUniversityId ? nearbyRows.length === pageSize : false,
-        recentlyActiveListings: recentlyActiveRows.length === pageSize,
       },
     };
 
@@ -167,7 +160,6 @@ export async function GET(request: Request) {
       counts: {
         newListings: payload.newListings.length,
         nearbyListings: payload.nearbyListings.length,
-        recentlyActiveListings: payload.recentlyActiveListings.length,
       },
       durationMs: Date.now() - startedAt,
     });

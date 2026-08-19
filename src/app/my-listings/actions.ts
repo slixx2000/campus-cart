@@ -89,3 +89,35 @@ export async function deleteListingAction(
   revalidatePath("/");
   redirect("/my-listings");
 }
+
+export type BumpListingState = { message?: string; ok?: boolean };
+
+/**
+ * Re-surfaces a listing in the feeds. The 24-hour cooldown, idempotency and row
+ * locking all live in the `bump_listing` RPC — `last_bumped_at` is not writable
+ * from the client, so this is the only path.
+ */
+export async function bumpListingAction(
+  _prevState: BumpListingState,
+  formData: FormData
+): Promise<BumpListingState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/sign-in");
+
+  const listingId = String(formData.get("listingId") ?? "");
+  if (!listingId) return { message: "Missing listing." };
+
+  const { error } = await supabase.rpc("bump_listing", {
+    p_listing_id: listingId,
+    p_request_id: String(formData.get("requestId") ?? "") || null,
+  });
+
+  if (error) return { message: error.message };
+
+  revalidatePath("/my-listings");
+  revalidatePath("/");
+  return { ok: true, message: "Listing bumped to the top of the feed." };
+}

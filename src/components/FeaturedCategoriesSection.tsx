@@ -10,18 +10,15 @@ export default function FeaturedCategoriesSection() {
 
   return (
     <section className="mx-auto mt-8 max-w-[1200px] px-4 sm:mt-14 sm:px-6">
-      <h2 className="mb-4 flex items-center gap-2 text-xl font-extrabold text-slate-900 sm:mb-6 sm:text-2xl dark:text-white">
-        <span className="material-symbols-outlined rounded-md bg-primary/10 p-2 text-primary">
-          category
-        </span>
+      <h2 className="mb-6 text-2xl font-semibold tracking-tight text-fg">
         Featured Categories
       </h2>
 
       <details
-        className="group rounded-2xl border border-slate-200/80 bg-white/85 p-3 shadow-sm lg:hidden dark:border-white/10 dark:bg-white/5"
+        className="group rounded-2xl border border-line bg-surface p-3 shadow-sm lg:hidden dark:bg-surface"
         onToggle={(event) => setIsOpen(event.currentTarget.open)}
       >
-        <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl px-2 py-2 text-sm font-bold text-slate-800 transition-colors hover:bg-slate-100/80 dark:text-slate-100 dark:hover:bg-white/10">
+        <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl px-2 py-2 text-sm font-bold text-slate-800 transition-colors hover:bg-surface-2 dark:text-slate-100 dark:hover:bg-surface">
           <span className="flex items-center gap-2">
             <span className="material-symbols-outlined text-base text-primary">grid_view</span>
             {isOpen ? "Hide Categories" : "Show Categories"}
@@ -31,7 +28,7 @@ export default function FeaturedCategoriesSection() {
           </span>
         </summary>
 
-        <div className="mt-3 border-t border-slate-200/80 pt-3 dark:border-white/10">
+        <div className="mt-3 border-t border-line pt-3">
           <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
             {categories.map((cat) => (
               <CategoryCard

@@ -2,28 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Design tokens — "startup-grade minimalism".
+ * Flat surfaces, 1px outlines, no gradients or blur. Values are `R G B`
+ * triplets so Tailwind's <alpha-value> opacity modifiers work.
+ */
 :root {
   color-scheme: light;
-}
-
-html,
-body {
-  width: 100%;
-  overflow-x: clip;
+  --bg: 248 250 252; /* slate-50   */
+  --surface: 255 255 255;
+  --surface-2: 241 245 249; /* slate-100 — chips, input tints */
+  --line: 226 232 240; /* slate-200  */
+  --fg: 15 23 42; /* slate-900  */
+  --muted: 100 116 139; /* slate-500  */
+  --primary: 15 23 42;
+  --on-primary: 255 255 255;
+  --accent: 16 185 129; /* emerald-500 */
 }
 
 .dark {
   color-scheme: dark;
+  --bg: 11 17 32;
+  --surface: 17 24 39;
+  --surface-2: 30 41 59; /* slate-800 */
+  --line: 31 41 55;
+  --fg: 248 250 252;
+  --muted: 148 163 184; /* slate-400 */
+  --primary: 248 250 252;
+  --on-primary: 15 23 42;
+  --accent: 52 211 153; /* emerald-400 */
+}
+
+/*
+ * Component recipes as CSS classes rather than React components: they work in
+ * server and client components alike and can be adopted file by file.
+ */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5
+      text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-on-primary hover:opacity-90;
+  }
+  .btn-secondary {
+    @apply btn border border-line bg-surface text-fg hover:border-fg;
+  }
+  .btn-ghost {
+    @apply btn text-muted hover:text-fg;
+  }
+  .btn-accent {
+    @apply btn bg-accent text-white hover:opacity-90;
+  }
+  .input {
+    @apply w-full rounded-md border border-line bg-surface px-3 py-2.5 text-sm
+      text-fg outline-none transition placeholder:text-muted/70
+      focus:border-fg focus:ring-2 focus:ring-fg/10;
+  }
+  /* Categories, metadata. No border, per the design system. */
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-md bg-surface-2 px-2.5 py-1
+      text-xs font-medium text-muted;
+  }
+  /* Pill shape is reserved for status indicators only. */
+  .pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .card {
+    @apply rounded-lg border border-line bg-surface;
+  }
 }
 
 @layer utilities {
   .skeleton-base {
     position: relative;
     overflow: hidden;
-    background: rgba(226, 232, 240, 0.85);
-  }
-  .dark .skeleton-base {
-    background: rgba(71, 85, 105, 0.55);
+    background: rgb(var(--line));
   }
   .skeleton-base::after {
     content: "";
@@ -33,21 +87,13 @@ body {
     background: linear-gradient(
       100deg,
       transparent 15%,
-      rgba(255, 255, 255, 0.45) 48%,
+      rgb(var(--surface) / 0.7) 48%,
       transparent 85%
     );
     animation-name: skeleton-shimmer;
     animation-duration: 1.5s;
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
-  }
-  .dark .skeleton-base::after {
-    background: linear-gradient(
-      100deg,
-      transparent 15%,
-      rgba(148, 163, 184, 0.22) 48%,
-      transparent 85%
-    );
   }
   .skeleton-grid::after {
     animation-duration: 1.15s;
@@ -59,31 +105,6 @@ body {
     animation-duration: 2.25s;
   }
 
-  .glass-nav {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(43, 157, 238, 0.1);
-  }
-  .glass-nav-dark {
-    background: rgba(16, 26, 34, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  .fluid-gradient {
-    background: linear-gradient(135deg, #2b9dee 0%, #60a5fa 50%, #f6f7f8 100%);
-  }
-  .fluid-gradient-dark {
-    background: radial-gradient(circle at top right, rgba(43, 157, 238, 0.22), transparent 40%),
-      radial-gradient(circle at bottom left, rgba(96, 165, 250, 0.12), transparent 35%),
-      linear-gradient(180deg, rgba(16, 26, 34, 0.96), rgba(16, 26, 34, 1));
-  }
-  .glass-card-dark {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
   .line-clamp-1 {
     overflow: hidden;
     display: -webkit-box;
@@ -103,26 +124,6 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
-  /* Accent color utilities with glassmorphism */
-  .glass-accent-secondary {
-    background: rgba(245, 158, 11, 0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-  }
-  .glass-accent-success {
-    background: rgba(16, 185, 129, 0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-  }
-  .glass-accent-purple {
-    background: rgba(167, 139, 250, 0.12);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(167, 139, 250, 0.3);
-  }
 }
 
 @keyframes skeleton-shimmer {
@@ -131,5 +132,19 @@ body {
   }
   100% {
     transform: translateX(120%);
+  }
+}
+
+/* Message bubble entrance — replaces a framer-motion dependency. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@layer utilities {
+  .animate-rise {
+    animation: rise 0.2s ease-out;
   }
 }

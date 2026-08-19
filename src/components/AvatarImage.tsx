@@ -32,7 +32,8 @@ export default function AvatarImage({
       alt={alt}
       width={256}
       height={256}
-      unoptimized
+      sizes="256px"
+      unoptimized={src.endsWith(".svg")}
       className={className}
       onError={() => setHasError(true)}
     />

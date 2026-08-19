@@ -527,7 +527,7 @@ export default function App() {
   const loadSellerProfile = useCallback(async (sellerId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, full_name, phone, avatar_url, is_verified_student, is_pioneer_seller, university_id, student_email, student_email_requested_at, student_email_verified_at')
+      .select('id, full_name, avatar_url, is_verified_student, is_pioneer_seller, university_id')
       .eq('id', sellerId)
       .maybeSingle();
 
@@ -1101,7 +1101,14 @@ export default function App() {
       return;
     }
 
-    const waLink = generateWhatsAppLink(listing.sellerPhone || '', listing);
+    // Seller phone is no longer part of the listing payload — it comes from a
+    // security-definer RPC that requires a signed-in caller, so anonymous
+    // clients can no longer bulk-read every number in the database.
+    const { data: sellerPhone } = await supabase.rpc('listing_seller_contact', {
+      p_listing_id: listing.id,
+    });
+
+    const waLink = generateWhatsAppLink(sellerPhone || '', listing);
     if (!waLink) {
       showFeedbackModal('Seller contact unavailable', 'This seller does not have a valid WhatsApp number yet. Try another listing or check back later.', 'error-outline');
       return;

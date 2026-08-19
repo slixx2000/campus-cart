@@ -69,7 +69,7 @@ export default function AvatarPicker({ initialAvatarUrl, onChange }: AvatarPicke
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-4">
-        <div className="size-20 overflow-hidden rounded-full border border-slate-200 bg-slate-100 dark:border-white/10 dark:bg-white/10">
+        <div className="size-20 overflow-hidden rounded-full border border-line bg-surface-2 dark:bg-surface">
           <AvatarImage alt="Selected avatar" src={selectedPreview} />
         </div>
         <div>
@@ -88,7 +88,7 @@ export default function AvatarPicker({ initialAvatarUrl, onChange }: AvatarPicke
           type="file"
           accept="image/jpeg,image/png,image/webp"
           onChange={handleFileChange}
-          className="w-full text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-2 file:text-sm file:font-bold file:text-primary hover:file:bg-primary/20 dark:text-slate-400 dark:file:bg-sky-300/10 dark:file:text-sky-300 dark:hover:file:bg-sky-300/20"
+          className="w-full text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-2 file:text-sm file:font-bold file:text-primary hover:file:bg-primary/20 dark:text-slate-400 dark:file:bg-accent dark:file:text-accent dark:hover:file:bg-accent"
         />
       </div>
 
@@ -104,12 +104,12 @@ export default function AvatarPicker({ initialAvatarUrl, onChange }: AvatarPicke
                 onClick={() => setSelection({ type: "default", url: avatarUrl })}
                 className={`overflow-hidden rounded-2xl border p-1 transition ${
                   isSelected
-                    ? "border-primary ring-2 ring-primary/20 dark:border-sky-300 dark:ring-sky-300/20"
-                    : "border-slate-200 hover:border-primary/40 dark:border-white/10 dark:hover:border-sky-300/40"
+                    ? "border-primary ring-2 ring-primary/20  dark:ring-sky-300/20"
+                    : "border-line hover:border-primary/40  dark:hover:border-sky-300/40"
                 }`}
                 aria-label={`Select avatar ${index + 1}`}
               >
-                <div className="aspect-square overflow-hidden rounded-xl bg-slate-100 dark:bg-white/10">
+                <div className="aspect-square overflow-hidden rounded-xl bg-surface-2 dark:bg-surface">
                   <AvatarImage alt={`Default avatar ${index + 1}`} src={avatarUrl} />
                 </div>
               </button>

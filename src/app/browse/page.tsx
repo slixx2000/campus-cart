@@ -5,7 +5,10 @@ import { getFeaturedListings, getListings } from "@/lib/repositories/listings";
 import { getAllCategories } from "@/lib/repositories/universities";
 import { dbListingToUi } from "@/lib/mappers";
 import { createClient } from "@/lib/supabase/server";
+import { getFavoriteListingIds } from "@/lib/repositories/favorites";
+import type { ListingCondition } from "@/types/database";
 import type { Listing } from "@/types";
+import AdBanner from "@/components/AdBanner";
 import BrowseFilters from "./BrowseFilters";
 import BrowseLoading from "./loading";
 
@@ -16,7 +19,9 @@ interface BrowsePageProps {
     q?: string;
     category?: string;
     university?: string;
+    minPrice?: string;
     maxPrice?: string;
+    condition?: string;
     type?: string;
     sort?: string;
     page?: string;
@@ -44,10 +49,17 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
       ).data?.university_id ?? null
     : null;
 
+  const conditions = sp.condition
+    ? (sp.condition.split(",").filter(Boolean) as ListingCondition[])
+    : undefined;
+
   const { data: rows, count } = await getListings({
     query: sp.q,
     category: sp.category,
+    university: sp.university,
+    minPrice: sp.minPrice ? Number(sp.minPrice) : undefined,
     maxPrice: sp.maxPrice ? Number(sp.maxPrice) : undefined,
+    conditions,
     isService,
     sortBy: (sp.sort as SortBy) || "newest",
     disablePagination: true,
@@ -76,79 +88,82 @@ async function BrowseResults({ searchParams }: BrowsePageProps) {
     q: sp.q ?? "",
     category: sp.category ?? "",
     university: sp.university ?? "",
+    minPrice: sp.minPrice ?? "",
     maxPrice: sp.maxPrice ?? "",
+    condition: sp.condition ?? "",
     type: sp.type ?? "",
     sort: sp.sort ?? "",
   });
 
-  const renderSection = (title: string, items: Listing[]) => (
+  const favoriteIds = [...(await getFavoriteListingIds(user?.id))];
+  const signedIn = Boolean(user);
+
+  // Any active filter collapses the three curated sections into one result set,
+  // matching the mockup's single grid.
+  const hasActiveFilters = Boolean(
+    sp.q || sp.category || sp.university || sp.minPrice || sp.maxPrice || sp.condition || sp.type
+  );
+
+  const renderSection = (title: string, items: Listing[], showHeading = true) => (
     <section className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
-          {title}
-        </h2>
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
-          {items.length} items
-        </span>
-      </div>
+      {showHeading ? (
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold tracking-tight text-fg">{title}</h2>
+          <span className="text-xs font-medium text-muted">{items.length} items</span>
+        </div>
+      ) : null}
       {items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300/80 bg-white/60 px-5 py-7 text-sm text-slate-500 dark:border-white/15 dark:bg-white/5 dark:text-slate-400">
+        <div className="card border-dashed px-5 py-7 text-sm text-muted">
           Nothing to show in this section yet.
         </div>
       ) : (
-        <ProgressiveListingGrid items={items} storageKey={`${browseStateKey}:${title}`} />
+        <ProgressiveListingGrid
+          items={items}
+          storageKey={`${browseStateKey}:${title}`}
+          favoriteIds={favoriteIds}
+          signedIn={signedIn}
+        />
       )}
     </section>
   );
 
   return (
-    <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
-      <div className="mx-auto max-w-7xl px-4 py-5 md:px-8 md:py-8">
+    <div className="min-h-screen bg-bg text-fg transition-colors">
+      <div className="mx-auto max-w-[1280px] px-4 py-8 md:px-12">
         <BrowseScrollRestorer storageKey={browseStateKey} />
-        <div className="mb-5 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/80 p-4 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur sm:mb-8 sm:p-6 dark:glass-card-dark dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/80 dark:text-sky-300">
-                Marketplace Feed
-              </span>
-              <h1 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-white sm:mt-3 sm:text-4xl">
-                Browse campus listings with live filters
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300 sm:mt-3">
-                Search verified student listings, refine by category or university,
-                and move between results without leaving the page context.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-primary/15 bg-primary/5 px-4 py-3 sm:px-5 sm:py-4 dark:border-sky-400/20 dark:bg-sky-400/10">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-primary/80 dark:text-sky-200">
-                Active inventory
-              </p>
-              <p className="mt-2 text-3xl font-black text-slate-900 dark:text-white">
-                {count}
-              </p>
-            </div>
-          </div>
-        </div>
-
         <Suspense fallback={null}>
           <BrowseFilters categories={categories} count={count} showPagination={false}>
+            <div className="mb-6">
+              <AdBanner placement="browse" />
+            </div>
             {allListings.length === 0 ? (
-              <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-9 text-center shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur sm:p-16 dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
-                <span className="material-symbols-outlined mb-4 block text-5xl text-slate-300 dark:text-slate-500">
+              <div className="card p-9 text-center sm:p-16">
+                <span className="material-symbols-outlined mb-4 block text-5xl text-muted">
                   search_off
                 </span>
-                <p className="mb-2 text-lg font-bold text-slate-700 dark:text-slate-100">
-                  No listings found
-                </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Try adjusting your filters or search query.
+                <p className="mb-2 text-lg font-semibold text-fg">No results found</p>
+                <p className="text-sm text-muted">
+                  We couldn&apos;t find any items matching your current filters. Try
+                  adjusting your search criteria or broadening your categories.
                 </p>
               </div>
+            ) : hasActiveFilters ? (
+              renderSection("All Listings", allListings, false)
             ) : (
-              <div className="space-y-7 sm:space-y-10">
-                {renderSection("Featured Listings", featuredListings)}
-                {renderSection("Nearby Listings", nearbyListings)}
-                {renderSection("All Listings", allListings)}
+              <div className="space-y-10">
+                {/* Curated sections only appear when they have something in them —
+                    an empty "Featured Listings — 0 items" block reads as broken. */}
+                {featuredListings.length > 0
+                  ? renderSection("Featured Listings", featuredListings)
+                  : null}
+                {nearbyListings.length > 0
+                  ? renderSection("Nearby Listings", nearbyListings)
+                  : null}
+                {renderSection(
+                  "All Listings",
+                  allListings,
+                  featuredListings.length > 0 || nearbyListings.length > 0
+                )}
               </div>
             )}
           </BrowseFilters>

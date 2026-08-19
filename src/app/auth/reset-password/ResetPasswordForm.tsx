@@ -12,10 +12,10 @@ export default function ResetPasswordForm() {
   return (
     <form
       action={formAction}
-      className="space-y-5 rounded-[1.75rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5"
+      className="space-y-5 rounded-lg border border-line bg-surface p-8 dark:bg-surface"
     >
       {state.message && (
-        <div className="rounded-xl border border-primary/20 bg-primary/10 p-4 text-sm text-primary dark:border-sky-300/20 dark:bg-sky-300/10 dark:text-sky-200">
+        <div className="rounded-xl border border-primary/20 bg-primary/10 p-4 text-sm text-primary">
           {state.message}
         </div>
       )}
@@ -32,7 +32,7 @@ export default function ResetPasswordForm() {
               required
               autoComplete="new-password"
               placeholder="At least 8 characters"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+              className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
             />
             {state.errors?.password && (
               <p className="mt-1 text-xs text-red-500">{state.errors.password[0]}</p>
@@ -49,7 +49,7 @@ export default function ResetPasswordForm() {
               required
               autoComplete="new-password"
               placeholder="Re-enter your password"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
+              className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:border-primary focus:ring-2 focus:ring-primary dark:text-white dark:focus:border-sky-300 dark:focus:ring-sky-300"
             />
             {state.errors?.confirmPassword && (
               <p className="mt-1 text-xs text-red-500">{state.errors.confirmPassword[0]}</p>
@@ -59,7 +59,7 @@ export default function ResetPasswordForm() {
           <button
             type="submit"
             disabled={pending}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-500 font-bold text-white transition-opacity hover:opacity-90 disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+            className="btn-primary h-12 w-full disabled:opacity-60"
           >
             {pending ? (
               <span className="material-symbols-outlined animate-spin text-xl">
@@ -73,7 +73,7 @@ export default function ResetPasswordForm() {
       ) : (
         <Link
           href="/auth/sign-in"
-          className="inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-primary to-blue-500 font-bold text-white transition-opacity hover:opacity-90 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+          className="btn-primary h-12 w-full"
         >
           Continue to Sign In
         </Link>

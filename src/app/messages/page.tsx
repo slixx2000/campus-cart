@@ -16,7 +16,7 @@ export default async function MessagesPage() {
   const conversations = await getConversationsForUser(user.id).catch(() => []);
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-[#07111f]">
+    <div className="min-h-screen bg-bg">
       <div className="mx-auto max-w-7xl px-4 py-6">
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-6">
           Messages
@@ -27,7 +27,7 @@ export default async function MessagesPage() {
           <ConversationList conversations={conversations} />
 
           {/* Empty state — prompt to select a conversation */}
-          <section className="hidden md:flex flex-1 flex-col items-center justify-center bg-white/70 dark:bg-slate-900/70 backdrop-blur rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <section className="hidden md:flex flex-1 flex-col items-center justify-center bg-surface dark:bg-slate-900/70 rounded-2xl border border-line shadow-sm">
             <span className="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-4">
               forum
             </span>

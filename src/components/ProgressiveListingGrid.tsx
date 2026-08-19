@@ -5,6 +5,8 @@ import ProductCard from "@/components/ProductCard";
 import type { Listing } from "@/types";
 
 type ProgressiveListingGridProps = {
+  favoriteIds?: string[];
+  signedIn?: boolean;
   items: Listing[];
   storageKey: string;
   batchSize?: number;
@@ -17,7 +19,10 @@ export default function ProgressiveListingGrid({
   items,
   storageKey,
   batchSize = DEFAULT_BATCH_SIZE,
+  favoriteIds = [],
+  signedIn = false,
 }: ProgressiveListingGridProps) {
+  const favorited = new Set(favoriteIds);
   const persistedKey = `progressive-grid:${storageKey}`;
   const [visibleCount, setVisibleCount] = useState(() => {
     if (typeof window === "undefined") {
@@ -109,9 +114,14 @@ export default function ProgressiveListingGrid({
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-[clamp(0.45rem,0.8vw,1.25rem)]">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {visibleItems.map((listing) => (
-          <ProductCard key={listing.id} listing={listing} />
+          <ProductCard
+            key={listing.id}
+            listing={listing}
+            isFavorited={favorited.has(listing.id)}
+            signedIn={signedIn}
+          />
         ))}
       </div>
       {hasMore ? <div ref={sentinelRef} className="h-8 w-full" /> : null}

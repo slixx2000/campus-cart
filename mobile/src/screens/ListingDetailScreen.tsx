@@ -103,8 +103,6 @@ export function ListingDetailScreen({
         ) : (
           <Text style={styles.infoValue}>{listing.sellerName}</Text>
         )}
-        <Text style={styles.infoLabel}>Phone</Text>
-        <Text style={styles.infoValue}>{listing.sellerPhone || 'Not provided yet'}</Text>
         <Text style={styles.infoLabel}>Views</Text>
         <Text style={styles.infoValue}>{listing.viewCount} people viewed this listing</Text>
         <Text style={styles.infoLabel}>Listed</Text>

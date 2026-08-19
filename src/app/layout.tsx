@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const geist = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist",
+  display: "swap",
+});
 import Header from "@/components/HeaderServer";
 import Footer from "@/components/Footer";
 import NotificationServer from "@/components/NotificationServer";
 import PWARegister from "@/components/PWARegister";
 import PWAInstallPopup from "@/components/PWAInstallPopup";
-import ScaledDesktopFrame from "@/components/ScaledDesktopFrame";
+import MobileTabBar from "@/components/MobileTabBar";
 
 export const metadata: Metadata = {
   title: "CampusCart – The Marketplace for Your Campus",
@@ -26,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -41,23 +48,17 @@ export default function RootLayout({
         />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className="font-display antialiased bg-background-light text-slate-900 min-h-screen transition-colors dark:bg-background-dark dark:text-slate-100">
+      <body className="font-display antialiased bg-bg text-fg min-h-screen transition-colors">
         <PWARegister />
         <PWAInstallPopup />
-        <ScaledDesktopFrame>
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
-        </ScaledDesktopFrame>
+        <Header />
+        <main className="min-h-screen pb-16 md:pb-0">{children}</main>
+        <Footer />
+        <MobileTabBar />
         <NotificationServer />
       </body>
     </html>

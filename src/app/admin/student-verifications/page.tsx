@@ -35,10 +35,10 @@ export default async function StudentVerificationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background-light px-4 py-12 text-slate-900 dark:bg-background-dark dark:text-slate-100">
+    <div className="min-h-screen bg-bg px-4 py-12 text-slate-900 dark:text-slate-100">
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
-          <span className="text-sm font-bold uppercase tracking-[0.28em] text-primary dark:text-sky-300">
+          <span className="text-sm font-bold uppercase tracking-[0.28em] text-primary">
             Admin
           </span>
           <h1 className="mt-3 text-3xl font-extrabold text-slate-900 dark:text-white">

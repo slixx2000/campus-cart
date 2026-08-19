@@ -58,7 +58,7 @@ export async function startConversationAction(formData: FormData) {
       user.id,
       sellerId
     );
-    redirect(`/chat/${conversationId}`);
+    redirect(`/messages/${conversationId}`);
   } catch {
     // Fallback — return to product page on unexpected error.
     redirect(`/product/${listingId}`);

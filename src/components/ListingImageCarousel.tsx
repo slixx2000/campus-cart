@@ -92,7 +92,7 @@ export default function ListingImageCarousel({
     <>
       <div className="space-y-3">
         <div
-          className="group relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-sm dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]"
+          className="group relative aspect-[4/3] overflow-hidden rounded-lg border border-line bg-surface shadow-sm dark:bg-surface"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -109,7 +109,7 @@ export default function ListingImageCarousel({
               <button
                 key={`${src}-${imageIndex}`}
                 type="button"
-                className="relative h-full w-full shrink-0 cursor-zoom-in bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary dark:bg-[#0d1a2b]"
+                className="relative h-full w-full shrink-0 cursor-zoom-in bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 onClick={() => setIsFullscreenOpen(true)}
                 aria-label={`Open image ${imageIndex + 1} in fullscreen`}
               >
@@ -125,7 +125,7 @@ export default function ListingImageCarousel({
           </div>
 
           {featured && (
-            <div className="absolute right-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-slate-900 backdrop-blur dark:bg-slate-950/70 dark:text-white">
+            <div className="absolute right-4 top-4 rounded-full bg-surface px-3 py-1 text-xs font-bold text-slate-900 dark:bg-slate-950/70 dark:text-white">
               Featured
             </div>
           )}
@@ -135,7 +135,7 @@ export default function ListingImageCarousel({
               <button
                 type="button"
                 onClick={goPrev}
-                className="absolute left-3 top-1/2 hidden -translate-y-1/2 rounded-full bg-white/85 p-2 text-slate-800 shadow transition hover:bg-white group-hover:inline-flex dark:bg-slate-900/70 dark:text-slate-100 dark:hover:bg-slate-900"
+                className="absolute left-3 top-1/2 hidden -translate-y-1/2 rounded-full bg-surface p-2 text-slate-800 shadow transition hover:bg-surface group-hover:inline-flex dark:bg-slate-900/70 dark:text-slate-100 dark:hover:bg-slate-900"
                 aria-label="Previous image"
               >
                 <span className="material-symbols-outlined">chevron_left</span>
@@ -143,7 +143,7 @@ export default function ListingImageCarousel({
               <button
                 type="button"
                 onClick={goNext}
-                className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-full bg-white/85 p-2 text-slate-800 shadow transition hover:bg-white group-hover:inline-flex dark:bg-slate-900/70 dark:text-slate-100 dark:hover:bg-slate-900"
+                className="absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-full bg-surface p-2 text-slate-800 shadow transition hover:bg-surface group-hover:inline-flex dark:bg-slate-900/70 dark:text-slate-100 dark:hover:bg-slate-900"
                 aria-label="Next image"
               >
                 <span className="material-symbols-outlined">chevron_right</span>
@@ -160,7 +160,7 @@ export default function ListingImageCarousel({
                 key={`dot-${dotIndex}`}
                 type="button"
                 onClick={() => goTo(dotIndex)}
-                className={`h-2.5 rounded-full transition-all ${isActive ? "w-6 bg-primary dark:bg-sky-300" : "w-2.5 bg-slate-300 dark:bg-slate-600"}`}
+                className={`h-2.5 rounded-full transition-all ${isActive ? "w-6 bg-primary " : "w-2.5 bg-slate-300 dark:bg-slate-600"}`}
                 aria-label={`Go to image ${dotIndex + 1}`}
                 aria-current={isActive}
                 disabled={!canSwipe}
@@ -180,8 +180,8 @@ export default function ListingImageCarousel({
                   onClick={() => goTo(thumbIndex)}
                   className={`relative aspect-[4/3] w-20 overflow-hidden rounded-xl border transition-all ${
                     isActive
-                      ? "border-primary ring-2 ring-primary/30 dark:border-sky-300 dark:ring-sky-300/30"
-                      : "border-slate-200/80 opacity-80 hover:opacity-100 dark:border-white/15"
+                      ? "border-primary ring-2 ring-primary/30  dark:ring-sky-300/30"
+                      : "border-line opacity-80 hover:opacity-100 "
                   }`}
                   aria-label={`Preview image ${thumbIndex + 1}`}
                   aria-current={isActive}
@@ -191,7 +191,7 @@ export default function ListingImageCarousel({
                     alt={`${alt} thumbnail ${thumbIndex + 1}`}
                     fallbackSrc={PLACEHOLDER}
                     fill
-                    className="object-contain bg-slate-50 dark:bg-[#0d1a2b]"
+                    className="object-contain bg-surface-2"
                   />
                 </button>
               );

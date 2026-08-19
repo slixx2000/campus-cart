@@ -24,10 +24,10 @@ export default function EditListingForm({
   const [condition, setCondition] = useState(listing.condition ?? "");
 
   return (
-    <div className="min-h-screen bg-background-light text-slate-900 transition-colors dark:bg-[#07111f] dark:text-slate-100">
+    <div className="min-h-screen bg-bg text-slate-900 transition-colors dark:text-slate-100">
       <div className="mx-auto max-w-3xl px-6 py-10">
-        <div className="mb-8 overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white/85 p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5 dark:shadow-[0_35px_120px_-55px_rgba(8,15,33,0.95)]">
-          <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/80 dark:text-sky-300">
+        <div className="mb-8 overflow-hidden rounded-lg border border-line bg-surface p-6 dark:bg-surface">
+          <span className="text-xs font-bold uppercase tracking-[0.3em] text-primary/80">
             Manage listing
           </span>
           <h1 className="mt-3 text-3xl font-extrabold text-slate-900 dark:text-white">
@@ -44,7 +44,7 @@ export default function EditListingForm({
           </div>
         )}
 
-        <form action={formAction} className="space-y-6 rounded-[2rem] border border-slate-200/70 bg-white/85 p-8 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.55)] backdrop-blur dark:glass-card-dark dark:border-white/10 dark:bg-white/5">
+        <form action={formAction} className="space-y-6 rounded-lg border border-line bg-surface p-8 dark:bg-surface">
           <input type="hidden" name="listingId" value={listing.id} />
           <input type="hidden" name="condition" value={condition} />
 
@@ -57,7 +57,7 @@ export default function EditListingForm({
               name="title"
               defaultValue={listing.title}
               maxLength={100}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
+              className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:text-white dark:focus:ring-sky-300"
             />
             {state.errors?.title && (
               <p className="text-xs text-red-500 mt-1">{state.errors.title[0]}</p>
@@ -70,7 +70,7 @@ export default function EditListingForm({
               <select
                 name="categoryId"
                 defaultValue={listing.category_id}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
+                className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:text-white dark:focus:ring-sky-300"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -82,14 +82,14 @@ export default function EditListingForm({
 
             <div>
               <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
-                Price (ZMW)
+                Price (K)
               </label>
               <input
                 type="number"
                 name="price"
                 defaultValue={Number(listing.price)}
                 min={1}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
+                className="w-full rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:text-white dark:focus:ring-sky-300"
               />
             </div>
           </div>
@@ -105,8 +105,8 @@ export default function EditListingForm({
                     onClick={() => setCondition((prev) => prev === c.value ? "" : c.value)}
                     className={`px-4 py-2 rounded-full text-xs font-bold border-2 transition-all ${
                       condition === c.value
-                        ? "border-primary bg-primary text-white dark:border-sky-300 dark:bg-sky-300 dark:text-slate-950"
-                        : "border-slate-200 bg-white text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+                        ? "border-primary bg-primary text-on-primary   dark:text-slate-950"
+                        : "border-line bg-surface text-slate-600  dark:bg-surface dark:text-slate-300"
                     }`}
                   >
                     {c.label}
@@ -123,21 +123,21 @@ export default function EditListingForm({
               defaultValue={listing.description}
               maxLength={2000}
               rows={5}
-              className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:border-white/10 dark:bg-[#0d1a2b] dark:text-white dark:focus:ring-sky-300"
+              className="w-full resize-none rounded-xl border border-line bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary dark:text-white dark:focus:ring-sky-300"
             />
           </div>
 
           <div className="flex justify-end gap-4">
             <a
               href="/my-listings"
-              className="rounded-full border border-slate-200 px-8 py-3 font-bold text-slate-600 transition-colors hover:bg-slate-50 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/10"
+              className="rounded-full border border-line px-8 py-3 font-bold text-slate-600 transition-colors hover:bg-surface-2 dark:text-slate-300 dark:hover:bg-surface"
             >
               Cancel
             </a>
             <button
               type="submit"
               disabled={pending}
-              className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-blue-400 px-10 py-3 font-bold text-white transition-all hover:shadow-lg disabled:opacity-60 dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950"
+              className="btn-primary px-10 py-3 disabled:opacity-60"
             >
               {pending ? (
                 <span className="material-symbols-outlined animate-spin text-lg leading-none">
