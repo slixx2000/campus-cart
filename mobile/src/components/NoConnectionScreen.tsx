@@ -1,9 +1,10 @@
 import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 
 export function NoConnectionScreen({ onRetry }: { onRetry?: () => void }) {
+  const styles = useStyles();
   return (
     <ScrollView contentContainerStyle={styles.screenContent}>
       <View style={styles.emptyState}>

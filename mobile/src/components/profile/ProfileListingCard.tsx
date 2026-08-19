@@ -5,6 +5,7 @@ import { FallbackImage } from '../FallbackImage';
 import { PLACEHOLDER_IMAGE } from '../../lib/constants';
 import { ActionSheetCard } from '../ActionSheetCard';
 import type { Listing } from '../../types';
+import { formatPrice } from '../../lib/format';
 
 type Props = {
   listing: Listing;
@@ -92,7 +93,7 @@ export function ProfileListingCard({ listing, onMarkSold, onBumpListing, onArchi
             borderColor: 'rgba(148, 163, 184, 0.25)',
           }}
         >
-          <Text style={{ color: '#f8fafc', fontWeight: '900', fontSize: 14 }}>K {listing.price.toLocaleString()}</Text>
+          <Text style={{ color: '#f8fafc', fontWeight: '900', fontSize: 14 }}>{formatPrice(listing.price)}</Text>
         </View>
 
         <View

@@ -3,7 +3,7 @@ import { FlatList, Pressable, RefreshControl, ScrollView, Text, TextInput, View 
 import { ListingCard } from '../components/ListingCard';
 import { NoConnectionScreen } from '../components/NoConnectionScreen';
 import { CATEGORY_OPTIONS } from '../lib/constants';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 import type { Listing } from '../types';
 
 type Props = {
@@ -55,6 +55,7 @@ export function BrowseScreen({
   onRefresh,
   error,
 }: Props) {
+  const styles = useStyles();
   const favoriteIdSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
   const header = (

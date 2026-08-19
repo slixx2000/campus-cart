@@ -3,7 +3,7 @@ import React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SectionHeader } from '../components/SectionHeader';
 import { CATEGORY_OPTIONS } from '../lib/constants';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 import type { PickedImage } from '../lib/imageUpload';
 import type { Profile } from '../types';
 import type { User } from '@supabase/supabase-js';
@@ -43,6 +43,7 @@ export function SellScreen({
   onPickImages,
   onSubmit,
 }: Props) {
+  const styles = useStyles();
   if (!user) {
     return (
       <ScrollView contentContainerStyle={styles.screenContent}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 
 type ActionItem = {
   key: string;
@@ -22,6 +22,7 @@ export function ActionSheetCard({
   actions: ActionItem[];
   onClose: () => void;
 }) {
+  const styles = useStyles();
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable

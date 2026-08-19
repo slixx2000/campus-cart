@@ -1,8 +1,9 @@
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 
 export function AboutScreen() {
+  const styles = useStyles();
   const safetyChecklist = [
     'Meet in a public, well-lit location on campus.',
     'Use in-app chat to keep deal context in one place.',

@@ -1,17 +1,21 @@
+import type { Listing } from '../types';
+import { useStyles, useTheme } from '../lib/styles';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, useWindowDimensions, View } from 'react-native';
-import ListingCard from './ListingCard.js';
+import { Animated, FlatList, NativeScrollEvent, NativeSyntheticEvent, View, useWindowDimensions } from 'react-native';
+import { ListingCard } from './ListingCard';
 
 const AUTO_PLAY_MS = 3800;
 const RESUME_DELAY_MS = 2400;
 const SIDE_PADDING = 16;
 const ITEM_GAP = 16;
 
-function FeaturedCarousel({ items, onPressItem }) {
-  const listRef = useRef(null);
+function FeaturedCarouselBase({ items, onPressItem }: { items: Listing[]; onPressItem: (item: Listing) => void }) {
+  const styles = useStyles();
+  const { colors } = useTheme();
+  const listRef = useRef<FlatList<Listing> | null>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
-  const autoTimerRef = useRef(null);
-  const resumeTimerRef = useRef(null);
+  const autoTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rawIndexRef = useRef(0);
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -41,7 +45,7 @@ function FeaturedCarousel({ items, onPressItem }) {
   }, []);
 
   const jumpToRawIndex = useCallback(
-    (index, animated) => {
+    (index: number, animated: boolean) => {
       if (!listRef.current) return;
       listRef.current.scrollToOffset({ offset: index * interval, animated });
       rawIndexRef.current = index;
@@ -83,7 +87,7 @@ function FeaturedCarousel({ items, onPressItem }) {
   }, [canLoop, clearTimers, handleAutoPlay, jumpToRawIndex, items.length]);
 
   const handleMomentumEnd = useCallback(
-    (event) => {
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const nextRawIndex = Math.round(event.nativeEvent.contentOffset.x / interval);
       rawIndexRef.current = nextRawIndex;
 
@@ -115,7 +119,7 @@ function FeaturedCarousel({ items, onPressItem }) {
   );
 
   const renderItem = useCallback(
-    ({ item }) => (
+    ({ item }: { item: Listing }) => (
       <View style={{ width: itemWidth, marginRight: ITEM_GAP }}>
         <ListingCard listing={item} onPress={() => onPressItem(item)} />
       </View>
@@ -123,10 +127,10 @@ function FeaturedCarousel({ items, onPressItem }) {
     [itemWidth, onPressItem]
   );
 
-  const keyExtractor = useCallback((item, index) => `${item.id}-${index}`, []);
+  const keyExtractor = useCallback((item: Listing, index: number) => `${item.id}-${index}`, []);
 
   const getItemLayout = useCallback(
-    (_, index) => ({
+    (_: unknown, index: number) => ({
       length: interval,
       offset: interval * index,
       index,
@@ -168,7 +172,7 @@ function FeaturedCarousel({ items, onPressItem }) {
       />
 
       {items.length > 1 ? (
-        <View className="mt-2 flex-row items-center justify-center">
+        <View style={styles.carouselDots}>
           {items.map((item, dotIndex) => {
             const logicalRawIndex = canLoop ? dotIndex + 1 : dotIndex;
             const inputRange = [
@@ -189,13 +193,13 @@ function FeaturedCarousel({ items, onPressItem }) {
               extrapolate: 'clamp',
             });
 
-            const bgClass = currentIndex === dotIndex ? 'bg-blue-500' : 'bg-gray-500';
-
             return (
               <Animated.View
                 key={`dot-${item.id}-${dotIndex}`}
-                style={{ width, opacity }}
-                className={`mx-1 h-2 rounded-full ${bgClass}`}
+                style={[
+                  styles.carouselDot,
+                  { width, opacity, backgroundColor: currentIndex === dotIndex ? colors.fg : colors.line },
+                ]}
               />
             );
           })}
@@ -205,4 +209,4 @@ function FeaturedCarousel({ items, onPressItem }) {
   );
 }
 
-export default React.memo(FeaturedCarousel);
+export const FeaturedCarousel = React.memo(FeaturedCarouselBase);

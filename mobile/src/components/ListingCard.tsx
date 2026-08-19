@@ -3,7 +3,7 @@ import { Pressable, Text, View } from 'react-native';
 import { FallbackImage } from './FallbackImage';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { formatPrice, relativeDate } from '../lib/format';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 import type { Listing } from '../types';
 
 export function ListingCard({
@@ -25,6 +25,7 @@ export function ListingCard({
   onToggleFavorite?: () => void;
   onMessagePress?: () => void;
 }) {
+  const styles = useStyles();
   const titleLines = compact ? 1 : 2;
   const useHomeTight = compact && homeTight;
 

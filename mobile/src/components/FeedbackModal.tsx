@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
-import { colors, styles } from '../lib/styles';
+import { useStyles, useTheme } from '../lib/styles';
 
 type Props = {
   visible: boolean;
@@ -20,12 +20,14 @@ export function FeedbackModal({
   buttonLabel = 'Okay',
   onClose,
 }: Props) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.feedbackModalBackdrop} onPress={onClose}>
         <Pressable style={styles.feedbackModalCard} onPress={(event) => event.stopPropagation()}>
           <View style={styles.feedbackModalIconWrap}>
-            <MaterialIcons name={icon} size={22} color={colors.secondary} />
+            <MaterialIcons name={icon} size={22} color={colors.accent} />
           </View>
           <Text style={styles.feedbackModalTitle}>{title}</Text>
           <Text style={styles.feedbackModalMessage}>{message}</Text>

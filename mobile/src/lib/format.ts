@@ -1,5 +1,7 @@
 export function formatPrice(amount: number) {
-  return `ZMW ${Number(amount || 0).toLocaleString('en-ZM')}`;
+  // Matches the web app's formatter in src/lib/data.ts — one currency format
+  // across both clients.
+  return `K${Number(amount || 0).toLocaleString('en-ZM')}`;
 }
 
 export function relativeDate(input: string) {

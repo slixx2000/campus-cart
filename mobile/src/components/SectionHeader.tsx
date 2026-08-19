@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 
 export function SectionHeader({
   eyebrow,
@@ -13,6 +13,7 @@ export function SectionHeader({
   body?: string;
   rightLabel?: string;
 }) {
+  const styles = useStyles();
   return (
     <View style={styles.sectionHeaderRow}>
       <View style={styles.sectionHeaderCopy}>

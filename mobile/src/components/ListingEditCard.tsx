@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, Text, TextInput, View } from 'react-native';
 import type { Listing } from '../types';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 
 export function ListingEditCard({
   visible,
@@ -16,6 +16,7 @@ export function ListingEditCard({
   onClose: () => void;
   onSave: (payload: { title: string; description: string; price: number }) => void;
 }) {
+  const styles = useStyles();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
