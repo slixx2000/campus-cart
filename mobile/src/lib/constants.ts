@@ -34,6 +34,6 @@ export const LISTING_SELECT = `
   university_id,
   categories ( id, name, material_icon, color_class ),
   universities ( id, name, short_name ),
-  profiles!listings_seller_id_fkey ( id, full_name, phone, avatar_url, is_verified_student, is_pioneer_seller ),
+  profiles!listings_seller_id_fkey ( id, full_name, avatar_url, is_verified_student, is_pioneer_seller ),
   listing_images ( id, public_url, sort_order )
 `;

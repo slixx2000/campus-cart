@@ -20,7 +20,6 @@ export function mapListing(row: any): Listing {
     university: row.universities?.name ?? 'Campus Cart',
     universityShortName: row.universities?.short_name ?? undefined,
     sellerName: row.profiles?.full_name ?? 'Unknown Seller',
-    sellerPhone: row.profiles?.phone ?? '',
     sellerAvatarUrl: row.profiles?.avatar_url ?? null,
     sellerId: row.profiles?.id ?? undefined,
     sellerVerified: row.profiles?.is_verified_student === true,
