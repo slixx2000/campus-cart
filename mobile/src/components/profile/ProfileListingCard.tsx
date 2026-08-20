@@ -6,6 +6,16 @@ import { PLACEHOLDER_IMAGE } from '../../lib/constants';
 import { ActionSheetCard } from '../ActionSheetCard';
 import type { Listing } from '../../types';
 import { formatPrice } from '../../lib/format';
+import { radius, text, useTheme } from '../../lib/styles';
+
+/**
+ * Chips that sit on top of a listing photo. Deliberately NOT theme tokens: what
+ * is behind them is a user's photo, not a themed surface, so they have to stay
+ * dark-on-light-text in both modes to keep contrast.
+ */
+const OVERLAY_BG = 'rgba(2, 6, 23, 0.82)';
+const OVERLAY_LINE = 'rgba(248, 250, 252, 0.22)';
+const OVERLAY_FG = '#F8FAFC';
 
 type Props = {
   listing: Listing;
@@ -17,9 +27,13 @@ type Props = {
 };
 
 export function ProfileListingCard({ listing, onMarkSold, onBumpListing, onArchiveListing, onRelist, onEditListing }: Props) {
+  const { colors } = useTheme();
   const isSold = listing.status === 'sold';
   const isArchived = listing.status === 'archived';
   const [showActions, setShowActions] = useState(false);
+
+  const statusLabel = isArchived ? 'Archived' : isSold ? 'Sold' : 'Active';
+  const statusColor = isArchived ? colors.muted : isSold ? colors.accent : OVERLAY_FG;
 
   const actionItems = useMemo(() => {
     const items = [] as Array<{ key: string; label: string; tone?: 'default' | 'danger'; onPress: () => void }>;
@@ -59,24 +73,19 @@ export function ProfileListingCard({ listing, onMarkSold, onBumpListing, onArchi
   return (
     <View
       style={{
-        backgroundColor: '#0f172a',
-        borderRadius: 20,
+        backgroundColor: colors.surface,
+        borderRadius: radius.md,
         borderWidth: 1,
-        borderColor: 'rgba(148, 163, 184, 0.2)',
+        borderColor: colors.line,
         overflow: 'hidden',
         marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.22,
-        shadowRadius: 10,
-        elevation: 4,
       }}
     >
       <View style={{ position: 'relative' }}>
         <FallbackImage
           uri={listing.images?.[0]}
           fallbackUri={PLACEHOLDER_IMAGE}
-          style={{ width: '100%', height: 170, backgroundColor: '#111827' }}
+          style={{ width: '100%', height: 170, backgroundColor: colors.surface2 }}
           contentFit="cover"
         />
 
@@ -85,15 +94,17 @@ export function ProfileListingCard({ listing, onMarkSold, onBumpListing, onArchi
             position: 'absolute',
             left: 12,
             bottom: 12,
-            backgroundColor: 'rgba(2, 6, 23, 0.85)',
-            borderRadius: 999,
+            backgroundColor: OVERLAY_BG,
+            borderRadius: radius.full,
             paddingHorizontal: 12,
             paddingVertical: 7,
             borderWidth: 1,
-            borderColor: 'rgba(148, 163, 184, 0.25)',
+            borderColor: OVERLAY_LINE,
           }}
         >
-          <Text style={{ color: '#f8fafc', fontWeight: '900', fontSize: 14 }}>{formatPrice(listing.price)}</Text>
+          <Text style={{ color: OVERLAY_FG, fontWeight: '800', fontSize: text.sm }}>
+            {formatPrice(listing.price)}
+          </Text>
         </View>
 
         <View
@@ -101,13 +112,24 @@ export function ProfileListingCard({ listing, onMarkSold, onBumpListing, onArchi
             position: 'absolute',
             right: 12,
             top: 12,
-            backgroundColor: isArchived ? 'rgba(100, 116, 139, 0.9)' : isSold ? 'rgba(22, 163, 74, 0.9)' : 'rgba(14, 165, 233, 0.9)',
-            borderRadius: 999,
+            backgroundColor: OVERLAY_BG,
+            borderRadius: radius.full,
             paddingHorizontal: 10,
             paddingVertical: 6,
+            borderWidth: 1,
+            borderColor: OVERLAY_LINE,
           }}
         >
-          <Text style={{ color: '#ffffff', fontWeight: '800', fontSize: 11, textTransform: 'uppercase' }}>{isArchived ? 'Archived' : isSold ? 'Sold' : 'Active'}</Text>
+          <Text
+            style={{
+              color: statusColor,
+              fontWeight: '800',
+              fontSize: text.xs,
+              textTransform: 'uppercase',
+            }}
+          >
+            {statusLabel}
+          </Text>
         </View>
 
         <Pressable
@@ -119,10 +141,10 @@ export function ProfileListingCard({ listing, onMarkSold, onBumpListing, onArchi
               bottom: 12,
               width: 36,
               height: 36,
-              borderRadius: 18,
-              backgroundColor: 'rgba(2, 6, 23, 0.85)',
+              borderRadius: radius.full,
+              backgroundColor: OVERLAY_BG,
               borderWidth: 1,
-              borderColor: 'rgba(148, 163, 184, 0.3)',
+              borderColor: OVERLAY_LINE,
               alignItems: 'center',
               justifyContent: 'center',
               transform: [{ scale: pressed ? 0.94 : 1 }],
@@ -131,15 +153,15 @@ export function ProfileListingCard({ listing, onMarkSold, onBumpListing, onArchi
           accessibilityRole="button"
           accessibilityLabel={`Open actions for ${listing.title}`}
         >
-          <MaterialIcons name="more-vert" size={18} color="#e2e8f0" />
+          <MaterialIcons name="more-vert" size={18} color={OVERLAY_FG} />
         </Pressable>
       </View>
 
       <View style={{ paddingHorizontal: 14, paddingVertical: 12 }}>
-        <Text style={{ color: '#f8fafc', fontWeight: '800', fontSize: 16 }} numberOfLines={1}>
+        <Text style={{ color: colors.fg, fontWeight: '800', fontSize: text.base }} numberOfLines={1}>
           {listing.title}
         </Text>
-        <Text style={{ color: '#94a3b8', marginTop: 4, fontSize: 13 }} numberOfLines={1}>
+        <Text style={{ color: colors.muted, marginTop: 4, fontSize: text.sm }} numberOfLines={1}>
           {listing.category} • {listing.university}
         </Text>
       </View>

@@ -31,7 +31,7 @@ export default function ProductCard({
       <article className="card flex h-full flex-col overflow-hidden transition-shadow hover:shadow-hover">
         <div className="relative aspect-square overflow-hidden bg-surface-2">
           <ListingImage
-            src={listing.images[0]}
+            src={listing.thumbnails?.[0] ?? listing.images[0]}
             alt={listing.title}
             fallbackSrc="/images/placeholder-electronics.svg"
             fill

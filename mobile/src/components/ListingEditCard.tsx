@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, Text, TextInput, View } from 'react-native';
 import type { Listing } from '../types';
-import { useStyles } from '../lib/styles';
+import { radius, useStyles, useTheme } from '../lib/styles';
 
 export function ListingEditCard({
   visible,
@@ -17,6 +17,7 @@ export function ListingEditCard({
   onSave: (payload: { title: string; description: string; price: number }) => void;
 }) {
   const styles = useStyles();
+  const { colors } = useTheme();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -34,7 +35,7 @@ export function ListingEditCard({
         onPress={onClose}
         style={{
           flex: 1,
-          backgroundColor: 'rgba(2, 6, 23, 0.72)',
+          backgroundColor: colors.scrim,
           justifyContent: 'flex-end',
           paddingHorizontal: 16,
           paddingBottom: 28,
@@ -43,10 +44,10 @@ export function ListingEditCard({
         <Pressable
           onPress={(event) => event.stopPropagation()}
           style={{
-            backgroundColor: '#0b1220',
-            borderRadius: 22,
+            backgroundColor: colors.surface,
+            borderRadius: radius.md,
             borderWidth: 1,
-            borderColor: 'rgba(148, 163, 184, 0.25)',
+            borderColor: colors.line,
             padding: 16,
             gap: 10,
           }}
@@ -54,13 +55,13 @@ export function ListingEditCard({
           <Text style={styles.noticeTitle}>Update listing</Text>
           <Text style={styles.noticeBody}>Only you can edit this listing.</Text>
 
-          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" placeholderTextColor="#64748b" />
+          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" placeholderTextColor={colors.muted} />
           <TextInput
             style={[styles.input, { minHeight: 90, textAlignVertical: 'top' }]}
             value={description}
             onChangeText={setDescription}
             placeholder="Description"
-            placeholderTextColor="#64748b"
+            placeholderTextColor={colors.muted}
             multiline
           />
           <TextInput
@@ -68,7 +69,7 @@ export function ListingEditCard({
             value={price}
             onChangeText={setPrice}
             placeholder="Price"
-            placeholderTextColor="#64748b"
+            placeholderTextColor={colors.muted}
             keyboardType="numeric"
           />
 
@@ -77,7 +78,7 @@ export function ListingEditCard({
             onPress={() => onSave({ title: title.trim(), description: description.trim(), price: Number(price) })}
             disabled={saving}
           >
-            {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Save changes</Text>}
+            {saving ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.primaryButtonText}>Save changes</Text>}
           </Pressable>
 
           <Pressable style={styles.secondaryButton} onPress={onClose}>

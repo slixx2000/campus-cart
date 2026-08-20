@@ -6,7 +6,7 @@ export const LISTING_SELECT = `
   categories ( id, name, slug, material_icon, color_class ),
   universities ( id, name, short_name, city ),
   profiles!listings_seller_id_fkey ( id, full_name, avatar_url, is_pioneer_seller ),
-  listing_images ( id, public_url, storage_path, sort_order )
+  listing_images ( id, public_url, object_key, storage_path, sort_order )
 `;
 
 export type ListingsFilter = {

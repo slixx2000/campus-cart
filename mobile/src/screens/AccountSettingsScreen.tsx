@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { FallbackImage } from '../components/FallbackImage';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
-import { useStyles, useTheme } from '../lib/styles';
+import { radius, text, useStyles, useTheme } from '../lib/styles';
 import type { UniversityRow } from '../types';
 import type { User } from '@supabase/supabase-js';
 
@@ -110,7 +110,7 @@ export function AccountSettingsScreen({
   return (
     <ScrollView
       contentContainerStyle={[styles.screenContent, { paddingBottom: 48 }]}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.muted} />}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Pressable onPress={onBack} style={styles.backButton}>
@@ -118,9 +118,9 @@ export function AccountSettingsScreen({
         </Pressable>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          {saveState === 'saving' || saveLoading ? <ActivityIndicator color="#38bdf8" size="small" /> : null}
-          {saveState === 'saved' ? <Text style={{ color: '#22c55e', fontWeight: '800' }}>Saved ✓</Text> : null}
-          {saveState === 'error' ? <Text style={{ color: '#ef4444', fontWeight: '800' }}>Save failed</Text> : null}
+          {saveState === 'saving' || saveLoading ? <ActivityIndicator color={colors.accent} size="small" /> : null}
+          {saveState === 'saved' ? <Text style={{ color: colors.accent, fontWeight: '800' }}>Saved ✓</Text> : null}
+          {saveState === 'error' ? <Text style={{ color: colors.danger, fontWeight: '800' }}>Save failed</Text> : null}
         </View>
       </View>
 
@@ -129,27 +129,27 @@ export function AccountSettingsScreen({
         <TextInput
           style={styles.input}
           placeholder="Full name"
-          placeholderTextColor="#64748b"
+          placeholderTextColor={colors.muted}
           value={editFullName}
           onChangeText={onEditFullName}
         />
         <TextInput
           style={styles.input}
           placeholder="Phone / WhatsApp"
-          placeholderTextColor="#64748b"
+          placeholderTextColor={colors.muted}
           value={editPhone}
           onChangeText={onEditPhone}
         />
         <TextInput
           style={styles.input}
           placeholder="Student email"
-          placeholderTextColor="#64748b"
+          placeholderTextColor={colors.muted}
           autoCapitalize="none"
           keyboardType="email-address"
           value={editStudentEmail}
           onChangeText={onEditStudentEmail}
         />
-        <Text style={{ color: '#94a3b8', fontSize: 12 }}>Account email: {user?.email || 'Not signed in'}</Text>
+        <Text style={{ color: colors.muted, fontSize: text.xs }}>Account email: {user?.email || 'Not signed in'}</Text>
 
         <Text style={styles.fieldLabel}>University</Text>
         <Pressable
@@ -164,8 +164,8 @@ export function AccountSettingsScreen({
             },
           ]}
         >
-          <Text style={{ color: '#f8fafc', flex: 1 }} numberOfLines={1}>{selectedUniversityName}</Text>
-          <MaterialIcons name="expand-more" size={20} color="#94a3b8" />
+          <Text style={{ color: colors.fg, flex: 1 }} numberOfLines={1}>{selectedUniversityName}</Text>
+          <MaterialIcons name="expand-more" size={20} color={colors.muted} />
         </Pressable>
       </View>
 
@@ -175,11 +175,11 @@ export function AccountSettingsScreen({
           <FallbackImage
             uri={profileAvatarUrl}
             fallbackUri={PLACEHOLDER_IMAGE}
-            style={{ width: 56, height: 56, borderRadius: 999, backgroundColor: '#111827' }}
+            style={{ width: 56, height: 56, borderRadius: radius.full, backgroundColor: colors.surface2 }}
             contentFit="cover"
           />
           <Pressable style={styles.secondaryButton} onPress={onPickAvatar} disabled={avatarLoading}>
-            {avatarLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Pick photo</Text>}
+            {avatarLoading ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Pick photo</Text>}
           </Pressable>
         </View>
 
@@ -206,7 +206,7 @@ export function AccountSettingsScreen({
         </ScrollView>
 
         <Pressable style={styles.secondaryButton} onPress={onApplyDefaultAvatar} disabled={avatarLoading || !selectedDefaultAvatar}>
-          {avatarLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Apply selected avatar</Text>}
+          {avatarLoading ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Apply selected avatar</Text>}
         </Pressable>
       </View>
 
@@ -229,7 +229,7 @@ export function AccountSettingsScreen({
 
       <View style={[styles.helperCard, { borderColor: colors.danger }]}>
         <Text style={[styles.helperCardTitle, { color: colors.danger }]}>Danger Zone</Text>
-        <Pressable style={[styles.secondaryButton, { borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.12)' }]} onPress={onSignOut}>
+        <Pressable style={[styles.secondaryButton, { borderColor: colors.danger, backgroundColor: colors.surface2 }]} onPress={onSignOut}>
           <Text style={[styles.secondaryButtonText, { color: colors.danger }]}>Sign out</Text>
         </Pressable>
       </View>
@@ -240,18 +240,18 @@ export function AccountSettingsScreen({
           Checks GitHub releases for the latest APK and opens the download link if a newer build is available.
         </Text>
         <Pressable style={styles.secondaryButton} onPress={onCheckForUpdates} disabled={checkingForUpdates}>
-          {checkingForUpdates ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Check for updates</Text>}
+          {checkingForUpdates ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Check for updates</Text>}
         </Pressable>
       </View>
 
       <Modal visible={showUniversityModal} transparent animationType="fade" onRequestClose={() => setShowUniversityModal(false)}>
-        <View style={{ flex: 1, backgroundColor: 'rgba(2, 6, 23, 0.7)', justifyContent: 'center', padding: 18 }}>
-          <View style={{ backgroundColor: '#0f172a', borderRadius: 18, borderWidth: 1, borderColor: '#1e293b', maxHeight: '75%', padding: 14 }}>
-            <Text style={{ color: '#f8fafc', fontSize: 18, fontWeight: '800', marginBottom: 10 }}>Choose university</Text>
+        <View style={{ flex: 1, backgroundColor: colors.scrim, justifyContent: 'center', padding: 18 }}>
+          <View style={{ backgroundColor: colors.surface, borderRadius: radius.md, borderWidth: 1, borderColor: colors.line, maxHeight: '75%', padding: 14 }}>
+            <Text style={{ color: colors.fg, fontSize: text.lg, fontWeight: '800', marginBottom: 10 }}>Choose university</Text>
             <TextInput
               style={styles.input}
               placeholder="Search university"
-              placeholderTextColor="#64748b"
+              placeholderTextColor={colors.muted}
               value={universitySearch}
               onChangeText={setUniversitySearch}
             />
@@ -263,7 +263,7 @@ export function AccountSettingsScreen({
                 }}
                 style={{ paddingVertical: 10 }}
               >
-                <Text style={{ color: '#e2e8f0', fontWeight: '700' }}>None</Text>
+                <Text style={{ color: colors.fg, fontWeight: '700' }}>None</Text>
               </Pressable>
               {filteredUniversities.map((uni) => (
                 <Pressable
@@ -272,10 +272,10 @@ export function AccountSettingsScreen({
                     onEditUniversityId(uni.id);
                     setShowUniversityModal(false);
                   }}
-                  style={{ paddingVertical: 10, borderTopWidth: 1, borderTopColor: '#1e293b' }}
+                  style={{ paddingVertical: 10, borderTopWidth: 1, borderTopColor: colors.line }}
                 >
-                  <Text style={{ color: '#f8fafc', fontWeight: '700' }}>{uni.name}</Text>
-                  {uni.short_name ? <Text style={{ color: '#94a3b8', fontSize: 12, marginTop: 2 }}>{uni.short_name}</Text> : null}
+                  <Text style={{ color: colors.fg, fontWeight: '700' }}>{uni.name}</Text>
+                  {uni.short_name ? <Text style={{ color: colors.muted, fontSize: text.xs, marginTop: 2 }}>{uni.short_name}</Text> : null}
                 </Pressable>
               ))}
             </ScrollView>
@@ -283,7 +283,7 @@ export function AccountSettingsScreen({
               onPress={() => setShowUniversityModal(false)}
               style={{ marginTop: 12, alignSelf: 'flex-end', paddingHorizontal: 12, paddingVertical: 8 }}
             >
-              <Text style={{ color: '#38bdf8', fontWeight: '700' }}>Close</Text>
+              <Text style={{ color: colors.accent, fontWeight: '700' }}>Close</Text>
             </Pressable>
           </View>
         </View>

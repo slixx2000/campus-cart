@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 import { startTransition, useActionState, useEffect, useMemo, useRef, useState } from "react";
-import { createListingAction } from "./actions";
+import { createDraftListingAction, createListingAction, type CreateListingState } from "./actions";
 import { useUniversities } from "@/hooks/useUniversities";
 import { formatPrice } from "@/lib/data";
 import type { CategoryRow } from "@/types/database";
@@ -24,11 +24,20 @@ const CONDITIONS = [
 
 interface SellFormProps {
   categories: CategoryRow[];
-  userId: string;
 }
 
-export default function SellForm({ categories, userId }: SellFormProps) {
-  const [state, formAction, pending] = useActionState(createListingAction, {});
+// No userId prop: the upload key is derived server-side from the verified JWT, so the
+// browser has no reason to know or send it.
+export default function SellForm({ categories }: SellFormProps) {
+  const [publishState, formAction, pending] = useActionState(createListingAction, {});
+  // Draft creation validates the same fields on the server before any upload starts,
+  // so its errors have to render in exactly the places the publish errors do.
+  const [draftState, setDraftState] = useState<CreateListingState>({});
+  const state: CreateListingState =
+    draftState.errors || draftState.message ? draftState : publishState;
+  // Reused if the user retries after a failed upload, so a retry does not strand a
+  // second draft row.
+  const draftIdRef = useRef<string | null>(null);
   const [isService, setIsService] = useState(false);
   const [condition, setCondition] = useState("");
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -123,21 +132,36 @@ export default function SellForm({ categories, userId }: SellFormProps) {
     const form = event.currentTarget;
     const formData = new FormData(form);
     formData.delete("images");
-    formData.set("listingId", crypto.randomUUID());
 
     try {
       setIsUploading(true);
+      setDraftState({});
       setUploadStatus(selectedImages.length > 0 ? "Preparing images..." : "Submitting listing...");
       setUploadProgress(selectedImages.length > 0 ? 5 : 100);
+
+      // Reserve the listing before uploading anything. This is what makes the server
+      // the one deciding whether these bytes are allowed to exist at all.
+      let listingId = draftIdRef.current;
+      if (!listingId) {
+        const draft = await createDraftListingAction(formData);
+        if (!draft.listingId) {
+          setDraftState({ errors: draft.errors, message: draft.message });
+          setUploadStatus(null);
+          setUploadProgress(0);
+          setIsUploading(false);
+          return;
+        }
+        listingId = draft.listingId;
+        draftIdRef.current = listingId;
+      }
+      formData.set("listingId", listingId);
 
       const uploadedImages: UploadedListingImage[] = [];
 
       for (let index = 0; index < selectedImages.length; index += 1) {
         const file = selectedImages[index];
-        const listingId = String(formData.get("listingId"));
 
         const uploadedImage = await uploadListingImage(file, {
-          userId,
           listingId,
           onProgress: (fileProgress, stage) => {
             const overallProgress = Math.round(
@@ -264,13 +288,16 @@ export default function SellForm({ categories, userId }: SellFormProps) {
                 <label className="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                   Photos (up to 6)
                 </label>
+                {/* dark: was bg-accent + text-accent — the same colour, so the button
+                    rendered as a blank green pill. Mirrors the light-mode pattern
+                    (tinted background, accent text) instead of a solid fill. */}
                 <input
                   type="file"
                   name="images"
                   multiple
                   accept="image/jpeg,image/png,image/webp"
                   onChange={handleImageChange}
-                  className="w-full text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-2 file:text-sm file:font-bold file:text-primary hover:file:bg-primary/20 dark:text-slate-400 dark:file:bg-accent dark:file:text-accent dark:hover:file:bg-accent"
+                  className="w-full text-sm text-slate-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-2 file:text-sm file:font-bold file:text-primary hover:file:bg-primary/20 dark:text-slate-400 dark:file:bg-accent/15 dark:file:text-accent dark:hover:file:bg-accent/25"
                 />
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                   Images are compressed to JPEG before upload for faster posting.
@@ -486,10 +513,16 @@ export default function SellForm({ categories, userId }: SellFormProps) {
                       {error}
                     </p>
                   )}
+                  {/* Deliberately NOT disabled while loading: a disabled control is
+                      omitted from FormData entirely, so submitting before the
+                      universities resolved sent no universityId and the server came
+                      back with "Invalid university" — pointing at a field that looked
+                      correctly filled by the time the user read it. Left enabled, the
+                      empty placeholder + `required` blocks submission in the browser
+                      with a message that names the actual problem. */}
                   <select
                     name="universityId"
                     required
-                    disabled={isLoading || universities.length === 0}
                     className={`w-full cursor-pointer appearance-none rounded-xl border bg-surface-2 px-4 py-3 text-sm text-slate-900 outline-none focus:ring-2 focus:ring-primary  dark:text-white dark:focus:ring-sky-300 ${
                       state.errors?.universityId
                         ? "border-red-400 dark:border-rose-300"
