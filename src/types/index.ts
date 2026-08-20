@@ -37,6 +37,8 @@ export interface Listing {
   sellerAvatarUrl?: string;
   sellerIsPioneer?: boolean;
   images: string[];
+  /** Grid-sized variants, index-aligned with `images`. Falls back to the full image. */
+  thumbnails?: string[];
   viewCount?: number;
   lastBumpedAt?: string;
   createdAt: string;

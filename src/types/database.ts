@@ -88,9 +88,23 @@ export type ListingRow = {
 export type ListingImageRow = {
   id: string;
   listing_id: string;
-  storage_path: string;
+  /** Legacy Supabase Storage path; null for R2-era rows. Use object_key. */
+  storage_path: string | null;
   public_url: string | null;
+  /** Cloudflare R2 key. Prefer over public_url; null on rows written before the R2 cutover. */
+  object_key: string | null;
   sort_order: number;
+  created_at: string;
+};
+
+/**
+ * One row per presigned R2 URL minted. Doubles as the presign rate-limit counter and
+ * as the orphan ledger for objects uploaded but never attached to a listing.
+ */
+export type UploadGrantRow = {
+  object_key: string;
+  user_id: string;
+  listing_id: string | null;
   created_at: string;
 };
 
@@ -298,8 +312,20 @@ export type Database = {
       };
       listing_images: {
         Row: ListingImageRow;
-        Insert: Omit<ListingImageRow, "id" | "created_at"> & { id?: string; created_at?: string };
+        Insert: Omit<ListingImageRow, "id" | "created_at" | "object_key" | "storage_path"> & {
+          id?: string;
+          created_at?: string;
+          object_key?: string | null;
+          // Nullable since 20260820150000 — R2-era rows have no Supabase path.
+          storage_path?: string | null;
+        };
         Update: Partial<ListingImageRow>;
+        Relationships: [];
+      };
+      upload_grants: {
+        Row: UploadGrantRow;
+        Insert: Omit<UploadGrantRow, "created_at"> & { created_at?: string };
+        Update: Partial<UploadGrantRow>;
         Relationships: [];
       };
       favorites: {

@@ -32,6 +32,7 @@ export async function uploadProfileAvatar(userId: string, uri: string, mimeType?
 
   const { error } = await supabase.storage.from('profile-images').upload(path, decode(base64), {
     contentType: mimeType || 'image/jpeg',
+    cacheControl: '31536000',
     upsert: true,
   });
 

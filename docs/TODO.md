@@ -108,3 +108,95 @@ Things that cost time this session and would cost it again.
   theme migration complete when it was not.
 - **Anything that touches a revoked column fails the whole request.** Client
   changes ship *before* the revoke migration, never after.
+
+ still to do phases 
+ Phase 4 — Web writes to R2
+
+src/lib/imageUpload.ts — browser-image-compression (already a dependency) switches
+fileType: "image/jpeg" → "image/webp", maxSizeMB: 0.3, plus a second thumbnail pass;
+supabase.storage calls at :62-79 become presigned PUTs. src/app/sell/actions.ts persists
+object_key and public_url as the CDN URL. src/lib/mappers.ts:12 prefers the key:
+img.object_key ? cdnUrl(img.object_key) : (img.public_url ?? PLACEHOLDER). next.config.mjs:14
+lists both hosts during transition.
+
+Serve the pre-made thumbnail unoptimized in src/components/ListingImage.tsx, keeping
+next/image optimization for the product-page hero only — this also removes the browse grid's
+dependence on Vercel's image-optimization quota.
+
+Verify: post on web; object lands under listings/<uid>/<listingId>/; both columns populated;
+card renders; and the unmodified current mobile APK still renders the same listing — that last
+check is the entire point of the dual write.
+Rollback: revert. Every row has a working public_url either way.
+
+Phase 5 — Mobile writes to R2
+
+Add expo-image-manipulator (new native dep → needs an EAS build, not OTA). Rewrite
+mobile/src/lib/imageUpload.ts to resize to 1200 px JPEG + thumbnail, then presigned PUT — today
+its only compression is ImagePicker quality: 0.75 with no resize and no size cap
+(mobile/src/lib/imageUpload.ts:22). Update mobile/App.tsx:1286-1299,
+mobile/src/lib/constants.ts:38 (select object_key), mobile/src/lib/mappers.ts:6,
+mobile/.env.example, and bump version + android.versionCode in mobile/app.json.
+
+Verify: npm --prefix mobile run typecheck; post from a device; confirm the grid loads the
+thumbnail; confirm cross-client rendering both directions.
+Rollback: publish the previous APK as latest — appUpdates.ts offers it. Slower than a web
+rollback, which is why this phase is last among the writers.
+
+Phase 6 — Reaper
+
+New src/app/api/cron/reap-images/route.ts + vercel.json cron entry + CRON_SECRET. Three
+passes: unclaimed upload_grants > 24h; draft listings > 24h (cascades to listing_images via
+schema.sql:498); listing_images whose listing has deleted_at older than the retention window.
+
+That third pass fixes a defect that predates R2: deleteListingAction
+(src/app/my-listings/actions.ts:69-91) is a soft delete, and nothing in this codebase has
+ever deleted a listing's images.
+
+Chose a daily sweep over a pg_net delete trigger — the trigger pattern exists
+(notify_message_insert) but a trigger doing network I/O has no retry and no visibility, and one
+sweep is easier to reason about than three delete paths.
+
+Ship in dry-run mode first (log, delete nothing), read a week of logs, then enable. A reaper is
+the one component where a bug is unrecoverable — this is where not to be lazy.
+Rollback: remove the cron entry.
+
+Phase 7 — Decommission
+
+Drop the Supabase host from next.config.mjs:14. Optionally revoke the storage INSERT policies in
+a new migration. Keep the buckets — empty they cost nothing and they are the undo. Stop writing
+public_url only once old-APK traffic is negligible.
+
+Explicitly out of scope
+
+- Avatars stay on Supabase Storage (user's call). Known consequence: the mobile avatar orphan
+  bug persists — mobile/src/lib/profileUpload.ts:31 writes avatar-${Date.now()}.${ext}, so every
+  mobile avatar change leaks the previous file. Web is fine (fixed avatar.jpg, upsert).
+- Hotlink protection. R2 egress is free, so hotlinking costs $0, and Referer blocking would
+  break WhatsApp link previews — the app's primary sharing channel (src/lib/whatsapp.ts).
+- Backfill / dual-read for legacy data. There is none.
+
+Verification
+
+No test framework exists in this repo. The gates are:
+
+npm run build                        # only real typecheck for src/
+npm --prefix mobile run typecheck
+node --env-file=.env.local scripts/count-supabase-storage.mjs   # re-measure any time
+
+Plus per phase, in order: curl -I the CDN URL (Phase 1) → curl the presign endpoint through all
+five rejection cases (Phase 2) → post + abandon a listing on web (Phase 3) → post on web and confirm
+the old APK still renders it (Phase 4) → post from a device, both directions (Phase 5) → run the
+reaper dry-run and confirm no live listing loses an image (Phase 6).
+
+Non-blocking questions
+
+Answers refine numbers; none block starting.
+
+1. Is campuscart.social already on Cloudflare nameservers? Decides whether §7.1 is a footnote or
+   a day of DNS work.
+2. Vercel plan + current image-optimization usage — sharpens the Phase 4 thumbnail argument.
+3. Retention window for soft-deleted listings' images. Plan assumes 30 days; longer if you ever
+   want to restore an archived listing with photos intact.
+4. How long to support old APKs — sets when the public_url dual write can stop.
+5. Real traffic numbers (Vercel Analytics / Supabase dashboard) — the MAU-per-listing ratios in the
+   cost model are invented.

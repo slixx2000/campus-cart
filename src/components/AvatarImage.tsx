@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { isCdnUrl } from "@/lib/cdn";
 import { useState } from "react";
 
 interface AvatarImageProps {
@@ -33,7 +34,7 @@ export default function AvatarImage({
       width={256}
       height={256}
       sizes="256px"
-      unoptimized={src.endsWith(".svg")}
+      unoptimized={src.endsWith(".svg") || isCdnUrl(src)}
       className={className}
       onError={() => setHasError(true)}
     />

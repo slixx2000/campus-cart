@@ -47,6 +47,7 @@ export async function uploadListingImages(userId: string, listingId: string, ima
       .from('listing-images')
       .upload(path, decode(base64), {
         contentType: image.mimeType,
+        cacheControl: '31536000',
         upsert: false,
       });
 
