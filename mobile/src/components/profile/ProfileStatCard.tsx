@@ -1,37 +1,43 @@
 import React from 'react';
 import { Pressable, Text, View } from 'react-native';
+import { radius, text, useTheme } from '../../lib/styles';
+
+/**
+ * Tones were 'blue' | 'green' | 'amber' — 'blue' being the sky primary the
+ * redesign dropped. They name a role now, so they survive a palette change.
+ */
+type Tone = 'default' | 'success' | 'warning';
 
 type Props = {
   label: string;
   value: string;
-  tone?: 'blue' | 'green' | 'amber';
+  tone?: Tone;
 };
 
-export function ProfileStatCard({ label, value, tone = 'blue' }: Props) {
-  const toneColor = tone === 'green' ? '#22c55e' : tone === 'amber' ? '#f59e0b' : '#38bdf8';
+export function ProfileStatCard({ label, value, tone = 'default' }: Props) {
+  const { colors } = useTheme();
+  const toneColor =
+    tone === 'success' ? colors.accent : tone === 'warning' ? colors.warning : colors.fg;
 
   return (
     <Pressable
       style={({ pressed }) => [
         {
           flex: 1,
-          backgroundColor: '#0b1220',
-          borderColor: 'rgba(148, 163, 184, 0.18)',
+          backgroundColor: colors.surface,
+          borderColor: colors.line,
           borderWidth: 1,
-          borderRadius: 18,
+          borderRadius: radius.md,
           paddingVertical: 14,
           paddingHorizontal: 12,
           transform: [{ scale: pressed ? 0.98 : 1 }],
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.2,
-          shadowRadius: 8,
-          elevation: 3,
         },
       ]}
     >
-      <Text style={{ color: toneColor, fontSize: 20, fontWeight: '900' }}>{value}</Text>
-      <Text style={{ color: '#94a3b8', marginTop: 4, fontSize: 12, fontWeight: '600' }}>{label}</Text>
+      <Text style={{ color: toneColor, fontSize: text.xl, fontWeight: '800' }}>{value}</Text>
+      <Text style={{ color: colors.muted, marginTop: 4, fontSize: text.xs, fontWeight: '600' }}>
+        {label}
+      </Text>
     </Pressable>
   );
 }

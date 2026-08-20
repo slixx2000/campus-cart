@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Pressable, Text, View } from 'react-native';
-import { useStyles } from '../lib/styles';
+import { radius, useStyles, useTheme } from '../lib/styles';
 
 type ActionItem = {
   key: string;
@@ -23,13 +23,14 @@ export function ActionSheetCard({
   onClose: () => void;
 }) {
   const styles = useStyles();
+  const { colors } = useTheme();
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable
         onPress={onClose}
         style={{
           flex: 1,
-          backgroundColor: 'rgba(2, 6, 23, 0.72)',
+          backgroundColor: colors.scrim,
           justifyContent: 'flex-end',
           paddingHorizontal: 16,
           paddingBottom: 28,
@@ -38,10 +39,10 @@ export function ActionSheetCard({
         <Pressable
           onPress={(event) => event.stopPropagation()}
           style={{
-            backgroundColor: '#0b1220',
-            borderRadius: 22,
+            backgroundColor: colors.surface,
+            borderRadius: radius.md,
             borderWidth: 1,
-            borderColor: 'rgba(148, 163, 184, 0.25)',
+            borderColor: colors.line,
             padding: 16,
             gap: 10,
           }}
@@ -58,10 +59,10 @@ export function ActionSheetCard({
               }}
               style={({ pressed }) => [
                 {
-                  borderRadius: 14,
+                  borderRadius: radius.sm,
                   borderWidth: 1,
-                  borderColor: action.tone === 'danger' ? 'rgba(239, 68, 68, 0.45)' : 'rgba(148, 163, 184, 0.2)',
-                  backgroundColor: action.tone === 'danger' ? 'rgba(127, 29, 29, 0.35)' : '#111b2e',
+                  borderColor: action.tone === 'danger' ? colors.danger : colors.line,
+                  backgroundColor: colors.surface2,
                   paddingVertical: 12,
                   paddingHorizontal: 14,
                   transform: [{ scale: pressed ? 0.98 : 1 }],
@@ -70,7 +71,7 @@ export function ActionSheetCard({
             >
               <Text
                 style={{
-                  color: action.tone === 'danger' ? '#fecaca' : '#e2e8f0',
+                  color: action.tone === 'danger' ? colors.danger : colors.fg,
                   fontWeight: '800',
                   textAlign: 'center',
                 }}
@@ -83,15 +84,15 @@ export function ActionSheetCard({
           <Pressable
             onPress={onClose}
             style={{
-              borderRadius: 14,
+              borderRadius: radius.sm,
               borderWidth: 1,
-              borderColor: 'rgba(148, 163, 184, 0.2)',
+              borderColor: colors.line,
               paddingVertical: 12,
               paddingHorizontal: 14,
-              backgroundColor: '#0f172a',
+              backgroundColor: colors.surface,
             }}
           >
-            <Text style={{ color: '#94a3b8', fontWeight: '700', textAlign: 'center' }}>Cancel</Text>
+            <Text style={{ color: colors.muted, fontWeight: '700', textAlign: 'center' }}>Cancel</Text>
           </Pressable>
         </Pressable>
       </Pressable>

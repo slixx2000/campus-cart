@@ -5,7 +5,7 @@ import { FallbackImage } from '../components/FallbackImage';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { relativeDate } from '../lib/format';
-import { useStyles } from '../lib/styles';
+import { useStyles, useTheme } from '../lib/styles';
 import type { Listing, Profile, SellerRatingSummary, SellerReview } from '../types';
 
 export function SellerProfileScreen({
@@ -40,6 +40,7 @@ export function SellerProfileScreen({
   onShowFeedback: (title: string, message: string) => void;
 }) {
   const styles = useStyles();
+  const { colors } = useTheme();
   const activeListings = listings.filter((listing) => listing.status !== 'sold');
   const soldCount = listings.filter((listing) => listing.status === 'sold').length;
   const [draftRating, setDraftRating] = useState(5);
@@ -87,7 +88,7 @@ export function SellerProfileScreen({
             </View>
           ) : null}
           {seller?.is_pioneer_seller ? (
-            <View style={[styles.badge, { backgroundColor: '#78350f' }]}>
+            <View style={[styles.badge, styles.badgePioneer]}>
               <Text style={styles.badgeText}>Pioneer seller</Text>
             </View>
           ) : null}
@@ -158,7 +159,7 @@ export function SellerProfileScreen({
                 onPress={() => setDraftRating(star)}
                 style={{ paddingVertical: 6, paddingHorizontal: 2 }}
               >
-                <Text style={{ fontSize: 24, color: star <= draftRating ? '#fbbf24' : '#475569' }}>★</Text>
+                <Text style={{ fontSize: 24, color: star <= draftRating ? colors.warning : colors.line }}>★</Text>
               </Pressable>
             ))}
           </View>
@@ -200,7 +201,7 @@ export function SellerProfileScreen({
                   <Text style={styles.sellerListingTitle}>{review.reviewerName}{isMine ? ' (You)' : ''}</Text>
                   <Text style={styles.cardDate}>{relativeDate(review.createdAt)}</Text>
                 </View>
-                <Text style={{ color: '#fbbf24', fontSize: 16 }}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</Text>
+                <Text style={{ color: colors.warning, fontSize: 16 }}>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</Text>
                 {review.reviewText ? <Text style={styles.helperText}>{review.reviewText}</Text> : null}
               </View>
             );

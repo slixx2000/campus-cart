@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, Text, TextInput, View } from 'react-native';
 import type { Listing } from '../types';
-import { useStyles } from '../lib/styles';
+import { radius, useStyles, useTheme } from '../lib/styles';
 
 export function ListingEditCard({
   visible,
@@ -17,6 +17,7 @@ export function ListingEditCard({
   onSave: (payload: { title: string; description: string; price: number }) => void;
 }) {
   const styles = useStyles();
+  const { colors } = useTheme();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
@@ -34,7 +35,7 @@ export function ListingEditCard({
         onPress={onClose}
         style={{
           flex: 1,
-          backgroundColor: 'rgba(2, 6, 23, 0.72)',
+          backgroundColor: colors.scrim,
           justifyContent: 'flex-end',
           paddingHorizontal: 16,
           paddingBottom: 28,
@@ -43,10 +44,10 @@ export function ListingEditCard({
         <Pressable
           onPress={(event) => event.stopPropagation()}
           style={{
-            backgroundColor: '#0b1220',
-            borderRadius: 22,
+            backgroundColor: colors.surface,
+            borderRadius: radius.md,
             borderWidth: 1,
-            borderColor: 'rgba(148, 163, 184, 0.25)',
+            borderColor: colors.line,
             padding: 16,
             gap: 10,
           }}

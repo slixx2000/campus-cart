@@ -22,6 +22,8 @@ export type Theme = {
   onPrimary: string;
   accent: string;
   danger: string;
+  /** Amber. Pending/expiring states — the one tone accent and danger cannot carry. */
+  warning: string;
   /** Modal/backdrop veil — the one place translucency survives the flat design. */
   scrim: string;
 };
@@ -38,6 +40,7 @@ export const palettes: Record<Mode, Theme> = {
     onPrimary: '#FFFFFF',
     accent: '#10B981',
     danger: '#DC2626',
+    warning: '#D97706',
     scrim: 'rgba(15, 23, 42, 0.45)',
   },
   dark: {
@@ -51,6 +54,7 @@ export const palettes: Record<Mode, Theme> = {
     onPrimary: '#0F172A',
     accent: '#34D399',
     danger: '#F87171',
+    warning: '#FBBF24',
     scrim: 'rgba(2, 6, 23, 0.60)',
   },
 };
@@ -369,6 +373,11 @@ const createStyles = (c: Theme) =>
     backgroundColor: c.surface,
     borderWidth: 1,
     borderColor: c.line,
+  },
+  badgePioneer: {
+    backgroundColor: c.surface,
+    borderWidth: 1,
+    borderColor: c.warning,
   },
   badgePending: { 
     backgroundColor: c.surface,

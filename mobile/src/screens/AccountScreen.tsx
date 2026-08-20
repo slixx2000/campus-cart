@@ -7,7 +7,7 @@ import { ProfileListingCard } from '../components/profile/ProfileListingCard';
 import { ProfileStatCard } from '../components/profile/ProfileStatCard';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
-import { useStyles } from '../lib/styles';
+import { radius, text, useStyles, useTheme } from '../lib/styles';
 import type { Listing, Profile, UniversityRow } from '../types';
 import type { User } from '@supabase/supabase-js';
 import { formatPrice } from '../lib/format';
@@ -69,6 +69,7 @@ type Props = {
 
 export function AccountScreen(props: Props) {
   const styles = useStyles();
+  const { colors } = useTheme();
   const {
     user,
     profile,
@@ -157,24 +158,24 @@ export function AccountScreen(props: Props) {
               {
                 width: 42,
                 height: 42,
-                borderRadius: 21,
+                borderRadius: radius.full,
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginRight: 10,
-                backgroundColor: 'rgba(15, 23, 42, 0.85)',
+                backgroundColor: colors.surface2,
                 borderWidth: 1,
-                borderColor: 'rgba(148, 163, 184, 0.25)',
+                borderColor: colors.line,
                 transform: [{ scale: pressed ? 0.94 : 1 }],
               },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Open settings"
           >
-            <MaterialIcons name="settings" size={20} color="#cbd5e1" />
+            <MaterialIcons name="settings" size={20} color={colors.fg} />
           </Pressable>
         </View>
 
-        <View style={[styles.profileCard, { borderRadius: 24 }]}> 
+        <View style={[styles.profileCard, { borderRadius: radius.md }]}> 
           <View style={styles.profileTopRow}>
             <FallbackImage
               uri={profile?.avatar_url}
@@ -185,9 +186,9 @@ export function AccountScreen(props: Props) {
             <View style={{ flex: 1 }}>
               <Text style={styles.profileName}>{profile?.full_name || user.email}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 }}>
-                <Text style={{ color: '#f8fafc', fontWeight: '700' }}>0.0</Text>
-                <Text style={{ color: '#94a3b8' }}>No ratings yet</Text>
-                <Text style={{ color: '#94a3b8' }}>• {soldCount} sales</Text>
+                <Text style={{ color: colors.fg, fontWeight: '700' }}>0.0</Text>
+                <Text style={{ color: colors.muted }}>No ratings yet</Text>
+                <Text style={{ color: colors.muted }}>• {soldCount} sales</Text>
               </View>
               <Text style={styles.profileMeta}>{universityName || 'No institution linked'}</Text>
               <Text style={[styles.profileMeta, { lineHeight: 20 }]}>{bio}</Text>
@@ -195,15 +196,21 @@ export function AccountScreen(props: Props) {
               <View style={{ flexDirection: 'row', marginTop: 10 }}>
                 <View
                   style={{
-                    borderRadius: 999,
+                    borderRadius: radius.full,
                     paddingHorizontal: 10,
                     paddingVertical: 6,
-                    backgroundColor: profile?.is_verified_student ? 'rgba(16,185,129,0.2)' : 'rgba(148,163,184,0.2)',
+                    backgroundColor: colors.surface2,
                     borderWidth: 1,
-                    borderColor: profile?.is_verified_student ? 'rgba(16,185,129,0.5)' : 'rgba(148,163,184,0.3)',
+                    borderColor: profile?.is_verified_student ? colors.accent : colors.line,
                   }}
                 >
-                  <Text style={{ color: '#e2e8f0', fontSize: 11, fontWeight: '800' }}>
+                  <Text
+                    style={{
+                      color: profile?.is_verified_student ? colors.accent : colors.muted,
+                      fontSize: text.xs,
+                      fontWeight: '800',
+                    }}
+                  >
                     {profile?.is_verified_student ? 'Verified student' : 'Verification pending'}
                   </Text>
                 </View>
@@ -213,17 +220,17 @@ export function AccountScreen(props: Props) {
         </View>
 
         <View style={{ flexDirection: 'row', gap: 10 }}>
-          <ProfileStatCard label="Active listings" value={String(activeCount)} tone="blue" />
-          <ProfileStatCard label="Items sold" value={String(soldCount)} tone="green" />
-          <ProfileStatCard label="Total earnings" value={formatPrice(totalEarnings)} tone="amber" />
+          <ProfileStatCard label="Active listings" value={String(activeCount)} />
+          <ProfileStatCard label="Items sold" value={String(soldCount)} tone="success" />
+          <ProfileStatCard label="Total earnings" value={formatPrice(totalEarnings)} tone="warning" />
         </View>
 
         <View style={styles.helperCard}>
           <Text style={styles.helperCardTitle}>Performance insights</Text>
           <View style={{ flexDirection: 'row', gap: 10 }}>
-            <ProfileStatCard label="Total views" value={String(totalViews)} tone="blue" />
-            <ProfileStatCard label="Sell-through" value={`${conversionRate}%`} tone="green" />
-            <ProfileStatCard label="Avg. rating" value="0.0" tone="amber" />
+            <ProfileStatCard label="Total views" value={String(totalViews)} />
+            <ProfileStatCard label="Sell-through" value={`${conversionRate}%`} tone="success" />
+            <ProfileStatCard label="Avg. rating" value="0.0" tone="warning" />
           </View>
         </View>
 
