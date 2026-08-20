@@ -110,7 +110,7 @@ export function AccountSettingsScreen({
   return (
     <ScrollView
       contentContainerStyle={[styles.screenContent, { paddingBottom: 48 }]}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.muted} />}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <Pressable onPress={onBack} style={styles.backButton}>
@@ -118,7 +118,7 @@ export function AccountSettingsScreen({
         </Pressable>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          {saveState === 'saving' || saveLoading ? <ActivityIndicator color="#38bdf8" size="small" /> : null}
+          {saveState === 'saving' || saveLoading ? <ActivityIndicator color={colors.accent} size="small" /> : null}
           {saveState === 'saved' ? <Text style={{ color: colors.accent, fontWeight: '800' }}>Saved ✓</Text> : null}
           {saveState === 'error' ? <Text style={{ color: colors.danger, fontWeight: '800' }}>Save failed</Text> : null}
         </View>
@@ -129,21 +129,21 @@ export function AccountSettingsScreen({
         <TextInput
           style={styles.input}
           placeholder="Full name"
-          placeholderTextColor="#64748b"
+          placeholderTextColor={colors.muted}
           value={editFullName}
           onChangeText={onEditFullName}
         />
         <TextInput
           style={styles.input}
           placeholder="Phone / WhatsApp"
-          placeholderTextColor="#64748b"
+          placeholderTextColor={colors.muted}
           value={editPhone}
           onChangeText={onEditPhone}
         />
         <TextInput
           style={styles.input}
           placeholder="Student email"
-          placeholderTextColor="#64748b"
+          placeholderTextColor={colors.muted}
           autoCapitalize="none"
           keyboardType="email-address"
           value={editStudentEmail}
@@ -165,7 +165,7 @@ export function AccountSettingsScreen({
           ]}
         >
           <Text style={{ color: colors.fg, flex: 1 }} numberOfLines={1}>{selectedUniversityName}</Text>
-          <MaterialIcons name="expand-more" size={20} color="#94a3b8" />
+          <MaterialIcons name="expand-more" size={20} color={colors.muted} />
         </Pressable>
       </View>
 
@@ -179,7 +179,7 @@ export function AccountSettingsScreen({
             contentFit="cover"
           />
           <Pressable style={styles.secondaryButton} onPress={onPickAvatar} disabled={avatarLoading}>
-            {avatarLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Pick photo</Text>}
+            {avatarLoading ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Pick photo</Text>}
           </Pressable>
         </View>
 
@@ -206,7 +206,7 @@ export function AccountSettingsScreen({
         </ScrollView>
 
         <Pressable style={styles.secondaryButton} onPress={onApplyDefaultAvatar} disabled={avatarLoading || !selectedDefaultAvatar}>
-          {avatarLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Apply selected avatar</Text>}
+          {avatarLoading ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Apply selected avatar</Text>}
         </Pressable>
       </View>
 
@@ -240,7 +240,7 @@ export function AccountSettingsScreen({
           Checks GitHub releases for the latest APK and opens the download link if a newer build is available.
         </Text>
         <Pressable style={styles.secondaryButton} onPress={onCheckForUpdates} disabled={checkingForUpdates}>
-          {checkingForUpdates ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Check for updates</Text>}
+          {checkingForUpdates ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Check for updates</Text>}
         </Pressable>
       </View>
 
@@ -251,7 +251,7 @@ export function AccountSettingsScreen({
             <TextInput
               style={styles.input}
               placeholder="Search university"
-              placeholderTextColor="#64748b"
+              placeholderTextColor={colors.muted}
               value={universitySearch}
               onChangeText={setUniversitySearch}
             />

@@ -148,7 +148,7 @@ export function AccountScreen(props: Props) {
     return (
       <ScrollView
         contentContainerStyle={styles.screenContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.muted} />}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <SectionHeader title="Profile" body="Your public seller presence." />
@@ -237,7 +237,7 @@ export function AccountScreen(props: Props) {
         <View style={styles.helperCard}>
           <Pressable style={styles.rowBetween} onPress={() => setShowActive((current) => !current)}>
             <Text style={styles.helperCardTitle}>Active listings ({activeListings.length})</Text>
-            <MaterialIcons name={showActive ? 'expand-less' : 'expand-more'} size={20} color="#94a3b8" />
+            <MaterialIcons name={showActive ? 'expand-less' : 'expand-more'} size={20} color={colors.muted} />
           </Pressable>
           {showActive ? (
             activeListings.length === 0 ? (
@@ -261,7 +261,7 @@ export function AccountScreen(props: Props) {
         <View style={styles.helperCard}>
           <Pressable style={styles.rowBetween} onPress={() => setShowSold((current) => !current)}>
             <Text style={styles.helperCardTitle}>Sold listings ({soldListings.length})</Text>
-            <MaterialIcons name={showSold ? 'expand-less' : 'expand-more'} size={20} color="#94a3b8" />
+            <MaterialIcons name={showSold ? 'expand-less' : 'expand-more'} size={20} color={colors.muted} />
           </Pressable>
           {showSold ? (
             soldListings.length === 0 ? (
@@ -285,7 +285,7 @@ export function AccountScreen(props: Props) {
         <View style={styles.helperCard}>
           <Pressable style={styles.rowBetween} onPress={() => setShowArchived((current) => !current)}>
             <Text style={styles.helperCardTitle}>Archived listings ({archivedListings.length})</Text>
-            <MaterialIcons name={showArchived ? 'expand-less' : 'expand-more'} size={20} color="#94a3b8" />
+            <MaterialIcons name={showArchived ? 'expand-less' : 'expand-more'} size={20} color={colors.muted} />
           </Pressable>
           {showArchived ? (
             archivedListings.length === 0 ? (
@@ -309,7 +309,7 @@ export function AccountScreen(props: Props) {
         <View style={styles.helperCard}>
           <Pressable style={styles.rowBetween} onPress={() => setShowSaved((current) => !current)}>
             <Text style={styles.helperCardTitle}>Saved listings ({savedListings.length})</Text>
-            <MaterialIcons name={showSaved ? 'expand-less' : 'expand-more'} size={20} color="#94a3b8" />
+            <MaterialIcons name={showSaved ? 'expand-less' : 'expand-more'} size={20} color={colors.muted} />
           </Pressable>
           {showSaved ? (
             savedListings.length === 0 ? (
@@ -343,15 +343,15 @@ export function AccountScreen(props: Props) {
   return (
     <ScrollView
       contentContainerStyle={styles.screenContent}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.muted} />}
     >
       {authMode === 'sign-up' && (
         <>
-          <TextInput style={styles.input} placeholder="Full name" placeholderTextColor="#64748b" value={fullName} onChangeText={setFullName} />
+          <TextInput style={styles.input} placeholder="Full name" placeholderTextColor={colors.muted} value={fullName} onChangeText={setFullName} />
           <TextInput
             style={styles.input}
             placeholder="Phone (local, e.g. 97xxxxxxx or 77xxxxxxx)"
-            placeholderTextColor="#64748b"
+            placeholderTextColor={colors.muted}
             keyboardType="phone-pad"
             value={phone}
             onChangeText={setPhone}
@@ -359,13 +359,13 @@ export function AccountScreen(props: Props) {
           <Text style={styles.helperText}>Stored as +260 automatically.</Text>
         </>
       )}
-      <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#64748b" keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
-      <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#64748b" secureTextEntry value={password} onChangeText={setPassword} />
+      <TextInput style={styles.input} placeholder="Email" placeholderTextColor={colors.muted} keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
+      <TextInput style={styles.input} placeholder="Password" placeholderTextColor={colors.muted} secureTextEntry value={password} onChangeText={setPassword} />
       <Pressable style={styles.primaryButton} onPress={onAuth} disabled={authLoading || (authMode === 'sign-up' && authEmailCooldownLeft > 0)}>
-        {authLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>{authMode === 'sign-in' ? 'Sign in' : 'Create account'}</Text>}
+        {authLoading ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.primaryButtonText}>{authMode === 'sign-in' ? 'Sign in' : 'Create account'}</Text>}
       </Pressable>
       <Pressable style={styles.secondaryButton} onPress={onGoogleAuth} disabled={authLoading}>
-        {authLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Continue with Google</Text>}
+        {authLoading ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Continue with Google</Text>}
       </Pressable>
       {authMode === 'sign-up' && authEmailCooldownLeft > 0 ? (
         <Text style={styles.helperText}>Resend available in {authEmailCooldownLeft}s</Text>
@@ -381,14 +381,14 @@ export function AccountScreen(props: Props) {
           <TextInput
             style={styles.input}
             placeholder="Reset email"
-            placeholderTextColor="#64748b"
+            placeholderTextColor={colors.muted}
             keyboardType="email-address"
             autoCapitalize="none"
             value={resetEmail}
             onChangeText={setResetEmail}
           />
           <Pressable style={styles.secondaryButton} onPress={onRequestPasswordReset} disabled={resetLoading || resetEmailCooldownLeft > 0}>
-            {resetLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Send reset email</Text>}
+            {resetLoading ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Send reset email</Text>}
           </Pressable>
           {resetEmailCooldownLeft > 0 ? (
             <Text style={styles.helperText}>Resend available in {resetEmailCooldownLeft}s</Text>

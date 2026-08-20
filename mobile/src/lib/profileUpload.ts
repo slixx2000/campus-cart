@@ -50,7 +50,9 @@ export async function fetchDefaultAvatars(): Promise<string[]> {
   const { data, error } = await supabase.storage
     .from(PROFILE_IMAGE_BUCKET)
     .list(DEFAULT_AVATAR_FOLDER, {
-      limit: 9,
+      // Matches the web picker (src/lib/avatarService.ts); the picker is a
+      // horizontal scroller, not a 3x3 grid, so 9 just truncated the set.
+      limit: 20,
       sortBy: { column: 'name', order: 'asc' },
     });
 

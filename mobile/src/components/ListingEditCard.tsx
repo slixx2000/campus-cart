@@ -55,13 +55,13 @@ export function ListingEditCard({
           <Text style={styles.noticeTitle}>Update listing</Text>
           <Text style={styles.noticeBody}>Only you can edit this listing.</Text>
 
-          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" placeholderTextColor="#64748b" />
+          <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Title" placeholderTextColor={colors.muted} />
           <TextInput
             style={[styles.input, { minHeight: 90, textAlignVertical: 'top' }]}
             value={description}
             onChangeText={setDescription}
             placeholder="Description"
-            placeholderTextColor="#64748b"
+            placeholderTextColor={colors.muted}
             multiline
           />
           <TextInput
@@ -69,7 +69,7 @@ export function ListingEditCard({
             value={price}
             onChangeText={setPrice}
             placeholder="Price"
-            placeholderTextColor="#64748b"
+            placeholderTextColor={colors.muted}
             keyboardType="numeric"
           />
 
@@ -78,7 +78,7 @@ export function ListingEditCard({
             onPress={() => onSave({ title: title.trim(), description: description.trim(), price: Number(price) })}
             disabled={saving}
           >
-            {saving ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Save changes</Text>}
+            {saving ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.primaryButtonText}>Save changes</Text>}
           </Pressable>
 
           <Pressable style={styles.secondaryButton} onPress={onClose}>

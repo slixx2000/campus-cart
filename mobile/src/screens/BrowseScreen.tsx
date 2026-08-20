@@ -3,7 +3,7 @@ import { FlatList, Pressable, RefreshControl, ScrollView, Text, TextInput, View 
 import { ListingCard } from '../components/ListingCard';
 import { NoConnectionScreen } from '../components/NoConnectionScreen';
 import { CATEGORY_OPTIONS } from '../lib/constants';
-import { useStyles } from '../lib/styles';
+import { useStyles, useTheme } from '../lib/styles';
 import type { Listing } from '../types';
 
 type Props = {
@@ -56,6 +56,7 @@ export function BrowseScreen({
   error,
 }: Props) {
   const styles = useStyles();
+  const { colors } = useTheme();
   const favoriteIdSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
 
   const header = (
@@ -63,7 +64,7 @@ export function BrowseScreen({
       <TextInput
         style={styles.input}
         placeholder="Search textbooks, phones, services..."
-        placeholderTextColor="#64748b"
+        placeholderTextColor={colors.muted}
         value={query}
         onChangeText={setQuery}
       />
@@ -124,7 +125,7 @@ export function BrowseScreen({
           keyExtractor={(item) => item.id}
           numColumns={2}
           showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#0ea5e9" />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.muted} />}
           columnWrapperStyle={styles.browseGridRow}
           contentContainerStyle={styles.browseListContent}
           renderItem={({ item }) => (

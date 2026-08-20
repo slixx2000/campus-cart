@@ -3,7 +3,7 @@ import React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SectionHeader } from '../components/SectionHeader';
 import { CATEGORY_OPTIONS } from '../lib/constants';
-import { useStyles } from '../lib/styles';
+import { useStyles, useTheme } from '../lib/styles';
 import type { PickedImage } from '../lib/imageUpload';
 import type { Profile } from '../types';
 import type { User } from '@supabase/supabase-js';
@@ -44,6 +44,7 @@ export function SellScreen({
   onSubmit,
 }: Props) {
   const styles = useStyles();
+  const { colors } = useTheme();
   if (!user) {
     return (
       <ScrollView contentContainerStyle={styles.screenContent}>
@@ -81,9 +82,9 @@ export function SellScreen({
       </View>
 
       <View style={styles.formSection}>
-        <TextInput style={styles.input} placeholder="Listing title" placeholderTextColor="#64748b" value={sellTitle} onChangeText={setSellTitle} />
-        <TextInput style={[styles.input, styles.multilineInput]} multiline placeholder="Describe the item or service" placeholderTextColor="#64748b" value={sellDescription} onChangeText={setSellDescription} />
-        <TextInput style={styles.input} placeholder="Price in ZMW" placeholderTextColor="#64748b" keyboardType="numeric" value={sellPrice} onChangeText={setSellPrice} />
+        <TextInput style={styles.input} placeholder="Listing title" placeholderTextColor={colors.muted} value={sellTitle} onChangeText={setSellTitle} />
+        <TextInput style={[styles.input, styles.multilineInput]} multiline placeholder="Describe the item or service" placeholderTextColor={colors.muted} value={sellDescription} onChangeText={setSellDescription} />
+        <TextInput style={styles.input} placeholder="Price in ZMW" placeholderTextColor={colors.muted} keyboardType="numeric" value={sellPrice} onChangeText={setSellPrice} />
       </View>
 
       <View style={styles.divider} />
@@ -101,7 +102,7 @@ export function SellScreen({
 
       <Text style={styles.fieldLabel}>Images</Text>
       <Pressable style={styles.secondaryButton} onPress={onPickImages} disabled={pickingImages}>
-        {pickingImages ? <ActivityIndicator color="#fff" /> : <Text style={styles.secondaryButtonText}>Pick listing images</Text>}
+        {pickingImages ? <ActivityIndicator color={colors.fg} /> : <Text style={styles.secondaryButtonText}>Pick listing images</Text>}
       </Pressable>
       <Text style={styles.helperText}>Add up to 5 images. These are uploaded after the listing is created.</Text>
       {listingImages.length > 0 && (
@@ -113,7 +114,7 @@ export function SellScreen({
       )}
 
       <Pressable style={styles.primaryButton} onPress={onSubmit} disabled={submitting}>
-        {submitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Publish listing</Text>}
+        {submitting ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.primaryButtonText}>Publish listing</Text>}
       </Pressable>
     </ScrollView>
   );

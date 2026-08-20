@@ -167,7 +167,7 @@ export function SellerProfileScreen({
             style={[styles.input, styles.multilineInput]}
             multiline
             placeholder="Share your experience with this seller"
-            placeholderTextColor="#64748b"
+            placeholderTextColor={colors.muted}
             value={draftReview}
             onChangeText={setDraftReview}
           />
@@ -183,7 +183,7 @@ export function SellerProfileScreen({
               }
             }}
           >
-            {reviewSubmitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Submit review</Text>}
+            {reviewSubmitting ? <ActivityIndicator color={colors.onPrimary} /> : <Text style={styles.primaryButtonText}>Submit review</Text>}
           </Pressable>
         </View>
       ) : null}
