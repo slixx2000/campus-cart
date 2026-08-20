@@ -44,7 +44,7 @@ export default function ForgotPasswordForm() {
     try {
       await sendPasswordResetEmail(normalizedEmail);
       startCooldown();
-      setMessage("Check your email for the login code or reset link.");
+      setMessage("Check your email for the login code or reset link. If it is not there, check your spam or junk folder.");
     } catch (error) {
       const next = error instanceof Error ? error.message : "Could not send reset email. Please try again.";
       setErrorMessage(next);

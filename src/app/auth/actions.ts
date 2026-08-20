@@ -162,7 +162,7 @@ export async function signUpAction(
 
   return {
     message:
-      "Account created! Check your email to confirm your address before signing in. You can browse with this account right away after confirmation, and selling unlocks once your student status is verified.",
+      "Account created! Check your email to confirm your address before signing in. If the email is not in your inbox, check your spam or junk folder. You can browse with this account right away after confirmation, and selling unlocks once your student status is verified.",
   };
 }
 
@@ -194,7 +194,7 @@ export async function forgotPasswordAction(
   }
 
   return {
-    message: "Password reset link sent. Check your email inbox.",
+    message: "Password reset link sent. Check your email inbox — if it is not there, check your spam or junk folder.",
   };
 }
 
