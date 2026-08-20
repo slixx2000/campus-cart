@@ -28,7 +28,9 @@ export async function signUpWithEmail(email: string, password: string, fullName:
 }
 
 export async function sendPasswordResetEmail(email: string) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'campuscart://auth/callback',
+  });
   if (error) throw new Error(mapAuthErrorMessage(error.message || 'Could not send reset email.'));
 }
 

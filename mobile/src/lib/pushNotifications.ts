@@ -1,17 +1,40 @@
 import * as Device from 'expo-device';
-import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import { supabase } from './supabase';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+/**
+ * Expo Go dropped remote push in SDK 53, and touching the push API there throws
+ * at startup — which crashed the whole app rather than degrading. Push only ever
+ * works in a dev/production build anyway, so in Expo Go this module no-ops and
+ * the rest of the app stays usable.
+ */
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+// NOTE: expo-notifications is loaded lazily, never at module scope. In Expo Go
+// the *import itself* throws (it calls addPushTokenListener during module init),
+// which took the entire app down before the first screen rendered.
+let notificationsModule: typeof import('expo-notifications') | null = null;
+let handlerConfigured = false;
+
+async function loadNotifications() {
+  if (isExpoGo) return null;
+  if (!notificationsModule) {
+    notificationsModule = await import('expo-notifications');
+  }
+  if (!handlerConfigured) {
+    notificationsModule.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowBanner: true,
+        shouldShowList: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+      }),
+    });
+    handlerConfigured = true;
+  }
+  return notificationsModule;
+}
 
 function getProjectId(): string | null {
   const fromEas = Constants?.easConfig?.projectId;
@@ -24,11 +47,16 @@ function getProjectId(): string | null {
 }
 
 export async function registerPushToken(userId: string): Promise<void> {
-  if (Platform.OS === 'web') {
+  if (Platform.OS === 'web' || isExpoGo) {
     return;
   }
 
   if (!Device.isDevice) {
+    return;
+  }
+
+  const Notifications = await loadNotifications();
+  if (!Notifications) {
     return;
   }
 

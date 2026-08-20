@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { formatPrice, relativeDate } from '../lib/format';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 import type { Listing } from '../types';
 import { FallbackImage } from '../components/FallbackImage';
 
@@ -23,6 +23,7 @@ export function ListingDetailScreen({
   onToggleFavorite?: () => void;
   onOpenSeller?: () => void;
 }) {
+  const styles = useStyles();
   const [activeImage, setActiveImage] = useState(0);
   const images = useMemo(() => (listing.images.length > 0 ? listing.images : []), [listing.images]);
 

@@ -28,28 +28,19 @@ import { getFavoriteIds, toggleFavorite } from './src/lib/favorites';
 import { CATEGORY_OPTIONS, LISTING_SELECT } from './src/lib/constants';
 import { mapListing } from './src/lib/mappers';
 import { getSellerReviews, upsertSellerReview } from './src/lib/reviews';
-import { colors, styles } from './src/lib/styles';
+import { ThemeProvider, useStyles, useTheme } from './src/lib/styles';
 import { supabase } from './src/lib/supabase';
 import type { CategoryRow, Listing, MainTabParamList, Profile, RootStackParamList, SellerRatingSummary, SellerReview, UniversityRow } from './src/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-const navTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: colors.bg,
-    card: colors.card,
-    text: colors.text,
-    border: colors.border,
-    primary: colors.primary,
-  },
-};
 
 const MAX_LISTING_IMAGES = 5;
 
 function MainTabsNavigator(props: any) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const {
     featuredListings,
     nearbyListings,
@@ -140,29 +131,26 @@ function MainTabsNavigator(props: any) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        headerStyle: { backgroundColor: colors.bg },
-        headerTintColor: colors.text,
-        headerTitleStyle: { fontWeight: '800' },
+        headerStyle: { backgroundColor: colors.surface },
+        headerTintColor: colors.fg,
+        headerTitleStyle: { fontWeight: '700' },
+        headerShadowVisible: false,
+        // Flat: a solid surface and a 1px hairline, no elevation or blur.
         tabBarStyle: {
-          backgroundColor: 'rgba(15, 23, 42, 0.75)',
-          borderTopColor: 'rgba(148, 163, 184, 0.15)',
+          backgroundColor: colors.surface,
+          borderTopColor: colors.line,
           borderTopWidth: 1,
-          elevation: 8,
-          shadowColor: '#000',
-          shadowOpacity: 0.2,
-          shadowRadius: 16,
-          shadowOffset: { width: 0, height: -4 },
+          elevation: 0,
           paddingBottom: 8,
         },
-        tabBarActiveTintColor: '#3b82f6',
-        tabBarInactiveTintColor: '#9ca3af',
+        tabBarActiveTintColor: colors.fg,
+        tabBarInactiveTintColor: colors.muted,
         tabBarLabel: ({ focused }) => (
           <Text
             style={{
-              color: focused ? '#3b82f6' : '#9ca3af',
-              fontSize: 12,
-              fontWeight: '700',
-              transform: [{ scale: focused ? 1.1 : 1 }],
+              color: focused ? colors.fg : colors.muted,
+              fontSize: 11,
+              fontWeight: '600',
             }}
           >
             {route.name}
@@ -175,9 +163,7 @@ function MainTabsNavigator(props: any) {
           if (route.name === 'About') iconName = 'info-outline';
           if (route.name === 'Account') iconName = 'person-outline';
           return (
-            <View style={{ transform: [{ scale: color === '#3b82f6' ? 1.1 : 1 }] }}>
-              <MaterialIcons name={iconName} size={size} color={color} />
-            </View>
+            <MaterialIcons name={iconName} size={size} color={color} />
           );
         },
       })}
@@ -187,8 +173,8 @@ function MainTabsNavigator(props: any) {
         options={{
           headerTitle: () => (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <MaterialIcons name="shopping-cart" size={20} color={colors.secondary} />
-              <Text style={{ color: colors.text, fontWeight: '900', fontSize: 18 }}>CampusCart</Text>
+              <MaterialIcons name="shopping-cart" size={20} color={colors.accent} />
+              <Text style={{ color: colors.fg, fontWeight: '900', fontSize: 18 }}>CampusCart</Text>
             </View>
           ),
         }}
@@ -199,8 +185,12 @@ function MainTabsNavigator(props: any) {
             nearbyListings={nearbyListings}
             refreshing={refreshingFeed}
             onRefresh={handleRefreshFeed}
-            onFilterPress={() => showFeedbackModal('Filters', 'Advanced filters are currently disabled.', 'tune')}
             onOpenListing={(listing) => navigation.getParent()?.navigate('ListingDetail', { listing })}
+            onSearchSubmit={(nextQuery) => {
+              setQuery(nextQuery);
+              setFavoritesOnly(false);
+              navigation.navigate('Browse');
+            }}
             onBrowsePress={() => navigation.navigate('Browse')}
             onSellPress={() => navigation.navigate('Sell')}
             onCategoryPress={(category) => {
@@ -323,7 +313,28 @@ function MainTabsNavigator(props: any) {
   );
 }
 
-export default function App() {
+function AppInner() {
+  const styles = useStyles();
+  const { mode, colors } = useTheme();
+
+  // Built here rather than at module scope so it follows the active theme.
+  const navTheme = useMemo(
+    () => ({
+      ...DefaultTheme,
+      dark: mode === 'dark',
+      colors: {
+        ...DefaultTheme.colors,
+        background: colors.bg,
+        card: colors.surface,
+        text: colors.fg,
+        border: colors.line,
+        primary: colors.fg,
+        notification: colors.accent,
+      },
+    }),
+    [mode, colors],
+  );
+
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -1359,7 +1370,7 @@ export default function App() {
                 },
               ]}
             >
-              <MaterialIcons name="shopping-cart" size={42} color={colors.secondary} />
+              <MaterialIcons name="shopping-cart" size={42} color={colors.accent} />
             </Animated.View>
             <View style={styles.loadingTrack}>
               <Animated.View
@@ -1381,12 +1392,12 @@ export default function App() {
   return (
     <AppErrorBoundary>
       <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="light" />
+      <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
       <NavigationContainer theme={navTheme}>
         <Stack.Navigator
           screenOptions={{
             headerStyle: { backgroundColor: colors.bg },
-            headerTintColor: colors.text,
+            headerTintColor: colors.fg,
             contentStyle: { backgroundColor: colors.bg },
             headerTitleStyle: { fontWeight: '800' },
           }}
@@ -1563,7 +1574,7 @@ export default function App() {
       {signedInToastVisible ? (
         <View style={styles.authToastContainer} pointerEvents="none">
           <View style={styles.authToastCard}>
-            <MaterialIcons name="check-circle" size={20} color={colors.success} />
+            <MaterialIcons name="check-circle" size={20} color={colors.accent} />
             <View style={styles.authToastCopy}>
               <Text style={styles.authToastTitle}>Signed in</Text>
               <Text style={styles.authToastBody}>Welcome back to Campus Cart.</Text>
@@ -1586,5 +1597,13 @@ export default function App() {
       />
       </SafeAreaView>
     </AppErrorBoundary>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppInner />
+    </ThemeProvider>
   );
 }

@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Linking, Modal, Pressable, Text, View } from 'react-native';
-import { colors, styles } from '../lib/styles';
+import { useStyles, useTheme } from '../lib/styles';
 import type { AppUpdateInfo } from '../lib/appUpdates';
 
 type Props = {
@@ -12,6 +12,8 @@ type Props = {
 };
 
 export function UpdatePromptModal({ visible, updateInfo, onUpdateLater, onRequestClose }: Props) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   const openDownload = async () => {
     if (!updateInfo) return;
 
@@ -37,7 +39,7 @@ export function UpdatePromptModal({ visible, updateInfo, onUpdateLater, onReques
       <Pressable style={styles.feedbackModalBackdrop} onPress={onUpdateLater}>
         <Pressable style={styles.feedbackModalCard} onPress={(event) => event.stopPropagation()}>
           <View style={styles.feedbackModalIconWrap}>
-            <MaterialIcons name="system-update" size={22} color={colors.secondary} />
+            <MaterialIcons name="system-update" size={22} color={colors.accent} />
           </View>
           <Text style={styles.feedbackModalTitle}>Update available</Text>
           <Text style={styles.feedbackModalMessage}>
@@ -60,7 +62,7 @@ export function UpdatePromptModal({ visible, updateInfo, onUpdateLater, onReques
                 }}
               >
                 <Text style={{ color: colors.muted, fontSize: 12, fontWeight: '700' }}>Current version</Text>
-                <Text style={{ color: colors.text, fontSize: 15, fontWeight: '800' }}>{updateInfo.currentVersion}</Text>
+                <Text style={{ color: colors.fg, fontSize: 15, fontWeight: '800' }}>{updateInfo.currentVersion}</Text>
               </View>
               <View
                 style={{
@@ -73,8 +75,8 @@ export function UpdatePromptModal({ visible, updateInfo, onUpdateLater, onReques
                   gap: 4,
                 }}
               >
-                <Text style={{ color: colors.secondary, fontSize: 12, fontWeight: '700' }}>Latest release</Text>
-                <Text style={{ color: colors.text, fontSize: 15, fontWeight: '800' }}>{updateInfo.latestVersion}</Text>
+                <Text style={{ color: colors.accent, fontSize: 12, fontWeight: '700' }}>Latest release</Text>
+                <Text style={{ color: colors.fg, fontSize: 15, fontWeight: '800' }}>{updateInfo.latestVersion}</Text>
               </View>
             </View>
           ) : null}
@@ -106,7 +108,7 @@ export function UpdatePromptModal({ visible, updateInfo, onUpdateLater, onReques
             ]}
             onPress={onUpdateLater}
           >
-            <Text style={[styles.secondaryButtonText, { color: colors.text }]}>Update later</Text>
+            <Text style={[styles.secondaryButtonText, { color: colors.fg }]}>Update later</Text>
           </Pressable>
         </Pressable>
       </Pressable>

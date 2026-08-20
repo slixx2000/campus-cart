@@ -159,7 +159,11 @@ export async function ensureProfileForUser(
     id: user.id,
     full_name: fullName,
     phone: user.user_metadata?.phone ?? existingProfile?.phone ?? null,
-    university_id: existingProfile?.university_id ?? null,
+    // university_id is deliberately absent, for the same reason as
+    // is_verified_student below: this function never derives it. handle_new_user
+    // sets it from the email domain, and the mobile profile editor sets it by
+    // hand. Including it meant any failed read of the existing row silently
+    // cleared the user's university on their next sign-in.
     avatar_url: fallbackAvatar,
     // is_verified_student is deliberately absent: it is not writable by the
     // authenticated role (migration 20260819091000). handle_new_user seeds it,

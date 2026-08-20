@@ -14,5 +14,11 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    // auth-js defaults to 'implicit', which returns tokens in the URL *fragment*
+    // (campuscart://auth/callback#access_token=...). The deep-link handler in
+    // App.tsx reads `?code=`, and detectSessionInUrl is off, so nothing ever
+    // consumed the fragment — Google sign-in silently did nothing. PKCE sends
+    // ?code=, which is what that handler already expects.
+    flowType: 'pkce',
   },
 });

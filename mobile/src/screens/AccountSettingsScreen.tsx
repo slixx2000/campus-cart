@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { FallbackImage } from '../components/FallbackImage';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
-import { styles } from '../lib/styles';
+import { useStyles, useTheme } from '../lib/styles';
 import type { UniversityRow } from '../types';
 import type { User } from '@supabase/supabase-js';
 
@@ -71,6 +71,8 @@ export function AccountSettingsScreen({
   onCheckForUpdates,
   checkingForUpdates,
 }: Props) {
+  const styles = useStyles();
+  const { colors, mode, setMode } = useTheme();
   const [showUniversityModal, setShowUniversityModal] = useState(false);
   const [universitySearch, setUniversitySearch] = useState('');
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
@@ -208,10 +210,27 @@ export function AccountSettingsScreen({
         </Pressable>
       </View>
 
-      <View style={[styles.helperCard, { borderColor: 'rgba(239, 68, 68, 0.45)' }]}>
-        <Text style={[styles.helperCardTitle, { color: '#fca5a5' }]}>Danger Zone</Text>
+      <View style={styles.helperCard}>
+        <Text style={styles.helperCardTitle}>Appearance</Text>
+        <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
+          {(['light', 'dark'] as const).map((option) => (
+            <Pressable
+              key={option}
+              onPress={() => setMode(option)}
+              style={[styles.chip, { flex: 1, marginRight: 0, alignItems: 'center' }, mode === option && styles.chipActive]}
+            >
+              <Text style={[styles.chipText, mode === option && styles.chipTextActive]}>
+                {option === 'light' ? 'Light' : 'Dark'}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
+
+      <View style={[styles.helperCard, { borderColor: colors.danger }]}>
+        <Text style={[styles.helperCardTitle, { color: colors.danger }]}>Danger Zone</Text>
         <Pressable style={[styles.secondaryButton, { borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.12)' }]} onPress={onSignOut}>
-          <Text style={[styles.secondaryButtonText, { color: '#fca5a5' }]}>Sign out</Text>
+          <Text style={[styles.secondaryButtonText, { color: colors.danger }]}>Sign out</Text>
         </Pressable>
       </View>
 

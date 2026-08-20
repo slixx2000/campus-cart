@@ -5,7 +5,7 @@ import { FallbackImage } from '../components/FallbackImage';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
 import { relativeDate } from '../lib/format';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 import type { Listing, Profile, SellerRatingSummary, SellerReview } from '../types';
 
 export function SellerProfileScreen({
@@ -39,6 +39,7 @@ export function SellerProfileScreen({
   onToggleFavorite: (listingId: string) => void;
   onShowFeedback: (title: string, message: string) => void;
 }) {
+  const styles = useStyles();
   const activeListings = listings.filter((listing) => listing.status !== 'sold');
   const soldCount = listings.filter((listing) => listing.status === 'sold').length;
   const [draftRating, setDraftRating] = useState(5);

@@ -7,9 +7,10 @@ import { ProfileListingCard } from '../components/profile/ProfileListingCard';
 import { ProfileStatCard } from '../components/profile/ProfileStatCard';
 import { SectionHeader } from '../components/SectionHeader';
 import { PLACEHOLDER_IMAGE } from '../lib/constants';
-import { styles } from '../lib/styles';
+import { useStyles } from '../lib/styles';
 import type { Listing, Profile, UniversityRow } from '../types';
 import type { User } from '@supabase/supabase-js';
+import { formatPrice } from '../lib/format';
 
 type Props = {
   user: User | null;
@@ -67,6 +68,7 @@ type Props = {
 };
 
 export function AccountScreen(props: Props) {
+  const styles = useStyles();
   const {
     user,
     profile,
@@ -213,7 +215,7 @@ export function AccountScreen(props: Props) {
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <ProfileStatCard label="Active listings" value={String(activeCount)} tone="blue" />
           <ProfileStatCard label="Items sold" value={String(soldCount)} tone="green" />
-          <ProfileStatCard label="Total earnings" value={`K ${totalEarnings.toLocaleString()}`} tone="amber" />
+          <ProfileStatCard label="Total earnings" value={formatPrice(totalEarnings)} tone="amber" />
         </View>
 
         <View style={styles.helperCard}>
@@ -309,7 +311,7 @@ export function AccountScreen(props: Props) {
               savedListings.map((listing) => (
                 <View key={listing.id} style={styles.profileCard}>
                   <Text style={styles.profileName}>{listing.title}</Text>
-                  <Text style={styles.profileMeta}>{listing.category} • K {listing.price.toLocaleString()}</Text>
+                  <Text style={styles.profileMeta}>{listing.category} • {formatPrice(listing.price)}</Text>
                 </View>
               ))
             )
