@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import PromotionsAdmin from "./PromotionsAdmin";
 
-export const metadata = { title: "Promotions – CampusCart Admin" };
+export const metadata = { title: "Promotions (Admin)" };
 
 export default async function PromotionsPage() {
   const supabase = await createClient();

@@ -3,7 +3,7 @@ import { getCurrentProfile } from "@/lib/repositories/profiles";
 import { createClient } from "@/lib/supabase/server";
 import ProfileSettingsForm from "./ProfileSettingsForm";
 
-export const metadata = { title: "Profile Settings – CampusCart" };
+export const metadata = { title: "Profile Settings" };
 
 export default async function ProfileSettingsPage() {
   const supabase = await createClient();

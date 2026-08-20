@@ -4,7 +4,7 @@ import { getListingById } from "@/lib/repositories/listings";
 import { getAllCategories } from "@/lib/repositories/universities";
 import EditListingForm from "./EditListingForm";
 
-export const metadata = { title: "Edit Listing – CampusCart" };
+export const metadata = { title: "Edit Listing" };
 
 export default async function EditListingPage({
   params,

@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const profile = await getProfileById(id);
   return {
-    title: profile ? `${profile.full_name} – CampusCart` : "Profile – CampusCart",
+    title: profile ? `${profile.full_name}` : "Profile",
   };
 }
 

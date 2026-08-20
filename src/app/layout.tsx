@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { siteUrl } from "@/lib/siteUrl";
 
 const geist = localFont({
   src: "./fonts/GeistVF.woff",
@@ -14,18 +15,75 @@ import PWARegister from "@/components/PWARegister";
 import PWAInstallPopup from "@/components/PWAInstallPopup";
 import MobileTabBar from "@/components/MobileTabBar";
 
+const SITE_NAME = "CampusCart";
+const TITLE = "CampusCart – The Student Marketplace for Zambian Campuses";
+const DESCRIPTION =
+  "Buy, sell and trade textbooks, electronics, clothing and services with verified students at your Zambian university. Free to post, student-only, no middleman.";
+
 export const metadata: Metadata = {
-  title: "CampusCart – The Marketplace for Your Campus",
-  description:
-    "Buy, sell, and trade with students on your campus instantly. Secure, verified, and student-only.",
+  // Without this, every relative URL below (og image, canonical) resolves
+  // against localhost in production and link previews come back blank.
+  metadataBase: new URL(siteUrl()),
+  title: {
+    default: TITLE,
+    // Pages set a bare title ("Sign In"); the brand is appended here rather
+    // than hand-written into each one.
+    template: "%s | CampusCart",
+  },
+  description: DESCRIPTION,
+  applicationName: SITE_NAME,
   manifest: "/manifest.webmanifest",
-  applicationName: "CampusCart",
+  keywords: [
+    "student marketplace Zambia",
+    "campus marketplace",
+    "buy and sell textbooks Zambia",
+    "university marketplace Lusaka",
+    "ZCAS",
+    "UNZA",
+    "student classifieds Zambia",
+    "second hand electronics Zambia",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: TITLE,
+    description: DESCRIPTION,
+    url: "/",
+    locale: "en_ZM",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "CampusCart" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/og.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  category: "shopping",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "CampusCart",
+    title: SITE_NAME,
   },
 };
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F8FAFC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0F172A" },
+  ],
+};
+
 
 export default function RootLayout({
   children,

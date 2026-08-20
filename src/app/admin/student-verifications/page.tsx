@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import AdminVerificationTable from "./AdminVerificationTable";
 
-export const metadata = { title: "Student Verifications – CampusCart Admin" };
+export const metadata = { title: "Student Verifications (Admin)" };
 
 export default async function StudentVerificationsPage() {
   const supabase = await createClient();
