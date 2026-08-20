@@ -30,7 +30,7 @@ interface ProductPageProps {
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { id } = await params;
   const row = await getListingById(id);
-  if (!row) return { title: "Listing not found – CampusCart" };
+  if (!row) return { title: "Listing not found" };
 
   const listing = dbListingToUi(row);
   const title = `${listing.title} – ${formatPrice(listing.price)}`;

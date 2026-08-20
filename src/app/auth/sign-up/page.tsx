@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import SignUpForm from "./SignUpForm";
 
-export const metadata = { title: "Sign Up – CampusCart" };
+export const metadata = { title: "Sign Up" };
 
 export default async function SignUpPage({
   searchParams,

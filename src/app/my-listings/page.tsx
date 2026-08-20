@@ -8,7 +8,7 @@ import ArchiveListingButton from "./ArchiveListingButton";
 import BumpListingButton from "./BumpListingButton";
 import ListingImage from "@/components/ListingImage";
 
-export const metadata = { title: "My Listings – CampusCart" };
+export const metadata = { title: "My Listings" };
 
 export default async function MyListingsPage() {
   const supabase = await createClient();

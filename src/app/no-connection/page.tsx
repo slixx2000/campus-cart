@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import NoConnectionState from "@/components/NoConnectionState";
 
 export const metadata: Metadata = {
-  title: "No Connection - CampusCart",
+  title: "No Connection",
   description: "Connection lost. Reconnect to keep using CampusCart.",
 };
 

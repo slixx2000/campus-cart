@@ -1,6 +1,6 @@
 import ResetPasswordForm from "./ResetPasswordForm";
 
-export const metadata = { title: "Set New Password - CampusCart" };
+export const metadata = { title: "Set New Password" };
 
 export default function ResetPasswordPage() {
   return (
