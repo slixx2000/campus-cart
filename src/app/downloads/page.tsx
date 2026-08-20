@@ -24,8 +24,8 @@ interface GitHubRelease {
 export default function DownloadsPage() {
   const mobileRepoUrl = 'https://github.com/slixx2000/campus-cart';
   const mobileReleasesUrl = 'https://github.com/slixx2000/campus-cart/releases';
-  const fallbackReleaseVersion = '1.1.0';
-  const fallbackApkUrl = 'https://github.com/slixx2000/campus-cart/releases/download/v1.1.0/campuscart.apk';
+  const fallbackReleaseVersion = '1.2.0';
+  const fallbackApkUrl = 'https://github.com/slixx2000/campus-cart/releases/download/v1.2.0/campuscart.apk';
 
   const [latestReleaseVersion, setLatestReleaseVersion] = useState(fallbackReleaseVersion);
   const [latestApkUrl, setLatestApkUrl] = useState(fallbackApkUrl);
