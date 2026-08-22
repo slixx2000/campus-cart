@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "schedule": "0 3 * * *",
+      "path": "/api/cron/reap-images",
+      "method": "GET"
+    }
+  ]
+}

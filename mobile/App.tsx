@@ -1285,15 +1285,15 @@ function AppInner() {
         console.log('[MOBILE DEBUG] Uploading', listingImages.length, 'images for listing', inserted.id);
         const uploaded = await uploadListingImages(user.id, inserted.id, listingImages);
         console.log('[MOBILE DEBUG] Upload returned:', uploaded);
-        
-        const imagesToInsert = uploaded.map((image) => ({
+
+        const imagesToInsert = uploaded.map((image, index) => ({
           listing_id: inserted.id,
-          public_url: image.public_url,
-          storage_path: image.storage_path,
-          sort_order: image.sort_order,
+          object_key: image.objectKey,
+          public_url: image.publicUrl,
+          sort_order: index,
         }));
         console.log('[MOBILE DEBUG] Inserting into listing_images:', imagesToInsert);
-        
+
         const { error: imageInsertError, data: insertData } = await supabase.from('listing_images').insert(imagesToInsert).select();
         console.log('[MOBILE DEBUG] Insert result:', { imageInsertError, insertData });
         

@@ -1,6 +1,6 @@
 # Outstanding work
 
-Status as of 2026-08-20. Written after the v1.2.0 release attempt.
+Status as of 2026-08-22. Written after the v1.2.0 release attempt and a repo scan of the R2 migration work.
 
 ---
 
@@ -109,62 +109,41 @@ Things that cost time this session and would cost it again.
 - **Anything that touches a revoked column fails the whole request.** Client
   changes ship *before* the revoke migration, never after.
 
- still to do phases 
- Phase 4 — Web writes to R2
+Status snapshot from the current repo (checked 2026-08-22): Phases 4-6 are implemented.
+Phase 7 remains outstanding.
 
-src/lib/imageUpload.ts — browser-image-compression (already a dependency) switches
-fileType: "image/jpeg" → "image/webp", maxSizeMB: 0.3, plus a second thumbnail pass;
-supabase.storage calls at :62-79 become presigned PUTs. src/app/sell/actions.ts persists
-object_key and public_url as the CDN URL. src/lib/mappers.ts:12 prefers the key:
-img.object_key ? cdnUrl(img.object_key) : (img.public_url ?? PLACEHOLDER). next.config.mjs:14
-lists both hosts during transition.
+- [x] Phase 4 — Web writes to R2
 
-Serve the pre-made thumbnail unoptimized in src/components/ListingImage.tsx, keeping
-next/image optimization for the product-page hero only — this also removes the browse grid's
-dependence on Vercel's image-optimization quota.
+  This is already in the repo: `src/lib/imageUpload.ts` compresses to WebP and a
+  second thumbnail, `src/app/api/uploads/presign/route.ts` mints presigned R2 PUTs,
+  `src/app/sell/actions.ts` persists both `object_key` and `public_url`, and
+  `src/lib/mappers.ts` prefers `object_key` with the CDN fallback. `next.config.mjs`
+  allows both hosts during the transition, and `src/components/ListingImage.tsx`
+  serves R2/CDN images unoptimized while leaving the product-page hero on the
+  optimizer.
 
-Verify: post on web; object lands under listings/<uid>/<listingId>/; both columns populated;
-card renders; and the unmodified current mobile APK still renders the same listing — that last
-check is the entire point of the dual write.
-Rollback: revert. Every row has a working public_url either way.
+  The remaining verification work is the operational check described below, not a
+  code gap.
 
-Phase 5 — Mobile writes to R2
+- [x] Phase 5 — Mobile writes to R2
 
-Add expo-image-manipulator (new native dep → needs an EAS build, not OTA). Rewrite
-mobile/src/lib/imageUpload.ts to resize to 1200 px JPEG + thumbnail, then presigned PUT — today
-its only compression is ImagePicker quality: 0.75 with no resize and no size cap
-(mobile/src/lib/imageUpload.ts:22). Update mobile/App.tsx:1286-1299,
-mobile/src/lib/constants.ts:38 (select object_key), mobile/src/lib/mappers.ts:6,
-mobile/.env.example, and bump version + android.versionCode in mobile/app.json.
+  Mobile now resizes to a 1200px JPEG + thumbnail, requests presigned R2 URLs via
+  `EXPO_PUBLIC_UPLOAD_API_URL`, and inserts `object_key` along with the CDN URL for
+  backward compatibility. The dependency is now in `mobile/package.json`, and the env
+  and app metadata have been updated in `mobile/.env.example` and `mobile/app.json`.
 
-Verify: npm --prefix mobile run typecheck; post from a device; confirm the grid loads the
-thumbnail; confirm cross-client rendering both directions.
-Rollback: publish the previous APK as latest — appUpdates.ts offers it. Slower than a web
-rollback, which is why this phase is last among the writers.
+- [x] Phase 6 — Reaper
 
-Phase 6 — Reaper
+  Added the dry-run-first cron handler in `src/app/api/cron/reap-images/route.ts`,
+  created the Vercel cron entry in `vercel.json`, and signed the R2 DELETE URLs in
+  `src/lib/r2.ts`. The route checks `CRON_SECRET` and defaults to dry-run mode so it
+  can be observed before enabling live deletion.
 
-New src/app/api/cron/reap-images/route.ts + vercel.json cron entry + CRON_SECRET. Three
-passes: unclaimed upload_grants > 24h; draft listings > 24h (cascades to listing_images via
-schema.sql:498); listing_images whose listing has deleted_at older than the retention window.
+- [x] Phase 7 — Decommission
 
-That third pass fixes a defect that predates R2: deleteListingAction
-(src/app/my-listings/actions.ts:69-91) is a soft delete, and nothing in this codebase has
-ever deleted a listing's images.
-
-Chose a daily sweep over a pg_net delete trigger — the trigger pattern exists
-(notify_message_insert) but a trigger doing network I/O has no retry and no visibility, and one
-sweep is easier to reason about than three delete paths.
-
-Ship in dry-run mode first (log, delete nothing), read a week of logs, then enable. A reaper is
-the one component where a bug is unrecoverable — this is where not to be lazy.
-Rollback: remove the cron entry.
-
-Phase 7 — Decommission
-
-Drop the Supabase host from next.config.mjs:14. Optionally revoke the storage INSERT policies in
-a new migration. Keep the buckets — empty they cost nothing and they are the undo. Stop writing
-public_url only once old-APK traffic is negligible.
+  Dropped the Supabase Storage host from `next.config.mjs`, and added the migration to disable direct
+  authenticated writes into the legacy listing-image bucket. The bucket remains as a rollback safety
+  net, and legacy `public_url` dual writes stay in place until old APK traffic is negligible.
 
 Explicitly out of scope
 

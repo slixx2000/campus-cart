@@ -149,6 +149,52 @@ export function presignPut({
   return `https://${cfg.host}${path}?${query}&X-Amz-Signature=${signature}`;
 }
 
+export function presignDelete({
+  key,
+  now = new Date(),
+  cfg = config(),
+}: Omit<PresignArgs, "contentType" | "contentLength">): string {
+  const { amzdate, datestamp } = timestamps(now);
+  const scope = `${datestamp}/${REGION}/${SERVICE}/aws4_request`;
+  const path = `/${cfg.bucket}/${encodeKey(key)}`;
+  const signedHeaders = "host";
+
+  const query = (
+    [
+      ["X-Amz-Algorithm", "AWS4-HMAC-SHA256"],
+      ["X-Amz-Credential", `${cfg.accessKeyId}/${scope}`],
+      ["X-Amz-Date", amzdate],
+      ["X-Amz-Expires", String(PRESIGN_EXPIRY_SECONDS)],
+      ["X-Amz-SignedHeaders", signedHeaders],
+    ] as const
+  )
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .sort()
+    .join("&");
+
+  const canonicalRequest = [
+    "DELETE",
+    path,
+    "",
+    `host:${cfg.host}\n`,
+    signedHeaders,
+    "UNSIGNED-PAYLOAD",
+  ].join("\n");
+
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzdate,
+    scope,
+    sha256hex(canonicalRequest),
+  ].join("\n");
+
+  const signature = createHmac("sha256", signingKey(cfg.secretAccessKey, datestamp))
+    .update(stringToSign)
+    .digest("hex");
+
+  return `https://${cfg.host}${path}?${query}&X-Amz-Signature=${signature}`;
+}
+
 /**
  * The client never proposes a key — it is derived here from the JWT-verified user id.
  * That is what makes cross-user writes and path traversal impossible by construction,
