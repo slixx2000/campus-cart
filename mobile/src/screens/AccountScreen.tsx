@@ -63,6 +63,7 @@ type Props = {
   onRelistListing: (listingId: string) => void;
   onUpdateListing: (listingId: string, payload: { title: string; description: string; price: number }) => void;
   onOpenSettings: () => void;
+  onOpenPromote: () => void;
   refreshing: boolean;
   onRefresh: () => void;
 };
@@ -121,6 +122,7 @@ export function AccountScreen(props: Props) {
     onRelistListing,
     onUpdateListing,
     onOpenSettings,
+    onOpenPromote,
     refreshing,
     onRefresh,
   } = props;
@@ -218,6 +220,12 @@ export function AccountScreen(props: Props) {
             </View>
           </View>
         </View>
+
+        {!profile?.is_pioneer_seller && onOpenPromote ? (
+          <Pressable style={[styles.primaryButton, { marginTop: 12 }]} onPress={onOpenPromote}>
+            <Text style={styles.primaryButtonText}>Upgrade to Seller Pro</Text>
+          </Pressable>
+        ) : null}
 
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <ProfileStatCard label="Active listings" value={String(activeCount)} />

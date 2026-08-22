@@ -14,6 +14,8 @@ export function ListingDetailScreen({
   isFavorite,
   onToggleFavorite,
   onOpenSeller,
+  onPromote,
+  isOwner,
 }: {
   listing: Listing;
   onMessageSeller?: () => void;
@@ -22,6 +24,8 @@ export function ListingDetailScreen({
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
   onOpenSeller?: () => void;
+  onPromote?: () => void;
+  isOwner?: boolean;
 }) {
   const styles = useStyles();
   const [activeImage, setActiveImage] = useState(0);
@@ -92,6 +96,12 @@ export function ListingDetailScreen({
       {canMessage && onMessageSeller ? (
         <Pressable style={styles.primaryButton} onPress={onMessageSeller}>
           <Text style={styles.primaryButtonText}>Message Seller</Text>
+        </Pressable>
+      ) : null}
+
+      {isOwner && onPromote ? (
+        <Pressable style={[styles.primaryButton, styles.promoteButton]} onPress={onPromote}>
+          <Text style={styles.primaryButtonText}>Promote Listing</Text>
         </Pressable>
       ) : null}
 

@@ -102,6 +102,7 @@ export type RootStackParamList = {
   ListingDetail: { listing: Listing };
   SellerProfile: { sellerId: string; sellerName: string };
   AccountSettings: undefined;
+  Payment: { listingId?: string };
 };
 
 export type MainTabParamList = {

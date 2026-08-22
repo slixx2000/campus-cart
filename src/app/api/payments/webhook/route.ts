@@ -118,34 +118,60 @@ export async function POST(request: NextRequest) {
       // Activation: if this payment bought a listing-level promotion, activate it
       const { data: paymentRow } = await supabase
         .from("payments")
-        .select("id, user_id, product_id, purpose, amount_minor, metadata")
+        .select("id, user_id, product_id, purpose, amount_minor, metadata, fulfilled_at")
         .eq("id", paymentId)
         .maybeSingle();
 
-      if (paymentRow && parsed.status === "paid") {
+      // Check if already fulfilled (idempotency)
+      if (paymentRow && parsed.status === "paid" && !paymentRow.fulfilled_at) {
         const purpose = paymentRow.purpose as string;
         const metadata = paymentRow.metadata as Record<string, unknown> | null;
 
         // proceed only for listing-scoped promotions
-        if (purpose === "listing_boost" || purpose === "featured_listing") {
-          const listingId = (metadata && (metadata.listingId as string)) || null;
+        if ((purpose === "listing_boost" || purpose === "featured_listing") && metadata?.listingId) {
+          const listingId = metadata.listingId as string;
 
-          if (listingId) {
-            // determine duration: try product -> metadata.duration_days -> default 1
-            let durationDays = 1;
-            if (paymentRow.product_id) {
-              const { data: prod } = await supabase
-                .from("payment_products")
-                .select("duration_days")
-                .eq("id", paymentRow.product_id)
-                .maybeSingle();
-              if (prod?.duration_days) durationDays = prod.duration_days;
-            } else if (metadata && typeof metadata.duration_days === "number") {
-              durationDays = metadata.duration_days as number;
-            }
+          // determine duration: try product -> metadata.duration_days -> default 1
+          let durationDays = 1;
+          if (paymentRow.product_id) {
+            const { data: prod } = await supabase
+              .from("payment_products")
+              .select("duration_days")
+              .eq("id", paymentRow.product_id)
+              .maybeSingle();
+            if (prod?.duration_days) durationDays = prod.duration_days;
+          } else if (metadata && typeof metadata.duration_days === "number") {
+            durationDays = metadata.duration_days as number;
+          }
 
+          const now = new Date();
+          const amountKwacha = paymentRow.amount_minor ? (paymentRow.amount_minor / 100.0) : null;
+
+          if (purpose === "listing_boost") {
+            // Paid boost: update last_bumped_at (bypasses 24h cooldown) and record promotion for audit
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { error: boostError } = await (supabase as any).rpc("paid_boost_listing", {
+              p_listing_id: listingId,
+              p_user_id: paymentRow.user_id,
+              p_days: durationDays,
+            });
+            if (boostError) console.error("Failed applying paid boost:", boostError.message);
+
+            // Record boost promotion for audit trail (does not affect featured cache)
+            const endsAt = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000).toISOString();
+            const { error: promoError } = await supabase.from("listing_promotions").insert({
+              listing_id: listingId,
+              kind: "boost",
+              starts_at: now.toISOString(),
+              ends_at: endsAt,
+              amount_kwacha: amountKwacha,
+              note: "Paid boost via webhook",
+              granted_by: paymentRow.user_id,
+            });
+            if (promoError) console.error("Failed inserting boost promotion:", promoError.message);
+          } else if (purpose === "featured_listing") {
+            // Featured listing: insert promotion and refresh featured cache
             // compute ends_at by extending existing active window if present
-            const now = new Date();
             const { data: currentEnd } = await supabase
               .from("listing_promotions")
               .select("ends_at")
@@ -159,13 +185,10 @@ export async function POST(request: NextRequest) {
             let endsAt = new Date(now.getTime() + durationDays * 24 * 60 * 60 * 1000).toISOString();
 
             if (currentEnd && currentEnd.ends_at) {
-              // extend from current end
               const current = new Date(currentEnd.ends_at);
               startsAt = now.toISOString();
               endsAt = new Date(current.getTime() + durationDays * 24 * 60 * 60 * 1000).toISOString();
             }
-
-            const amountKwacha = paymentRow.amount_minor ? (paymentRow.amount_minor / 100.0) : null;
 
             const { error: promoError } = await supabase.from("listing_promotions").insert({
               listing_id: listingId,
@@ -180,11 +203,13 @@ export async function POST(request: NextRequest) {
             if (promoError) console.error("Failed inserting listing promotion:", promoError.message);
 
             // Refresh the featured listing cache
-            // rpc list is not exhaustively typed here; allow this one explicit cast for the definer function call
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { error: refreshError } = await (supabase as any).rpc("refresh_featured_listings");
             if (refreshError) console.error("Failed refreshing featured listings:", refreshError.message);
           }
+
+          // Mark payment as fulfilled (idempotency)
+          await supabase.from("payments").update({ fulfilled_at: now.toISOString() }).eq("id", paymentId);
         }
       }
     }

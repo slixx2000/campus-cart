@@ -20,6 +20,7 @@ const createSessionSchema = z.object({
     "transaction_fee",
     "delivery",
   ]).default("listing_boost"),
+  listingId: z.string().uuid().optional(),
   phone: z.string().min(7).max(20),
   operator: z.string().min(2).max(30).optional(),
   customerName: z.string().min(2).max(120).optional(),
@@ -75,6 +76,11 @@ export async function POST(request: NextRequest) {
       amountMinor = data.price_minor;
     }
 
+    // For listing-scoped purchases require a listingId
+    if ((parsed.data.purpose === "listing_boost" || parsed.data.purpose === "featured_listing") && !parsed.data.listingId) {
+      return NextResponse.json({ error: "listingId is required for this product purpose" }, { status: 400 });
+    }
+
     if (!amountMinor || amountMinor <= 0) {
       return NextResponse.json({ error: "A valid amount is required" }, { status: 400 });
     }
@@ -98,6 +104,7 @@ export async function POST(request: NextRequest) {
         productId: productRow?.id ?? null,
         productName: productRow?.name ?? null,
         productKind: productRow?.kind ?? null,
+        listingId: parsed.data.listingId ?? null,
       }),
     );
 

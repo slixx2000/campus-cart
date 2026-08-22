@@ -3,6 +3,7 @@ export const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 export const CDN_URL = process.env.EXPO_PUBLIC_CDN_URL ?? 'https://cdn.campuscart.social';
 export const UPLOAD_API_URL =
   process.env.EXPO_PUBLIC_UPLOAD_API_URL ?? 'https://campuscart.social/api/uploads/presign';
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'https://campuscart.social';
 
 export const PLACEHOLDER_IMAGE =
   'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop';

@@ -192,6 +192,7 @@ const createStyles = (c: Theme) =>
   statLabel: { color: c.muted, fontSize: text.sm },
   primaryButton: { backgroundColor: c.primary, paddingHorizontal: 18, paddingVertical: 14, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   primaryButtonText: { color: c.onPrimary, fontWeight: '600', fontSize: text.base },
+  promoteButton: { backgroundColor: c.accent, marginTop: 10 },
   secondaryButton: { backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, paddingHorizontal: 18, paddingVertical: 14, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
   secondaryButtonText: { color: c.fg, fontWeight: '600', fontSize: text.base },
   sectionTitle: { color: c.fg, fontWeight: '800', fontSize: text.xl, marginTop: 8 },

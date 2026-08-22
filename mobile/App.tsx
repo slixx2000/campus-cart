@@ -17,6 +17,7 @@ import { AccountSettingsScreen } from './src/screens/AccountSettingsScreen';
 import { ListingDetailScreen } from './src/screens/ListingDetailScreen';
 import { SellerProfileScreen } from './src/screens/SellerProfileScreen';
 import { SellScreen } from './src/screens/SellScreen';
+import { PaymentScreen } from './src/screens/PaymentScreen';
 import { pickImages, uploadListingImages, type PickedImage } from './src/lib/imageUpload';
 import { fetchDefaultAvatars, pickSingleProfileImage, uploadProfileAvatar } from './src/lib/profileUpload';
 import { registerPushToken } from './src/lib/pushNotifications';
@@ -304,6 +305,7 @@ function MainTabsNavigator(props: any) {
             onRelistListing={(listingId: string) => updateListingStatus(listingId, { status: 'active' }, 'Listing relisted.')}
             onUpdateListing={handleUpdateListing}
             onOpenSettings={() => navigation.getParent()?.navigate('AccountSettings')}
+            onOpenPromote={() => navigation.getParent()?.navigate('Payment')}
             refreshing={refreshingAccount}
             onRefresh={handleRefreshAccount}
           />
@@ -1513,6 +1515,8 @@ function AppInner() {
                     sellerName: route.params.listing.sellerName,
                   });
                 }}
+                isOwner={!!user && route.params.listing.sellerId === user?.id}
+                onPromote={() => navigation.navigate('Payment', { listingId: route.params.listing.id })}
               />
             )}
           </Stack.Screen>
@@ -1566,6 +1570,17 @@ function AppInner() {
                   void handleCheckForAppUpdates({ silent: false });
                 }}
                 checkingForUpdates={checkingForUpdates}
+              />
+            )}
+          </Stack.Screen>
+          <Stack.Screen name="Payment" options={{ title: 'Promote Listing' }}>
+            {({ route, navigation }) => (
+              <PaymentScreen
+                navigation={navigation}
+                route={route}
+                user={user}
+                profile={profile}
+                openThemedAlert={showFeedbackModal}
               />
             )}
           </Stack.Screen>

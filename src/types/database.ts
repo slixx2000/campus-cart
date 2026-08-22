@@ -214,21 +214,22 @@ export type PaymentProductRow = {
 };
 
 export type PaymentRow = {
- id: string;
- user_id: string;
- product_id: string | null;
- provider: PaymentProviderName;
- provider_payment_id: string | null;
- provider_reference: string | null;
- payment_reference: string;
- status: PaymentStatus;
- purpose: PaymentPurpose;
- amount_minor: number;
- currency: "ZMW";
- metadata: Json;
- created_at: string;
- updated_at: string;
- paid_at: string | null;
+  id: string;
+  user_id: string;
+  product_id: string | null;
+  provider: PaymentProviderName;
+  provider_payment_id: string | null;
+  provider_reference: string | null;
+  payment_reference: string;
+  status: PaymentStatus;
+  purpose: PaymentPurpose;
+  amount_minor: number;
+  currency: "ZMW";
+  metadata: Json;
+  created_at: string;
+  updated_at: string;
+  paid_at: string | null;
+  fulfilled_at: string | null;
 };
 
 export type PaymentWebhookEventRow = {
@@ -245,7 +246,7 @@ export type PaymentWebhookEventRow = {
 export type ListingPromotionRow = {
   id: string;
   listing_id: string;
-  kind: "featured";
+  kind: "featured" | "boost";
   starts_at: string;
   ends_at: string;
   amount_kwacha: number | null;
@@ -337,11 +338,12 @@ export type Database = {
       };
       payments: {
         Row: PaymentRow;
-        Insert: Omit<PaymentRow, "id" | "created_at" | "updated_at" | "paid_at"> & {
+        Insert: Omit<PaymentRow, "id" | "created_at" | "updated_at" | "paid_at" | "fulfilled_at"> & {
           id?: string;
           created_at?: string;
           updated_at?: string;
           paid_at?: string | null;
+          fulfilled_at?: string | null;
         };
         Update: Partial<PaymentRow>;
         Relationships: [];
