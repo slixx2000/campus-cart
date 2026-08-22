@@ -12,6 +12,25 @@ export type Json =
 
 export type ListingCondition = "new" | "like_new" | "good" | "fair";
 export type ListingStatus = "draft" | "active" | "sold" | "archived" | "removed";
+export type PaymentProviderName = "bila";
+export type PaymentStatus =
+  | "pending"
+  | "processing"
+  | "paid"
+  | "failed"
+  | "cancelled"
+  | "refunded"
+  | "partially_refunded";
+export type PaymentPurpose =
+  | "listing_boost"
+  | "featured_listing"
+  | "seller_subscription"
+  | "storefront_upgrade"
+  | "advertisement"
+  | "sponsored_deal"
+  | "transaction_fee"
+  | "delivery";
+export type PromotionProductKind = "boost" | "featured" | "seller_pro";
 export type ReportType = "user" | "listing" | "conversation";
 
 export type SellerReviewRow = {
@@ -180,6 +199,49 @@ export type PushTokenRow = {
   updated_at: string;
 };
 
+export type PaymentProductRow = {
+ id: string;
+ kind: PromotionProductKind;
+ name: string;
+ description: string | null;
+ price_minor: number;
+ currency: "ZMW";
+ duration_days: number;
+ is_active: boolean;
+ metadata: Json;
+ created_at: string;
+ updated_at: string;
+};
+
+export type PaymentRow = {
+ id: string;
+ user_id: string;
+ product_id: string | null;
+ provider: PaymentProviderName;
+ provider_payment_id: string | null;
+ provider_reference: string | null;
+ payment_reference: string;
+ status: PaymentStatus;
+ purpose: PaymentPurpose;
+ amount_minor: number;
+ currency: "ZMW";
+ metadata: Json;
+ created_at: string;
+ updated_at: string;
+ paid_at: string | null;
+};
+
+export type PaymentWebhookEventRow = {
+ id: string;
+ payment_id: string;
+ provider: PaymentProviderName;
+ event_name: string;
+ provider_event_id: string | null;
+ status: PaymentStatus | null;
+ payload: Json;
+ received_at: string;
+};
+
 export type ListingPromotionRow = {
   id: string;
   listing_id: string;
@@ -191,7 +253,7 @@ export type ListingPromotionRow = {
   granted_by: string;
   created_at: string;
 }
-
+ 
 export type AdBannerRow = {
   id: string;
   placement: "home" | "browse";
@@ -261,6 +323,36 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<ProfileRow>;
+        Relationships: [];
+      };
+      payment_products: {
+        Row: PaymentProductRow;
+        Insert: Omit<PaymentProductRow, "id" | "created_at" | "updated_at"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<PaymentProductRow>;
+        Relationships: [];
+      };
+      payments: {
+        Row: PaymentRow;
+        Insert: Omit<PaymentRow, "id" | "created_at" | "updated_at" | "paid_at"> & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+          paid_at?: string | null;
+        };
+        Update: Partial<PaymentRow>;
+        Relationships: [];
+      };
+      payment_webhook_events: {
+        Row: PaymentWebhookEventRow;
+        Insert: Omit<PaymentWebhookEventRow, "id" | "received_at"> & {
+          id?: string;
+          received_at?: string;
+        };
+        Update: Partial<PaymentWebhookEventRow>;
         Relationships: [];
       };
       listing_promotions: {
@@ -410,6 +502,10 @@ export type Database = {
     Enums: {
       listing_condition: ListingCondition;
       listing_status: ListingStatus;
+      payment_provider_name: PaymentProviderName;
+      payment_status: PaymentStatus;
+      payment_purpose: PaymentPurpose;
+      promotion_product_kind: PromotionProductKind;
     };
     Views: Record<string, never>;
     Functions: {

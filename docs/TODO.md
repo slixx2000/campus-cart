@@ -145,6 +145,103 @@ Phase 7 remains outstanding.
   authenticated writes into the legacy listing-image bucket. The bucket remains as a rollback safety
   net, and legacy `public_url` dual writes stay in place until old APK traffic is negligible.
 
+## 6. Planned monetization roadmap (phases 8+)
+
+These are the feature phases to implement next, ordered to match the product roadmap in
+`docs/paymentsUpgrade.md` and to keep the first launch focused on paid visibility rather than broad
+commerce infrastructure.
+
+- [x] **Phase 8 — Payment abstraction and provider service**
+
+  - Added a single payment service layer with a provider abstraction and a Bila implementation.
+  - Wired environment-backed config for the selected provider and webhook signing secrets.
+  - Kept provider logic server-only and separated it from the UI.
+  - Added a webhook route that verifies Bila's signature using the documented `timestamp.body` HMAC scheme.
+
+- [x] **Phase 9 — Payment database model**
+
+  - Added the canonical `payment_products`, `payments`, and `payment_webhook_events` tables in Supabase.
+  - Added provider, amount, currency, status, purpose, metadata, and webhook tracking fields.
+  - Added indexes and RLS policies for authenticated user/admin access and payment-record integrity.
+
+- [x] **Phase 10 — Payment provider integration**
+
+  - Integrated the first provider with a secure server-side Bila collection session flow.
+  - Added ZMW pricing conversion and integer-safe minor-unit tracking.
+  - Added a provider-backed session route that creates the payment record and returns the provider response.
+
+- [ ] **Phase 11 — Webhook processing and fulfillment**
+
+  - Add `/api/payments/webhook` with signature verification and event replay protection.
+  - Mark payments as `paid`/`failed` only after verified provider responses.
+  - Trigger the correct feature activation only once per payment (`idempotency`).
+
+- [ ] **Phase 12 — Product and pricing system**
+
+  - Add configurable pricing items for Boost, Featured, and Seller Pro.
+  - Store product definitions in the database rather than hard-coding them in components.
+  - Add admin controls for enabling/disabling price points and durations.
+
+- [ ] **Phase 13 — Listing Boost**
+
+  - Let sellers purchase a temporary visibility bump for an existing listing.
+  - Add a boost duration selector, purchase flow, status tracking, and expiration logic.
+  - Update ranking logic so boosted listings get a boost without overshadowing organic discovery.
+
+- [ ] **Phase 14 — Featured Listings**
+
+  - Add premium placements for homepage/category/search featuring.
+  - Require labeled sponsored/featured display and moderation controls.
+  - Track expiration and rotation so featured inventory is finite and reviewable.
+
+- [ ] **Phase 15 — Promotion expiration and analytics**
+
+  - Add a scheduled job that expires outdated promotions and removes premium ranking.
+  - Record impressions/clicks and conversion metrics at the listing and seller level.
+  - Add admin reporting for active, expired, and failed promotion records.
+
+- [ ] **Phase 16 — Seller Pro**
+
+  - Add a recurring subscription flow for power sellers.
+  - Include premium profile/storefront options, discounted boosts, and higher listing limits.
+  - Scope this as a revenue-validation feature, not a full business-facing SaaS rollout.
+
+- [ ] **Phase 17 — Seller storefronts**
+
+  - Add a seller profile page with banner, description, categories, and featured inventory.
+  - Restrict storefront upgrades to paying sellers only and keep free profiles basic.
+  - Treat this as a later enhancement after the first monetization proof is validated.
+
+- [ ] **Phase 18 — Business advertising**
+
+  - Add campus-specific sponsored placements, business ad units, and promotion bundles.
+  - Keep all branded placement clearly labelled and moderated.
+  - Defer until the platform has a stable revenue loop and clear ad policy.
+
+- [ ] **Phase 19 — CampusCart Checkout**
+
+  - Build a buyer-facing commerce layer only after core monetization is stable.
+  - Add order management, cart/checkout flows, and transaction records where needed.
+  - Keep this out of the first MVP unless product direction explicitly requires it.
+
+- [ ] **Phase 20 — Transaction fees and delivery**
+
+  - Add platform fees, payout logic, shipping/delivery support, and refunds/disputes.
+  - This is a later-stage commerce feature and should not be launched before the visibility MVP is proven.
+
+### MVP recommendation for the next phase
+
+The repo should start from the first concrete revenue slice:
+
+- [ ] Boost Listing
+- [ ] Featured Listing
+- [ ] Seller Pro (lightweight subscription tier only)
+- [ ] Payment abstraction + provider integration + verified webhook processing
+- [ ] Product/pricing configuration + admin controls
+
+This covers the minimum viable monetization path described in the roadmap without prematurely
+building checkout, payouts, or delivery infrastructure.
+
 Explicitly out of scope
 
 - Avatars stay on Supabase Storage (user's call). Known consequence: the mobile avatar orphan
